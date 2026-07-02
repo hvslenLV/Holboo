@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Холбоо — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0F0A12; --bg2: #160D1A; --gold: #E8A87C; --rose: #C1607A;
+      --text: #F5EDE8; --muted: #9C8A86; --card: #1E1124; --border: #2D1A34;
+      --input: #130A17; --green: #4ade80; --yellow: #fbbf24; --red: #f87171;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+
+    /* SIDEBAR */
+    .sidebar { width: 220px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; }
+    .sidebar-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--gold); padding: 0 20px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-logo span { color: var(--rose); }
+    .sidebar-logo small { display: block; font-family: 'Inter', sans-serif; font-size: .68rem; color: var(--muted); margin-top: 4px; font-weight: 400; }
+    .nav-items { padding: 12px 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: var(--muted); text-decoration: none; font-size: .88rem; transition: all .2s; border-left: 3px solid transparent; }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,.03); }
+    .nav-item.active { color: var(--text); border-left-color: var(--rose); background: rgba(193,96,122,.07); }
+    .nav-badge { margin-left: auto; background: var(--rose); color: #fff; font-size: .65rem; font-weight: 700; padding: 2px 6px; border-radius: 50px; }
+
+    /* MAIN */
+    .main { margin-left: 220px; flex: 1; padding: 28px 32px; }
+
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .top-bar h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; }
+    .top-bar p { color: var(--muted); font-size: .82rem; margin-top: 3px; }
+    .admin-badge { background: rgba(193,96,122,.15); border: 1px solid rgba(193,96,122,.3); color: var(--rose); padding: 6px 14px; border-radius: 50px; font-size: .78rem; font-weight: 600; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px; }
+    .stat-icon { font-size: 1.5rem; margin-bottom: 10px; }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .stat-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .stat-change { font-size: .75rem; margin-top: 8px; }
+    .up { color: var(--green); } .down { color: var(--red); }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 20px; width: fit-content; }
+    .tab { padding: 9px 18px; border-radius: 9px; font-size: .85rem; font-weight: 500; cursor: pointer; color: var(--muted); transition: all .2s; border: none; background: none; font-family: 'Inter', sans-serif; }
+    .tab.active { background: var(--rose); color: #fff; }
+
+    /* TABLE */
+    .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .table-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+    .table-header h3 { font-size: 1rem; font-weight: 600; }
+    .search-bar { background: var(--input); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-size: .82rem; color: var(--text); font-family: 'Inter', sans-serif; outline: none; width: 200px; }
+    .search-bar::placeholder { color: rgba(156,138,134,.5); }
+    .search-bar:focus { border-color: var(--rose); }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 12px 20px; font-size: .72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid var(--border); }
+    td { padding: 14px 20px; border-bottom: 1px solid rgba(45,26,52,.6); font-size: .85rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    .user-cell { display: flex; align-items: center; gap: 10px; }
+    .user-av { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .9rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .user-name { font-weight: 600; font-size: .88rem; }
+    .user-info { font-size: .75rem; color: var(--muted); margin-top: 1px; }
+
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 50px; font-size: .72rem; font-weight: 600; }
+    .badge.premium  { background: rgba(232,168,124,.12); color: var(--gold); border: 1px solid rgba(232,168,124,.2); }
+    .badge.free     { background: rgba(156,138,134,.1);  color: var(--muted); border: 1px solid rgba(156,138,134,.2); }
+    .badge.pending  { background: rgba(251,191,36,.12);  color: var(--yellow); border: 1px solid rgba(251,191,36,.2); }
+    .badge.approved { background: rgba(74,222,128,.1);   color: var(--green);  border: 1px solid rgba(74,222,128,.2); }
+    .badge.rejected { background: rgba(248,113,113,.1);  color: var(--red);    border: 1px solid rgba(248,113,113,.2); }
+
+    .action-btn { padding: 6px 12px; border-radius: 7px; font-size: .75rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; border: none; transition: all .2s; }
+    .action-btn.approve { background: rgba(74,222,128,.15); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+    .action-btn.approve:hover { background: rgba(74,222,128,.25); }
+    .action-btn.reject  { background: rgba(248,113,113,.12); color: var(--red);   border: 1px solid rgba(248,113,113,.2); }
+    .action-btn.reject:hover  { background: rgba(248,113,113,.22); }
+    .action-btn.view    { background: rgba(232,168,124,.1);  color: var(--gold);  border: 1px solid rgba(232,168,124,.2); }
+    .action-btn.view:hover    { background: rgba(232,168,124,.2); }
+
+    /* PAYMENT MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.75); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+    .modal-overlay.show { display: flex; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; max-width: 440px; width: 90%; animation: popIn .3s ease; }
+    @keyframes popIn { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 20px; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-field label { display: block; font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+    .modal-field .val { font-size: .92rem; font-weight: 500; }
+    .screenshot-preview { background: var(--input); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; }
+    .screenshot-preview .thumb { font-size: 3rem; margin-bottom: 8px; }
+    .screenshot-preview p { font-size: .82rem; color: var(--muted); }
+    .modal-btns { display: flex; gap: 10px; }
+    .modal-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: .9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .2s; }
+    .modal-btn.ok  { background: var(--green); color: #000; border: none; }
+    .modal-btn.no  { background: var(--red);   color: #fff; border: none; }
+    .modal-btn.cancel { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+    /* CHART */
+    .chart-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+    .mini-chart { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px; }
+    .mini-chart h3 { font-size: .9rem; font-weight: 600; margin-bottom: 16px; }
+    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 80px; }
+    .bar { flex: 1; border-radius: 4px 4px 0 0; position: relative; transition: opacity .2s; cursor: pointer; }
+    .bar:hover { opacity: .8; }
+    .bar-label { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: .65rem; color: var(--muted); white-space: nowrap; }
+    .bar-val { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: .65rem; color: var(--text); font-weight: 600; white-space: nowrap; }
+
+    .donut-wrap { display: flex; align-items: center; gap: 20px; }
+    .donut { position: relative; width: 80px; height: 80px; }
+    .donut svg { transform: rotate(-90deg); }
+    .donut-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 700; }
+    .legend { display: flex; flex-direction: column; gap: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: .78rem; color: var(--muted); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-section { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    Хол<span>бо</span>о
+    <small>Admin панель</small>
+  </div>
+  <nav class="nav-items">
+    <a class="nav-item active" href="#">📊 Хянах самбар</a>
+    <a class="nav-item" href="#">👥 Хэрэглэгчид</a>
+    <a class="nav-item" href="#">💳 Төлбөрүүд <span class="nav-badge">5</span></a>
+    <a class="nav-item" href="#">✅ Баталгаажуулалт <span class="nav-badge">3</span></a>
+    <a class="nav-item" href="#">💌 Мессежүүд</a>
+    <a class="nav-item" href="#">🚫 Гомдол</a>
+    <a class="nav-item" href="index.html">🔙 Сайт руу</a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="top-bar">
+    <div>
+      <h1>Хянах самбар</h1>
+      <p>2026 оны 7-р сарын 2 • Сүүлд шинэчлэгдсэн: 5 минутын өмнө</p>
+    </div>
+    <span class="admin-badge">🔐 Admin</span>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-num" style="color:var(--gold)">1,247</div>
+      <div class="stat-label">Нийт хэрэглэгч</div>
+      <div class="stat-change up">↑ +23 энэ долоо хоногт</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-num" style="color:var(--rose)">312</div>
+      <div class="stat-label">Premium хэрэглэгч</div>
+      <div class="stat-change up">↑ +8 энэ долоо хоногт</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💰</div>
+      <div class="stat-num" style="color:var(--green)">6.2M</div>
+      <div class="stat-label">Сарын орлого (₮)</div>
+      <div class="stat-change up">↑ +18% өмнөх сараас</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💗</div>
+      <div class="stat-num" style="color:#a78bfa">347</div>
+      <div class="stat-label">Амжилттай хос</div>
+      <div class="stat-change up">↑ +12 энэ сард</div>
+    </div>
+  </div>
+
+  <!-- MINI CHARTS -->
+  <div class="chart-section">
+    <div class="mini-chart">
+      <h3>Долоо хоногийн бүртгэл</h3>
+      <div class="bar-chart" id="barChart"></div>
+      <div style="height:24px"></div>
+    </div>
+    <div class="mini-chart">
+      <h3>Хэрэглэгчийн эрх</h3>
+      <div class="donut-wrap">
+        <div class="donut">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--border)" stroke-width="12"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--rose)" stroke-width="12"
+              stroke-dasharray="75 113" stroke-linecap="round"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="12"
+              stroke-dasharray="38 150" stroke-dashoffset="-75" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-label">312</div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--rose)"></div>Premium — 312</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>VIP — 24</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Үнэгүй — 911</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('payments', this)">💳 Төлбөр баталгаажуулах</button>
+    <button class="tab" onclick="switchTab('users', this)">👥 Хэрэглэгчид</button>
+    <button class="tab" onclick="switchTab('verify', this)">✅ Профайл баталгаажуулах</button>
+  </div>
+
+  <!-- PAYMENTS TABLE -->
+  <div id="tab-payments">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Хүлээгдэж буй төлбөрүүд <span style="color:var(--yellow);font-size:.8rem;margin-left:8px">● 5 хүлээгдэж байна</span></h3>
+        <input class="search-bar" placeholder="🔍 Хайх..." />
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Хэрэглэгч</th>
+            <th>Эрх</th>
+            <th>Дүн</th>
+            <th>Гүйлгээний утга</th>
+            <th>Огноо</th>
+            <th>Төлөв</th>
+            <th>Үйлдэл</th>
+          </tr>
+        </thead>
+        <tbody id="paymentsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- USERS TABLE -->
+  <div id="tab-users" style="display:none">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Бүх хэрэглэгчид</h3>
+        <input class="search-bar" placeholder="🔍 Нэрээр хайх..." />
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Хэрэглэгч</th>
+            <th>Нас / Дүүрэг</th>
+            <th>Эрх</th>
+            <th>Бүртгэсэн</th>
+            <th>Төлөв</th>
+            <th>Үйлдэл</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- VERIFY TABLE -->
+  <div id="tab-verify" style="display:none">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Профайл баталгаажуулах хүсэлт</h3>
+        <input class="search-bar" placeholder="🔍 Хайх..." />
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Хэрэглэгч</th>
+            <th>Утас</th>
+            <th>Ирсэн огноо</th>
+            <th>Зураг</th>
+            <th>Үйлдэл</th>
+          </tr>
+        </thead>
+        <tbody id="verifyBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <h3>💳 Төлбөр баталгаажуулах</h3>
+    <div class="modal-field">
+      <label>Хэрэглэгч</label>
+      <div class="val" id="modalUser"></div>
+    </div>
+    <div class="modal-field">
+      <label>Гүйлгээний утга</label>
+      <div class="val" id="modalRef" style="color:var(--rose)"></div>
+    </div>
+    <div class="modal-field">
+      <label>Дүн</label>
+      <div class="val" id="modalAmt" style="color:var(--gold)"></div>
+    </div>
+    <div class="screenshot-preview">
+      <div class="thumb">📱</div>
+      <p>Гүйлгээний скриншот<br/><span style="color:var(--gold);font-size:.75rem">screenshot_20260702.jpg</span></p>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn ok" onclick="approvePayment()">✓ Баталгаажуулах</button>
+      <button class="modal-btn no" onclick="rejectPayment()">✕ Татгалзах</button>
+      <button class="modal-btn cancel" onclick="closeModal()">Болих</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const payments = [
+  { id:1, name:'Дэлгэрмаа', emoji:'Д', color:'linear-gradient(135deg,#C1607A,#8B2E4A)', plan:'Premium', amount:'₮19,900', ref:'ХОС-14523', date:'2026-07-02', status:'pending' },
+  { id:2, name:'Батбаяр',   emoji:'Б', color:'linear-gradient(135deg,#5B8FB9,#2C5282)', plan:'Premium', amount:'₮19,900', ref:'ХОС-28734', date:'2026-07-02', status:'pending' },
+  { id:3, name:'Ганчимэг',  emoji:'Г', color:'linear-gradient(135deg,#7B9E5B,#3D5C2A)', plan:'VIP',     amount:'₮49,900', ref:'ХОС-39201', date:'2026-07-01', status:'pending' },
+  { id:4, name:'Сүрэнгэрэл',emoji:'С', color:'linear-gradient(135deg,#9B6B9B,#5C3A6E)', plan:'Premium', amount:'₮19,900', ref:'ХОС-41188', date:'2026-07-01', status:'approved' },
+  { id:5, name:'Мөнхбаяр', emoji:'М', color:'linear-gradient(135deg,#6B7B9B,#3A4A6E)', plan:'Premium', amount:'₮19,900', ref:'ХОС-55672', date:'2026-06-30', status:'approved' },
+];
+
+const users = [
+  { name:'Дэлгэрмаа', emoji:'Д', color:'linear-gradient(135deg,#C1607A,#8B2E4A)', age:44, district:'Сүхбаатар', plan:'premium', joined:'2026-07-02', active:true },
+  { name:'Батбаяр',   emoji:'Б', color:'linear-gradient(135deg,#5B8FB9,#2C5282)', age:47, district:'Баянзүрх',  plan:'premium', joined:'2026-07-01', active:true },
+  { name:'Наранцэцэг',emoji:'Н', color:'linear-gradient(135deg,#C1607A,#8B2E4A)', age:43, district:'Сүхбаатар', plan:'free',    joined:'2026-06-28', active:true },
+  { name:'Ганбаатар', emoji:'Г', color:'linear-gradient(135deg,#7B9E5B,#3D5C2A)', age:49, district:'Хан-Уул',   plan:'premium', joined:'2026-06-25', active:false },
+  { name:'Оюунцэцэг', emoji:'О', color:'linear-gradient(135deg,#9B6B9B,#5C3A6E)', age:45, district:'Чингэлтэй', plan:'free',    joined:'2026-06-20', active:true },
+];
+
+const verifyList = [
+  { name:'Номин',     emoji:'Н', color:'linear-gradient(135deg,#5BA8B9,#2C6282)', phone:'9911-4455', date:'2026-07-02' },
+  { name:'Дамдинсүрэн',emoji:'Д',color:'linear-gradient(135deg,#B9855B,#7A4A20)', phone:'9922-3344', date:'2026-07-01' },
+  { name:'Энхцэцэг', emoji:'Э', color:'linear-gradient(135deg,#B96B7A,#7A3A4A)', phone:'9933-2211', date:'2026-06-30' },
+];
+
+let currentPayId = null;
+let paymentStatuses = { 1:'pending', 2:'pending', 3:'pending', 4:'approved', 5:'approved' };
+
+function renderPayments() {
+  document.getElementById('paymentsBody').innerHTML = payments.map(p => `
+    <tr>
+      <td><div class="user-cell">
+        <div class="user-av" style="background:${p.color}">${p.emoji}</div>
+        <div><div class="user-name">${p.name}</div></div>
+      </div></td>
+      <td><span class="badge ${p.plan === 'VIP' ? 'premium' : 'premium'}">${p.plan === 'VIP' ? '👑 VIP' : '⭐ Premium'}</span></td>
+      <td style="color:var(--gold);font-weight:600">${p.amount}</td>
+      <td style="color:var(--rose);font-size:.8rem">${p.ref}</td>
+      <td style="color:var(--muted);font-size:.8rem">${p.date}</td>
+      <td><span class="badge ${paymentStatuses[p.id]}">${paymentStatuses[p.id] === 'pending' ? '⏳ Хүлээгдэж байна' : paymentStatuses[p.id] === 'approved' ? '✓ Баталгаажсан' : '✕ Татгалзсан'}</span></td>
+      <td><div style="display:flex;gap:6px">
+        <button class="action-btn view" onclick="openPayModal(${p.id})">👁 Харах</button>
+        ${paymentStatuses[p.id] === 'pending' ? `
+          <button class="action-btn approve" onclick="quickApprove(${p.id})">✓</button>
+          <button class="action-btn reject"  onclick="quickReject(${p.id})">✕</button>
+        ` : ''}
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function renderUsers() {
+  document.getElementById('usersBody').innerHTML = users.map(u => `
+    <tr>
+      <td><div class="user-cell">
+        <div class="user-av" style="background:${u.color}">${u.emoji}</div>
+        <div><div class="user-name">${u.name}</div></div>
+      </div></td>
+      <td style="font-size:.82rem;color:var(--muted)">${u.age} нас • ${u.district}</td>
+      <td><span class="badge ${u.plan}">${u.plan === 'premium' ? '⭐ Premium' : '· Үнэгүй'}</span></td>
+      <td style="font-size:.78rem;color:var(--muted)">${u.joined}</td>
+      <td><span class="badge ${u.active ? 'approved' : 'free'}">${u.active ? '🟢 Идэвхтэй' : '⚫ Идэвхгүй'}</span></td>
+      <td><div style="display:flex;gap:6px">
+        <button class="action-btn view">👁 Харах</button>
+        <button class="action-btn reject">🚫 Блок</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function renderVerify() {
+  document.getElementById('verifyBody').innerHTML = verifyList.map((v, i) => `
+    <tr>
+      <td><div class="user-cell">
+        <div class="user-av" style="background:${v.color}">${v.emoji}</div>
+        <div><div class="user-name">${v.name}</div></div>
+      </div></td>
+      <td style="font-size:.82rem;color:var(--muted)">${v.phone}</td>
+      <td style="font-size:.78rem;color:var(--muted)">${v.date}</td>
+      <td><button class="action-btn view">📸 Зураг харах</button></td>
+      <td><div style="display:flex;gap:6px">
+        <button class="action-btn approve" onclick="verifyUser(${i}, this)">✓ Баталгаажуулах</button>
+        <button class="action-btn reject">✕ Татгалзах</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function openPayModal(id) {
+  currentPayId = id;
+  const p = payments.find(x => x.id === id);
+  document.getElementById('modalUser').textContent = p.name;
+  document.getElementById('modalRef').textContent  = p.ref;
+  document.getElementById('modalAmt').textContent  = p.amount;
+  document.getElementById('payModal').classList.add('show');
+}
+function closeModal() { document.getElementById('payModal').classList.remove('show'); }
+function approvePayment() { quickApprove(currentPayId); closeModal(); }
+function rejectPayment()  { quickReject(currentPayId);  closeModal(); }
+function quickApprove(id) { paymentStatuses[id] = 'approved'; renderPayments(); }
+function quickReject(id)  { paymentStatuses[id] = 'rejected'; renderPayments(); }
+
+function verifyUser(i, btn) {
+  btn.textContent = '✓ Баталгаажсан';
+  btn.className = 'action-btn view';
+  btn.disabled = true;
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+  document.getElementById('tab-' + tab).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Bar chart
+const weekData = [
+  { day: 'Да', val: 14 }, { day: 'Мя', val: 22 }, { day: 'Лх', val: 18 },
+  { day: 'Пү', val: 31 }, { day: 'Ба', val: 27 }, { day: 'Бя', val: 19 }, { day: 'Ня', val: 9 }
+];
+const max = Math.max(...weekData.map(d => d.val));
+document.getElementById('barChart').innerHTML = weekData.map(d => `
+  <div class="bar" style="height:${(d.val/max)*100}%;background:linear-gradient(to top,var(--rose),rgba(193,96,122,.4))">
+    <span class="bar-val">${d.val}</span>
+    <span class="bar-label">${d.day}</span>
+  </div>
+`).join('');
+
+renderPayments();
+renderUsers();
+renderVerify();
+</script>
+</body>
+</html>
