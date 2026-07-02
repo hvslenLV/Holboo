@@ -1,10 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="mn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Холбоо — Таны хосыг олъё</title>
+  
+  <script>
+    // МАШ ЧУХАЛ: Хэрэглэгч бүртгүүлсэн бол нүүр хуудсыг алгасаж шууд match.html рүү үсрүүлнэ
+    if (localStorage.getItem('currentUser')) {
+      window.location.href = 'match.html';
+    }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -132,7 +139,7 @@
       font-weight: 300;
     }
 
-    /* Dual profile card — signature element */
+    /* Dual profile card */
     .match-preview {
       position: relative;
       display: flex;
@@ -650,28 +657,6 @@
 </footer>
 
 <script>
-  // Dynamic Check: Хэрэглэгч бүртгүүлсэн эсэхийг ухаалгаар шалгах
-  window.addEventListener('DOMContentLoaded', () => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      // Хэрэглэгч аль хэдийн бүртгүүлсэн байна!
-      // 'register.html' холбоостой бүх товчлуурыг 'match.html' рүү үсэрдэг болгоно.
-      const registerButtons = document.querySelectorAll('a[href="register.html"]');
-      registerButtons.forEach(btn => {
-        btn.setAttribute('href', 'match.html');
-        
-        // Товчлуурын текстийг илүү тохиромжтой болгож солино
-        if (btn.classList.contains('nav-cta')) {
-          btn.textContent = 'Хосоо олох';
-        } else if (btn.classList.contains('btn-primary')) {
-          btn.textContent = 'Шууд орох →';
-        } else {
-          btn.textContent = 'Хосоо харах';
-        }
-      });
-    }
-  });
-
   // Floating hearts
   const bg = document.getElementById('heartsBg');
   const emojis = ['💗','💕','✨','💞','🌸'];
