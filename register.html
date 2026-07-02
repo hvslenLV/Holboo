@@ -4,14 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Холбоо — Бүртгүүлэх</title>
-  
-  <script>
-    // МАШ ЧУХАЛ: Хэрэглэгч аль хэдийн бүртгүүлсэн бол дахин бүртгүүлэх шаардлагагүй, шууд match.html рүү шилжүүлнэ
-    if (localStorage.getItem('currentUser')) {
-      window.location.href = 'match.html';
-    }
-  </script>
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -125,9 +117,10 @@
       box-shadow: 0 6px 20px rgba(193,96,122,0.25);
     }
 
-    .btn-submit:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(193,96,122,0.4);
+    .btn-submit:disabled {
+      background: var(--muted);
+      cursor: not-allowed;
+      box-shadow: none;
     }
 
     .back-link {
@@ -144,7 +137,6 @@
       color: var(--gold);
     }
 
-    /* Амжилттай болсон үед харуулах мэдэгдэл */
     .toast {
       position: fixed;
       top: 24px;
@@ -208,35 +200,113 @@
         <input type="text" id="interest" class="form-control" placeholder="Жишээ нь: Ном унших, Аялал" required />
       </div>
 
-      <button type="submit" class="btn-submit">Бүртгүүлэх</button>
+      <button type="submit" class="btn-submit" id="submitBtn">Бүртгүүлэх</button>
     </form>
 
     <a href="index.html" class="back-link">← Нүүр хуудас руу буцах</a>
   </div>
 
-  <script>
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Firebase тохиргоог байгаль орчны хувьсагчаас авах
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'olboo-dating-app';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+      apiKey: "", // Автоматаар ажиллах тул хоосон үлдээнэ
+      authDomain: "dummy-dating-project.firebaseapp.com",
+      projectId: "dummy-dating-project",
+      storageBucket: "dummy-dating-project.appspot.com",
+      messagingSenderId: "123456",
+      appId: "1:123456:web:123"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let activeUser = null;
+
+    // Нэвтрэлт шалгах
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.error("Auth error:", err);
+      }
+    };
+    initAuth();
+
+    onAuthStateChanged(auth, (user) => {
+      activeUser = user;
+      if (user) {
+        // Хэрэглэгч аль хэдийн бүртгүүлсэн бол match.html рүү шилжүүлэх
+        if (localStorage.getItem('currentUser')) {
+          window.location.href = 'match.html';
+        }
+      }
+    });
+
+    // Форм илгээх үйлдэл
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
+      if (!activeUser) {
+        alert("Холболт түр саатлаа. Дахин оролдоно уу.");
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Уншиж байна...";
+
       const name = document.getElementById('name').value;
-      const age = document.getElementById('age').value;
+      const age = parseInt(document.getElementById('age').value);
       const gender = document.getElementById('gender').value;
       const location = document.getElementById('location').value;
       const interest = document.getElementById('interest').value;
 
-      // Шинэ хэрэглэгчийн мэдээллийг хөтчийн санах ойд түр хадгалах
-      const newUser = { name, age, gender, location, interest };
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
+      const userData = {
+        uid: activeUser.uid,
+        name,
+        age,
+        gender,
+        location,
+        interest,
+        avatar: name.charAt(0).toUpperCase(),
+        status: "pending", // Шалгагдаж буй
+        registeredAt: new Date().toISOString()
+      };
 
-      // Амжилттай болсон мэдэгдэл харуулах
-      const toast = document.getElementById('toast');
-      toast.style.display = 'block';
+      try {
+        // RULE 1 Дагуу бичих: /artifacts/{appId}/public/data/users/{userId}
+        const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
+        await setDoc(userDocRef, userData);
 
-      setTimeout(() => {
-        window.location.href = 'match.html'; // Хос олох хуудас руу шилжих
-      }, 1000);
+        // Хөтөч дээрээ давхар хадгална
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+
+        // Амжилттай мэдэгдэл харуулах
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+
+        setTimeout(() => {
+          window.location.href = 'match.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error("Бодит санд хадгалахад алдаа гарлаа:", error);
+        alert("Алдаа гарлаа. Дахин оролдоно уу.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Бүртгүүлэх";
+      }
     });
   </script>
-
 </body>
 </html>
