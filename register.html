@@ -31,6 +31,25 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Floating hearts background */
+    .hearts-bg {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1;
+    }
+    .hearts-bg span {
+      position: absolute;
+      font-size: 1.2rem;
+      opacity: 0;
+      animation: floatHeart linear infinite;
+    }
+    @keyframes floatHeart {
+      0%   { opacity: 0; transform: translateY(0) scale(.8); }
+      10%  { opacity: .12; }
+      90%  { opacity: .06; }
+      100% { opacity: 0; transform: translateY(-100vh) scale(1.1); }
     }
 
     .register-container {
@@ -41,6 +60,8 @@
       width: 100%;
       max-width: 450px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 10;
     }
 
     .logo {
@@ -56,7 +77,7 @@
       text-align: center;
       font-size: 1.1rem;
       color: var(--muted);
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
     .form-group {
@@ -117,10 +138,33 @@
       box-shadow: 0 6px 20px rgba(193,96,122,0.25);
     }
 
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(193,96,122,0.4);
+    }
+
     .btn-submit:disabled {
       background: var(--muted);
       cursor: not-allowed;
       box-shadow: none;
+    }
+
+    .btn-ghost {
+      width: 100%;
+      background: transparent;
+      color: var(--gold-lt);
+      border: 1px solid rgba(232,168,124,.25);
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 12px;
+    }
+    .btn-ghost:hover {
+      border-color: var(--gold);
+      background: rgba(232,168,124,.06);
     }
 
     .back-link {
@@ -137,6 +181,43 @@
       color: var(--gold);
     }
 
+    /* ── BANK DETAILS (Step 2) ── */
+    .bank-badge {
+      background: #E11C33;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-top: 16px;
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .bank-info-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.85rem;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+      padding-bottom: 6px;
+    }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    .info-lbl { color: var(--muted); }
+    .info-val { font-weight: 600; color: var(--text); }
+    .info-val.highlight { color: var(--gold); font-size: 1rem; }
+
+    /* Toast Notification */
     .toast {
       position: fixed;
       top: 24px;
@@ -149,68 +230,120 @@
       display: none;
       z-index: 1000;
       box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Multi-step Animation */
+    .fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
 
-  <div class="toast" id="toast">Бүртгэл амжилттай үүсэв! Түр хүлээнэ үү...</div>
+  <!-- Floating hearts bg -->
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <div class="toast" id="toast">Бүртгэл амжилттай үүсэв! 🎉</div>
 
   <div class="register-container">
     <div class="logo">Хол<span>бо</span>о</div>
-    <div class="title">Хосоо олох анхны алхам</div>
 
-    <form id="registerForm">
-      <div class="form-group">
-        <label for="name">Таны нэр</label>
-        <input type="text" id="name" class="form-control" placeholder="Жишээ нь: Анужин" required />
-      </div>
-
-      <div class="row">
+    <!-- АЛХАМ 1: БҮРТГЭЛИЙН ФОРМ -->
+    <div id="stepForm">
+      <div class="title">Хосоо олох анхны алхам</div>
+      <form id="registerForm">
         <div class="form-group">
-          <label for="age">Нас</label>
-          <input type="number" id="age" class="form-control" min="18" max="100" placeholder="40" required />
+          <label for="name">Таны нэр</label>
+          <input type="text" id="name" class="form-control" placeholder="Жишээ нь: Анужин" required />
         </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label for="age">Нас</label>
+            <input type="number" id="age" class="form-control" min="18" max="100" placeholder="40" required />
+          </div>
+          <div class="form-group">
+            <label for="gender">Хүйс</label>
+            <select id="gender" class="form-control" required>
+              <option value="" disabled selected>Сонгох</option>
+              <option value="female">Эмэгтэй</option>
+              <option value="male">Эрэгтэй</option>
+            </select>
+          </div>
+        </div>
+
         <div class="form-group">
-          <label for="gender">Хүйс</label>
-          <select id="gender" class="form-control" required>
+          <label for="location">Байршил / Дүүрэг</label>
+          <select id="location" class="form-control" required>
             <option value="" disabled selected>Сонгох</option>
-            <option value="female">Эмэгтэй</option>
-            <option value="male">Эрэгтэй</option>
+            <option value="Хан-Уул">Хан-Уул</option>
+            <option value="Баянзүрх">Баянзүрх</option>
+            <option value="Сүхбаатар">Сүхбаатар</option>
+            <option value="Чингэлтэй">Чингэлтэй</option>
+            <option value="Баянгол">Баянгол</option>
+            <option value="Сонгинохайрхан">Сонгинохайрхан</option>
+            <option value="Орон нутаг">Орон нутаг</option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label for="interest">Таны сонирхол (Tag)</label>
+          <input type="text" id="interest" class="form-control" placeholder="Жишээ нь: Ном унших, Аялал" required />
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Бүртгүүлэх</button>
+      </form>
+      <a href="index.html" class="back-link">← Нүүр хуудас руу буцах</a>
+    </div>
+
+    <!-- АЛХАМ 2: ХААН БАНК ТӨЛБӨРИЙН ХЭСЭГ (Эхэндээ нууц байна) -->
+    <div id="stepPayment" style="display: none;" class="fade-in">
+      <div class="title" style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.35rem; margin-bottom: 8px;">Бүртгэл амжилттай! 🎉</div>
+      <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
+        Одоо Premium багцаа идэвхжүүлж, хязгааргүй чатлах болон бусад олон боломжийг аваарай.
+      </p>
+
+      <div class="bank-badge">KHAN BANK</div>
+      
+      <div class="bank-info-box">
+        <div class="info-row">
+          <div class="info-lbl">Дансны дугаар:</div>
+          <div class="info-val highlight">5404840683</div> <!-- Өөрийн дансаа бичээрэй -->
+        </div>
+        <div class="info-row">
+          <div class="info-lbl">Хүлээн авагч нэр:</div>
+          <div class="info-val">Хүсэлдалай .О</div> <!-- Өөрийн нэрийг бичнэ -->
+        </div>
+        <div class="info-row">
+          <div class="info-lbl">Шилжүүлэх дүн:</div>
+          <div class="info-val highlight">19,900 ₮</div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl">Гүйлгээний утга:</div>
+          <div class="info-val" style="color: var(--rose);" id="dynRef">Анужин Premium</div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="location">Байршил / Дүүрэг</label>
-        <select id="location" class="form-control" required>
-          <option value="" disabled selected>Сонгох</option>
-          <option value="Хан-Уул">Хан-Уул</option>
-          <option value="Баянзүрх">Баянзүрх</option>
-          <option value="Сүхбаатар">Сүхбаатар</option>
-          <option value="Чингэлтэй">Чингэлтэй</option>
-          <option value="Баянгол">Баянгол</option>
-          <option value="Сонгинохайрхан">Сонгинохайрхан</option>
-          <option value="Орон нутаг">Орон нутаг</option>
-        </select>
-      </div>
+      <button class="btn-submit" id="btnPaid">Шилжүүлсэн, бэлэн боллоо</button>
+      <button class="btn-ghost" id="btnFree">Үнэгүй хувилбараар үргэлжлүүлэх</button>
+    </div>
 
-      <div class="form-group">
-        <label for="interest">Таны сонирхол (Tag)</label>
-        <input type="text" id="interest" class="form-control" placeholder="Жишээ нь: Ном унших, Аялал" required />
-      </div>
-
-      <button type="submit" class="btn-submit" id="submitBtn">Бүртгүүлэх</button>
-    </form>
-
-    <a href="index.html" class="back-link">← Нүүр хуудас руу буцах</a>
   </div>
 
   <!-- Firebase Scripts -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'olboo-dating-app';
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
@@ -227,7 +360,9 @@
     const db = getFirestore(app);
 
     let activeUser = null;
+    let tempUserData = null; // Сүүлд хадгалах датаг түр хадгалах
 
+    // 1-р дүрмийн дагуу холболтыг шалгах
     const initAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -245,25 +380,26 @@
       activeUser = user;
     });
 
+    // Форм илгээх үйлдэл
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
+      e.preventDefault(); // Хуудас ачаалахаас сэргийлнэ!
+
       if (!activeUser) {
-        alert("Холболт түр саатлаа. Дахин оролдоно уу.");
+        alert("Холболт түр саатлаа. Түр хүлээгээд дахин дарна уу.");
         return;
       }
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
-      submitBtn.textContent = "Уншиж байна...";
+      submitBtn.textContent = "Бүртгэж байна...";
 
-      const name = document.getElementById('name').value;
+      const name = document.getElementById('name').value.trim();
       const age = parseInt(document.getElementById('age').value);
       const gender = document.getElementById('gender').value;
       const location = document.getElementById('location').value;
-      const interest = document.getElementById('interest').value;
+      const interest = document.getElementById('interest').value.trim();
 
-      const userData = {
+      tempUserData = {
         uid: activeUser.uid,
         name,
         age,
@@ -271,22 +407,34 @@
         location,
         interest,
         avatar: name.charAt(0).toUpperCase(),
-        status: "pending",
+        status: "pending", // Админ шалгах хүлээгдэж буй
+        paymentStatus: "none", // Одоогоор төлбөр хийгээгүй
         registeredAt: new Date().toISOString()
       };
 
       try {
+        // RULE 1 дагуу: /artifacts/{appId}/public/data/users/{userId}
         const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
-        await setDoc(userDocRef, userData);
+        await setDoc(userDocRef, tempUserData);
 
-        localStorage.setItem('currentUser', JSON.stringify(userData));
+        // Давхар локал санах ойд хадгалах
+        localStorage.setItem('currentUser', JSON.stringify(tempUserData));
 
+        // Toast мэдэгдэл харуулах
         const toast = document.getElementById('toast');
         toast.style.display = 'block';
 
         setTimeout(() => {
-          window.location.href = 'match.html';
-        }, 1500);
+          toast.style.display = 'none';
+          
+          // ── УХААЛАГ ШИЛЖИЛТ ──
+          // Бүртгэлийн формыг нууж, төлбөрийн хэсгийг харуулах
+          document.getElementById('stepForm').style.display = 'none';
+          document.getElementById('stepPayment').style.display = 'block';
+          
+          // Гүйлгээний утгыг хэрэглэгчийн нэрээр идэвхжүүлэх
+          document.getElementById('dynRef').textContent = `${name} Premium`;
+        }, 1200);
 
       } catch (error) {
         console.error("Бодит санд хадгалахад алдаа гарлаа:", error);
@@ -295,6 +443,52 @@
         submitBtn.textContent = "Бүртгүүлэх";
       }
     });
+
+    // Төлбөр шилжүүлсэн үйлдэл
+    document.getElementById('btnPaid').addEventListener('click', async function() {
+      if (!activeUser || !tempUserData) return;
+
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = "Бүртгэж байна...";
+
+      try {
+        // Сан руу төлбөрийн хүсэлтийг "pending" болгон илгээх
+        const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
+        await updateDoc(userDocRef, { paymentStatus: "pending" });
+
+        // Локал санд шинэчлэх
+        tempUserData.paymentStatus = "pending";
+        localStorage.setItem('currentUser', JSON.stringify(tempUserData));
+        localStorage.setItem('paymentStatus', 'pending');
+
+        alert("Баярлалаа! Төлбөрийн мэдээллийг хүлээж авлаа. Админ 5-10 минутын дотор шалгаж идэвхжүүлнэ.");
+        window.location.href = 'match.html';
+
+      } catch (err) {
+        console.error("Error updating payment:", err);
+        window.location.href = 'match.html';
+      }
+    });
+
+    // Үнэгүй үргэлжлүүлэх үйлдэл
+    document.getElementById('btnFree').addEventListener('click', function() {
+      window.location.href = 'match.html';
+    });
+
+    // Зүрх хөвөх урсгал үүсгэх
+    const bg = document.getElementById('heartsBg');
+    const emojis = ['💗','💕','✨','💞','🌸'];
+    for (let i = 0; i < 15; i++) {
+      const s = document.createElement('span');
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top  = Math.random() * 100 + '%';
+      s.style.animationDuration = (12 + Math.random() * 16) + 's';
+      s.style.animationDelay   = (Math.random() * 10) + 's';
+      s.style.fontSize = (.7 + Math.random() * .8) + 'rem';
+      bg.appendChild(s);
+    }
   </script>
 </body>
 </html>
