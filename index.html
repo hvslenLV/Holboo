@@ -125,7 +125,6 @@
       pointer-events: none;
     }
 
-    /* Floating hearts background */
     .hearts-bg {
       position: absolute; inset: 0; pointer-events: none; overflow: hidden;
     }
@@ -184,7 +183,6 @@
       z-index: 1;
     }
 
-    /* Dual profile card */
     .match-preview {
       position: relative;
       display: flex;
@@ -468,9 +466,13 @@
     footer {
       border-top: 1px solid var(--border);
       padding: 40px 48px;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 16px;
-      font-size: .82rem; color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: .82rem;
+      color: var(--muted);
     }
     footer a { color: var(--muted); text-decoration: none; transition: color .2s; }
     footer a:hover { color: var(--gold); }
@@ -483,7 +485,8 @@
       -webkit-backdrop-filter: blur(8px);
       z-index: 1000;
       display: none;
-      align-items: center; justify-content: center;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
       opacity: 0;
       transition: opacity .3s;
@@ -514,7 +517,9 @@
       color: var(--muted); font-size: 1.5rem;
       cursor: pointer;
       width: 36px; height: 36px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 50%;
       transition: background .2s, color .2s;
     }
@@ -543,6 +548,8 @@
       line-height: 1.6;
       margin-bottom: 24px;
     }
+    
+    /* FIXED: Bank info box - horizontal layout */
     .bank-info-box {
       background: var(--bg2);
       border: 1px solid var(--border);
@@ -553,37 +560,62 @@
     }
     .info-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       font-size: 0.9rem;
       border-bottom: 1px dashed rgba(255,255,255,0.05);
-      padding-bottom: 8px;
-      gap: 10px;
+      padding-bottom: 10px;
+      gap: 8px;
     }
-    .info-row:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
-    .info-lbl { color: var(--muted); flex-shrink: 0; }
-    .info-val { font-weight: 600; color: var(--text); word-break: break-all; }
-    .info-val.highlight { color: var(--gold); font-size: 1.1rem; }
+    .info-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+    .info-lbl {
+      color: var(--muted);
+      flex-shrink: 0;
+      min-width: 100px;
+    }
+    .info-val {
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .info-val.highlight {
+      color: var(--gold);
+      font-size: 1.05rem;
+    }
     .copy-btn {
       background: none;
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 4px 8px;
+      padding: 4px 10px;
       border-radius: 6px;
       font-size: 0.75rem;
       cursor: pointer;
       transition: all .2s;
       flex-shrink: 0;
+      white-space: nowrap;
     }
-    .copy-btn:hover { border-color: var(--gold); color: var(--gold); }
-    .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
+    .copy-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .copy-btn.copied {
+      border-color: #22c55e;
+      color: #22c55e;
+    }
 
     .btn-done {
       width: 100%;
       background: linear-gradient(135deg, var(--rose), var(--rose-dark));
       color: white;
-      border: none; padding: 14px;
+      border: none;
+      padding: 14px;
       border-radius: 12px;
       font-weight: 600;
       cursor: pointer;
@@ -605,11 +637,43 @@
       .nav-cta { display: none; }
       .nav-cta.mobile-show { display: block; }
       
-      footer { padding: 32px 20px; justify-content: center; text-align: center; flex-direction: column; }
+      footer {
+        padding: 32px 20px;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+      }
       .stat-row { gap: 24px; }
       .match-preview { width: 280px; }
       .pricing-grid { grid-template-columns: 1fr; }
       .profiles-grid { grid-template-columns: repeat(2, 1fr); }
+      
+      /* Payment modal mobile fixes */
+      .payment-modal {
+        padding: 24px 16px;
+        max-width: 100%;
+      }
+      .info-row {
+        font-size: 0.85rem;
+        gap: 6px;
+      }
+      .info-lbl {
+        min-width: 80px;
+        font-size: 0.8rem;
+      }
+      .info-val {
+        font-size: 0.9rem;
+      }
+      .info-val.highlight {
+        font-size: 1rem;
+      }
+      .copy-btn {
+        padding: 3px 8px;
+        font-size: 0.7rem;
+      }
+      .bank-info-box {
+        padding: 16px;
+      }
     }
     
     @media (max-width: 480px) {
@@ -619,12 +683,13 @@
       h1 { font-size: 2.2rem; }
       .hero-btns { flex-direction: column; align-items: center; }
       .btn-primary, .btn-ghost { width: 100%; max-width: 280px; text-align: center; }
+      
+      .info-lbl {
+        min-width: 70px;
+      }
     }
 
-    /* Smooth scroll for anchor links */
     html { scroll-behavior: smooth; }
-    
-    /* Selection color */
     ::selection { background: rgba(193,96,122,.3); color: var(--text); }
   </style>
 </head>
@@ -641,13 +706,13 @@
     <li><a href="#profiles">Хэрэглэгчид</a></li>
     <li><a href="#pricing">Үнэ</a></li>
   </ul>
-  <a class="nav-cta" href="#register" id="navCta">Бүртгүүлэх</a>
+  <a class="nav-cta" href="register.html">Бүртгүүлэх</a>
   <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Цэс нээх">☰</button>
   <div class="mobile-nav" id="mobileNav">
     <a href="#how">Хэрхэн ажилладаг</a>
     <a href="#profiles">Хэрэглэгчид</a>
     <a href="#pricing">Үнэ</a>
-    <a class="nav-cta" href="#register" id="mobileNavCta">Бүртгүүлэх</a>
+    <a class="nav-cta" href="register.html">Бүртгүүлэх</a>
   </div>
 </nav>
 
@@ -657,7 +722,6 @@
   <h1>Таны <em>жинхэнэ хос</em><br/>энд хүлээж байна</h1>
   <p class="hero-sub">Facebook группийн эмх замбараагүй байдлыг орхи. Найдвартай, хувийн, халуун дулаан орчинд хосоо ол.</p>
 
-  <!-- Signature: two cards + heart -->
   <div class="match-preview">
     <div class="profile-card card-left">
       <div class="avatar" style="background:linear-gradient(135deg,#C1607A,#8B2E4A);">Д</div>
@@ -673,7 +737,7 @@
   </div>
 
   <div class="hero-btns">
-    <a class="btn-primary" href="#register" id="heroCta">Одоо эхлэх</a>
+    <a class="btn-primary" href="register.html">Одоо эхлэх</a>
     <a class="btn-ghost" href="#how">Хэрхэн ажилладаг вэ?</a>
   </div>
 
@@ -783,10 +847,9 @@
         <li class="no">Миний профайлыг хэн харав</li>
         <li class="no">Verified badge</li>
       </ul>
-      <a class="plan-btn" href="#register">Эхлэх</a>
+      <a class="plan-btn" href="register.html">Эхлэх</a>
     </div>
     
-    <!-- Premium Багц (ХААН Банк Данс холбосон) -->
     <div class="plan featured">
       <div class="plan-badge">Хамгийн их сонгогддог</div>
       <div class="plan-name">Premium</div>
@@ -803,7 +866,6 @@
       <button class="plan-pay-btn" onclick="openPaymentModal('Premium Багц', '19,900₮')">Premium эхлэх</button>
     </div>
     
-    <!-- VIP Зуучлал (ХААН Банк Данс холбосон) -->
     <div class="plan">
       <div class="plan-name">VIP Зуучлал</div>
       <div class="plan-price">₮49,900</div>
@@ -865,7 +927,7 @@
   <div class="eyebrow">Эхлэх цаг болсон</div>
   <h2>Таны хос таныг<br/><em style="color:var(--gold);font-style:italic;">хүлээж байна</em></h2>
   <p>Бүртгүүлэхэд 2 минут л хэрэгтэй. Зар сурталчилгаагүй, хуурамч профайлгүй.</p>
-  <a class="btn-primary" href="#register" id="ctaBtn" style="font-size:1.05rem;padding:18px 44px;">Үнэгүй бүртгүүлэх →</a>
+  <a class="btn-primary" href="register.html" style="font-size:1.05rem;padding:18px 44px;">Үнэгүй бүртгүүлэх →</a>
 </section>
 
 <!-- FOOTER -->
@@ -892,38 +954,28 @@
       <div class="bank-info-box">
         <div class="info-row">
           <div class="info-lbl">Банк:</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div class="info-val">Хаан Банк (Khan Bank)</div>
-            <button class="copy-btn" onclick="copyText('Хаан Банк (Khan Bank)', this)">Хуулах</button>
-          </div>
+          <div class="info-val">Хаан Банк</div>
+          <button class="copy-btn" onclick="copyText('Хаан Банк', this)">Хуулах</button>
         </div>
         <div class="info-row">
-          <div class="info-lbl">Хүлээн авагч данс:</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div class="info-val highlight" id="accountNum">5070XXXXXX</div>
-            <button class="copy-btn" onclick="copyText('5070XXXXXX', this)">Хуулах</button>
-          </div>
+          <div class="info-lbl">Данс:</div>
+          <div class="info-val highlight" id="accountNum">5070XXXXXX</div>
+          <button class="copy-btn" onclick="copyText('5070XXXXXX', this)">Хуулах</button>
         </div>
         <div class="info-row">
-          <div class="info-lbl">Хүлээн авагчийн нэр:</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div class="info-val">Бат-Эрдэнэ .О</div>
-            <button class="copy-btn" onclick="copyText('Бат-Эрдэнэ .О', this)">Хуулах</button>
-          </div>
+          <div class="info-lbl">Нэр:</div>
+          <div class="info-val">Бат-Эрдэнэ .О</div>
+          <button class="copy-btn" onclick="copyText('Бат-Эрдэнэ .О', this)">Хуулах</button>
         </div>
         <div class="info-row">
-          <div class="info-lbl">Шилжүүлэх дүн:</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div class="info-val highlight" id="modalPrice">19,900 ₮</div>
-            <button class="copy-btn" onclick="copyPrice(this)">Хуулах</button>
-          </div>
+          <div class="info-lbl">Дүн:</div>
+          <div class="info-val highlight" id="modalPrice">19,900 ₮</div>
+          <button class="copy-btn" onclick="copyPrice(this)">Хуулах</button>
         </div>
         <div class="info-row">
-          <div class="info-lbl">Гүйлгээний утга:</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div class="info-val" style="color: var(--rose);" id="paymentRef">таны_утасны_дугаар</div>
-            <button class="copy-btn" onclick="copyRef(this)">Хуулах</button>
-          </div>
+          <div class="info-lbl">Утга:</div>
+          <div class="info-val" style="color: var(--rose);" id="paymentRef">Утасны дугаар</div>
+          <button class="copy-btn" onclick="copyRef(this)">Хуулах</button>
         </div>
       </div>
       
@@ -951,7 +1003,6 @@
     mobileMenuBtn.textContent = menuOpen ? '✕' : '☰';
   });
 
-  // Close mobile menu when clicking a link
   mobileNav.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       menuOpen = false;
@@ -979,7 +1030,6 @@
     document.getElementById('modalPackName').textContent = packName;
     document.getElementById('modalPrice').textContent = price;
     
-    // Reset states
     document.getElementById('formState').classList.remove('hidden');
     document.getElementById('successState').classList.remove('active');
     
@@ -993,7 +1043,6 @@
     modal.classList.remove('active');
     document.body.style.overflow = '';
     
-    // Reset after animation
     setTimeout(() => {
       document.getElementById('formState').classList.remove('hidden');
       document.getElementById('successState').classList.remove('active');
@@ -1004,17 +1053,14 @@
     document.getElementById('formState').classList.add('hidden');
     document.getElementById('successState').classList.add('active');
     
-    // Store payment status
     localStorage.setItem('paymentStatus', 'pending');
     localStorage.setItem('paymentTime', Date.now().toString());
   }
 
-  // Close modal on backdrop click
   document.getElementById('paymentModal').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closePaymentModal();
   });
 
-  // Close on Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closePaymentModal();
   });
@@ -1024,7 +1070,6 @@
     navigator.clipboard.writeText(text).then(() => {
       showCopied(btn);
     }).catch(() => {
-      // Fallback for older browsers
       const textarea = document.createElement('textarea');
       textarea.value = text;
       document.body.appendChild(textarea);
@@ -1103,19 +1148,7 @@
       }
     });
   });
-
-  // ===== REGISTER BUTTON PLACEHOLDER =====
-  // Хэрэв бүртгэлийн хуудас байхгүй бол alert харуулах
-  document.querySelectorAll('a[href="#register"]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      // Хэрэв register.html байхгүй бол
-      if (!btn.getAttribute('href').includes('.html')) {
-        e.preventDefault();
-        alert('Бүртгэлийн хуудас удахгүй нээгдэнэ!');
-      }
-    });
-  });
 </script>
 
 </body>
-</html>'''
+</html>
