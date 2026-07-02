@@ -4,13 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Холбоо — Таны хосыг олъё</title>
-  
-  <script>
-    // Хэрэглэгч бүртгүүлсэн бол нүүр хуудсыг алгасаж шууд match.html рүү үсрүүлнэ
-    if (localStorage.getItem('currentUser')) {
-      window.location.href = 'match.html';
-    }
-  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -439,7 +432,7 @@
     .modal-close:hover { color: #fff; }
     
     .bank-badge {
-      background: #E11C33; /* Хаан банкны үндсэн улаан өнгө */
+      background: #E11C33;
       color: white;
       padding: 8px 16px;
       border-radius: 8px;
@@ -753,7 +746,7 @@
     <button class="modal-close" onclick="closePaymentModal()">×</button>
     <div class="bank-badge">KHAN BANK</div>
     <div class="payment-title" id="modalPackName">Premium Багц</div>
-    <p class="payment-desc">Доорх дансанд төлбөрөө шилжүүлснээр таны багц 5-10 минутын дотор идэвхжинэ.</p>
+    <p class="payment-desc">Доорх дансанд төлбөрөө шилжүүлснээр таны багц 5-10 минутын дотор идэвхжнэ.</p>
     
     <div class="bank-info-box">
       <div class="info-row">
@@ -762,11 +755,11 @@
       </div>
       <div class="info-row">
         <div class="info-lbl">Хүлээн авагч данс:</div>
-        <div class="info-val highlight">5404840683</div> 
+        <div class="info-val highlight">5070XXXXXX</div>
       </div>
       <div class="info-row">
         <div class="info-lbl">Хүлээн авагчийн нэр:</div>
-        <div class="info-val">Хүсэлдалай</div> 
+        <div class="info-val">Бат-Эрдэнэ .О</div>
       </div>
       <div class="info-row">
         <div class="info-lbl">Шилжүүлэх дүн:</div>
@@ -774,7 +767,7 @@
       </div>
       <div class="info-row">
         <div class="info-lbl">Гүйлгээний утга:</div>
-        <div class="info-val" style="color: var(--rose);">таны_утасны_дугаар</div>
+        <div class="info-val" style="color: var(--rose);" id="paymentRef">таны_утасны_дугаар</div>
       </div>
     </div>
     
@@ -785,6 +778,15 @@
 <script>
   // Modal controllers
   function openPaymentModal(packName, price) {
+    // Хэрэв хэрэглэгч бүртгүүлсэн бол гүйлгээний утгыг автоматаар нэрээр нь солих
+    const stored = localStorage.getItem('currentUser');
+    if (stored) {
+      const user = JSON.parse(stored);
+      document.getElementById('paymentRef').textContent = `${user.name} Premium`;
+    } else {
+      document.getElementById('paymentRef').textContent = "таны_утасны_дугаар";
+    }
+
     document.getElementById('modalPackName').textContent = packName;
     document.getElementById('modalPrice').textContent = price;
     document.getElementById('paymentModal').style.display = 'flex';
@@ -796,10 +798,28 @@
 
   function completePayment() {
     alert("Баярлалаа! Төлбөрийн мэдээллийг хүлээж авлаа. Админ 5-10 минутын дотор шалгаж идэвхжүүлнэ.");
-    // Төлбөрийн хүсэлт илгээсэн гэдгийг тэмдэглэх
     localStorage.setItem('paymentStatus', 'pending');
     closePaymentModal();
   }
+
+  // Dynamic Check: Хэрэглэгч бүртгүүлсэн эсэхийг ухаалгаар шалгаж товчлуурыг солих
+  window.addEventListener('DOMContentLoaded', () => {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      // Хэрэглэгч аль хэдийн бүртгүүлсэн байгаа тул товчлуурын линкийг match.html болгож өөрчлөх
+      const registerButtons = document.querySelectorAll('a[href="register.html"]');
+      registerButtons.forEach(btn => {
+        btn.setAttribute('href', 'match.html');
+        if (btn.classList.contains('nav-cta')) {
+          btn.textContent = 'Хосоо олох';
+        } else if (btn.classList.contains('btn-primary')) {
+          btn.textContent = 'Шууд орох →';
+        } else {
+          btn.textContent = 'Хосоо харах';
+        }
+      });
+    }
+  });
 
   // Floating hearts
   const bg = document.getElementById('heartsBg');
@@ -825,5 +845,6 @@
     });
   });
 </script>
+
 </body>
 </html>
