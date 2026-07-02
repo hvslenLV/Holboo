@@ -181,7 +181,27 @@
       color: var(--gold);
     }
 
-    /* ── BANK DETAILS (Step 2) ── */
+    /* Амжилттай болсон үед харуулах мэдэгдэл */
+    .toast {
+      position: fixed;
+      top: 24px;
+      background: #2b5c3f;
+      border: 1px solid #3d8c5a;
+      color: #e6f7ed;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ── BANK DETAILS ── */
     .bank-badge {
       background: #E11C33;
       color: white;
@@ -216,35 +236,6 @@
     .info-lbl { color: var(--muted); }
     .info-val { font-weight: 600; color: var(--text); }
     .info-val.highlight { color: var(--gold); font-size: 1rem; }
-
-    /* Toast Notification */
-    .toast {
-      position: fixed;
-      top: 24px;
-      background: #2b5c3f;
-      border: 1px solid #3d8c5a;
-      color: #e6f7ed;
-      padding: 16px 24px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      display: none;
-      z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      animation: slideDown 0.3s ease-out;
-    }
-    @keyframes slideDown {
-      from { transform: translateY(-20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* Multi-step Animation */
-    .fade-in {
-      animation: fadeIn 0.4s ease-out forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
   </style>
 </head>
 <body>
@@ -305,8 +296,8 @@
       <a href="index.html" class="back-link">← Нүүр хуудас руу буцах</a>
     </div>
 
-    <!-- АЛХАМ 2: ХААН БАНК ТӨЛБӨРИЙН ХЭСЭГ (Эхэндээ нууц байна) -->
-    <div id="stepPayment" style="display: none;" class="fade-in">
+    <!-- АЛХАМ 2: ХААН БАНК ТӨЛБӨРИЙН ХЭСЭГ (Сонголттой) -->
+    <div id="stepPayment" style="display: none;">
       <div class="title" style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.35rem; margin-bottom: 8px;">Бүртгэл амжилттай! 🎉</div>
       <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
         Одоо Premium багцаа идэвхжүүлж, хязгааргүй чатлах болон бусад олон боломжийг аваарай.
@@ -317,11 +308,11 @@
       <div class="bank-info-box">
         <div class="info-row">
           <div class="info-lbl">Дансны дугаар:</div>
-          <div class="info-val highlight">5404840683</div> <!-- Өөрийн дансаа бичээрэй -->
+          <div class="info-val highlight">5404840683</div>
         </div>
         <div class="info-row">
           <div class="info-lbl">Хүлээн авагч нэр:</div>
-          <div class="info-val">Хүсэлдалай .О</div> <!-- Өөрийн нэрийг бичнэ -->
+          <div class="info-val">Хүсэлдалай .О</div>
         </div>
         <div class="info-row">
           <div class="info-lbl">Шилжүүлэх дүн:</div>
@@ -329,7 +320,7 @@
         </div>
         <div class="info-row">
           <div class="info-lbl">Гүйлгээний утга:</div>
-          <div class="info-val" style="color: var(--rose);" id="dynRef">Анужин Premium</div>
+          <div class="info-val" style="color: var(--rose); font-weight: bold;" id="dynRef">Анужин Premium</div>
         </div>
       </div>
 
@@ -360,9 +351,8 @@
     const db = getFirestore(app);
 
     let activeUser = null;
-    let tempUserData = null; // Сүүлд хадгалах датаг түр хадгалах
+    let tempUserData = null;
 
-    // 1-р дүрмийн дагуу холболтыг шалгах
     const initAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -382,10 +372,10 @@
 
     // Форм илгээх үйлдэл
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
-      e.preventDefault(); // Хуудас ачаалахаас сэргийлнэ!
+      e.preventDefault(); // Хуудас унах, дахин ачаалахаас 100% сэргийлнэ!
 
       if (!activeUser) {
-        alert("Холболт түр саатлаа. Түр хүлээгээд дахин дарна уу.");
+        alert("Уучлаарай, систем холбогдож байна. Хэдэн секунд хүлээгээд дахин дарна уу.");
         return;
       }
 
@@ -407,76 +397,73 @@
         location,
         interest,
         avatar: name.charAt(0).toUpperCase(),
-        status: "pending", // Админ шалгах хүлээгдэж буй
-        paymentStatus: "none", // Одоогоор төлбөр хийгээгүй
+        status: "pending",
+        paymentStatus: "none",
         registeredAt: new Date().toISOString()
       };
 
       try {
-        // RULE 1 дагуу: /artifacts/{appId}/public/data/users/{userId}
+        // Firebase үүлэн санд найдвартай хадгалах
         const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
         await setDoc(userDocRef, tempUserData);
 
-        // Давхар локал санах ойд хадгалах
+        // Хөтөчийн локал санах ойд хадгалах
         localStorage.setItem('currentUser', JSON.stringify(tempUserData));
 
-        // Toast мэдэгдэл харуулах
+        // Амжилтын мэдэгдэл харуулах
         const toast = document.getElementById('toast');
         toast.style.display = 'block';
 
         setTimeout(() => {
           toast.style.display = 'none';
           
-          // ── УХААЛАГ ШИЛЖИЛТ ──
-          // Бүртгэлийн формыг нууж, төлбөрийн хэсгийг харуулах
+          // ХУУДАС ШИНЭЧЛЭХГҮЙГЭЭР ШУУД ТӨЛБӨРИЙН ХЭСГИЙГ ХАРУУЛАХ
           document.getElementById('stepForm').style.display = 'none';
           document.getElementById('stepPayment').style.display = 'block';
           
-          // Гүйлгээний утгыг хэрэглэгчийн нэрээр идэвхжүүлэх
+          // Хэрэглэгчийн нэрээр гүйлгээний утгыг автоматаар өөрчлөх
           document.getElementById('dynRef').textContent = `${name} Premium`;
         }, 1200);
 
       } catch (error) {
-        console.error("Бодит санд хадгалахад алдаа гарлаа:", error);
-        alert("Алдаа гарлаа. Дахин оролдоно уу.");
+        console.error("Firestore Error:", error);
+        alert("Бүртгэхэд алдаа гарлаа. Дахин оролдоно уу.");
         submitBtn.disabled = false;
         submitBtn.textContent = "Бүртгүүлэх";
       }
     });
 
-    // Төлбөр шилжүүлсэн үйлдэл
+    // Шилжүүлсэн бэлэн боллоо товч дарах үед
     document.getElementById('btnPaid').addEventListener('click', async function() {
       if (!activeUser || !tempUserData) return;
 
       const btn = this;
       btn.disabled = true;
-      btn.textContent = "Бүртгэж байна...";
+      btn.textContent = "Бүртгэл шинэчилж байна...";
 
       try {
-        // Сан руу төлбөрийн хүсэлтийг "pending" болгон илгээх
         const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
         await updateDoc(userDocRef, { paymentStatus: "pending" });
 
-        // Локал санд шинэчлэх
         tempUserData.paymentStatus = "pending";
         localStorage.setItem('currentUser', JSON.stringify(tempUserData));
         localStorage.setItem('paymentStatus', 'pending');
 
-        alert("Баярлалаа! Төлбөрийн мэдээллийг хүлээж авлаа. Админ 5-10 минутын дотор шалгаж идэвхжүүлнэ.");
+        alert("Баярлалаа! Төлбөрийн шилжүүлэг орсон эсэхийг админ 5-10 минутад шалгаж идэвхжүүлнэ.");
         window.location.href = 'match.html';
 
       } catch (err) {
-        console.error("Error updating payment:", err);
+        console.error("Payment Update Error:", err);
         window.location.href = 'match.html';
       }
     });
 
-    // Үнэгүй үргэлжлүүлэх үйлдэл
+    // Үнэгүй үргэлжлүүлэх
     document.getElementById('btnFree').addEventListener('click', function() {
       window.location.href = 'match.html';
     });
 
-    // Зүрх хөвөх урсгал үүсгэх
+    // Хөвөх зүрхнүүд үүсгэх
     const bg = document.getElementById('heartsBg');
     const emojis = ['💗','💕','✨','💞','🌸'];
     for (let i = 0; i < 15; i++) {
