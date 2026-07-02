@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Холбоо — Бүртгүүлэх</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #1A0E1C;
+      --bg2:    #221428;
+      --gold:   #E8A87C;
+      --rose:   #C1607A;
+      --text:   #F5EDE8;
+      --muted:  #9C8A86;
+      --card:   #2B1830;
+      --border: #3D2240;
+      --input:  #1f1226;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+```
+/* NAV */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 48px;
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); }
+.logo span { color: var(--rose); }
+.nav-back { color: var(--muted); text-decoration: none; font-size: .88rem; display: flex; align-items: center; gap: 6px; transition: color .2s; }
+.nav-back:hover { color: var(--gold); }
+
+/* LAYOUT */
+.page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 65px);
+}
+
+/* LEFT PANEL */
+.left-panel {
+  background: linear-gradient(160deg, #2B1830 0%, #1A0E1C 100%);
+  border-right: 1px solid var(--border);
+  padding: 60px 48px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.left-panel::before {
+  content: '';
+  position: absolute; left: -100px; top: 50%; transform: translateY(-50%);
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(193,96,122,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.left-panel h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem; line-height: 1.2;
+  margin-bottom: 16px;
+}
+.left-panel h2 em { font-style: italic; color: var(--gold); }
+.left-panel p { color: var(--muted); line-height: 1.7; margin-bottom: 40px; font-size: .95rem; }
+
+.perks { display: flex; flex-direction: column; gap: 18px; }
+.perk { display: flex; align-items: flex-start; gap: 14px; }
+.perk-icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(193,96,122,.12);
+  border: 1px solid rgba(193,96,122,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+.perk-text h4 { font-size: .9rem; font-weight: 600; margin-bottom: 4px; }
+.perk-text p  { font-size: .82rem; color: var(--muted); line-height: 1.5; margin: 0; }
+
+.trust-row {
+  margin-top: 40px; padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.trust-avatars { display: flex; }
+.trust-av {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 700; color: #fff;
+  margin-left: -8px;
+}
+.trust-av:first-child { margin-left: 0; }
+.trust-text { font-size: .82rem; color: var(--muted); line-height: 1.4; }
+.trust-text strong { color: var(--gold); }
+
+/* RIGHT PANEL — FORM */
+.right-panel { padding: 60px 48px; overflow-y: auto; }
+.form-header { margin-bottom: 36px; }
+.step-indicator {
+  display: flex; gap: 8px; margin-bottom: 24px;
+}
+.step-dot {
+  height: 4px; border-radius: 2px; flex: 1;
+  background: var(--border); transition: background .3s;
+}
+.step-dot.active { background: var(--rose); }
+.step-dot.done   { background: var(--gold); }
+
+.form-header h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 6px; }
+.form-header p  { color: var(--muted); font-size: .88rem; }
+
+/* STEPS */
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.field { margin-bottom: 20px; }
+label { display: block; font-size: .82rem; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: .04em; text-transform: uppercase; }
+
+input[type=text], input[type=tel], input[type=number], select, textarea {
+  width: 100%;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: .95rem;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(193,96,122,.12);
+}
+input::placeholder, textarea::placeholder { color: rgba(156,138,134,.5); }
+textarea { resize: vertical; min-height: 90px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Gender select */
+.gender-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gender-btn {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--input);
+  color: var(--muted);
+  font-size: .9rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all .2s;
+}
+.gender-btn.selected {
+  border-color: var(--rose);
+  background: rgba(193,96,122,.1);
+  color: var(--text);
+}
+
+/* Photo upload */
+.photo-upload {
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 36px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.photo-upload:hover { border-color: var(--rose); background: rgba(193,96,122,.04); }
+.photo-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.photo-upload .icon { font-size: 2.4rem; margin-bottom: 10px; }
+.photo-upload p { color: var(--muted); font-size: .88rem; }
+.photo-upload strong { color: var(--gold); }
+.photo-preview {
+  display: none;
+  width: 100px; height: 100px; border-radius: 50%;
+  object-fit: cover; margin: 0 auto 12px;
+  border: 3px solid var(--rose);
+}
+
+/* Interests */
+.interests-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.int-tag {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  background: var(--input);
+  color: var(--muted);
+  font-size: .82rem;
+  cursor: pointer;
+  transition: all .2s;
+  user-select: none;
+}
+.int-tag.selected {
+  border-color: var(--rose);
+  background: rgba(193,96,122,.12);
+  color: var(--text);
+}
+
+/* Premium card */
+.premium-card {
+  background: linear-gradient(135deg, #2B1830, #1f1225);
+  border: 1px solid var(--rose);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.premium-card::before {
+  content: '⭐ Хамгийн их сонгогддог';
+  position: absolute; top: 16px; right: 16px;
+  background: var(--rose);
+  color: #fff; font-size: .68rem; font-weight: 700;
+  padding: 4px 12px; border-radius: 50px;
+  letter-spacing: .06em;
+}
+.premium-card h4 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 4px; }
+.premium-card .price { color: var(--gold); font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; }
+.premium-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.premium-card ul li { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.premium-card ul li::before { content: '✓'; color: var(--gold); font-weight: 700; }
+
+.free-option {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer;
+}
+.free-option p { font-size: .88rem; color: var(--muted); }
+.free-option strong { color: var(--text); font-size: .95rem; }
+
+/* Bank transfer */
+.bank-card {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.bank-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.bank-row:last-child { border-bottom: none; padding-bottom: 0; }
+.bank-row span:first-child { font-size: .82rem; color: var(--muted); }
+.bank-row span:last-child  { font-size: .9rem; font-weight: 600; }
+.copy-btn {
+  background: rgba(232,168,124,.1);
+  border: 1px solid rgba(232,168,124,.2);
+  color: var(--gold);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: .75rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.copy-btn:hover { background: rgba(232,168,124,.2); }
+
+.upload-proof {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: border-color .2s;
+}
+.upload-proof:hover { border-color: var(--gold); }
+.upload-proof input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.upload-proof p { color: var(--muted); font-size: .85rem; margin-top: 8px; }
+
+/* NAV BUTTONS */
+.form-nav {
+  display: flex; gap: 12px; margin-top: 32px;
+}
+.btn-next {
+  flex: 1;
+  background: linear-gradient(135deg, var(--rose), #a8405a);
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 1rem; font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: transform .15s, box-shadow .2s;
+  box-shadow: 0 6px 20px rgba(193,96,122,.3);
+}
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(193,96,122,.45); }
+.btn-prev {
+  padding: 16px 24px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 12px;
+  font-size: .95rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: border-color .2s, color .2s;
+}
+.btn-prev:hover { border-color: var(--gold); color: var(--gold); }
+
+/* SUCCESS */
+.success-screen {
+  display: none;
+  text-align: center;
+  padding: 40px 0;
+}
+.success-screen .big-icon { font-size: 4rem; margin-bottom: 20px; animation: popIn .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.success-screen h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 12px; }
+.success-screen p  { color: var(--muted); line-height: 1.7; font-size: .92rem; }
+.success-screen .check-items { margin: 28px auto; max-width: 320px; text-align: left; display: flex; flex-direction: column; gap: 12px; }
+.check-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; color: var(--muted); }
+.check-item span { color: var(--gold); font-size: 1rem; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .page { grid-template-columns: 1fr; }
+  .left-panel { display: none; }
+  .right-panel { padding: 32px 20px; }
+  nav { padding: 16px 20px; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+```
+
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Хол<span>бо</span>о</div>
+  <a class="nav-back" href="index.html">← Нүүр хуудас руу</a>
+</nav>
+
+<div class="page">
+
+  <!-- LEFT -->
+
+  <div class="left-panel">
+    <h2>Таны <em>жинхэнэ хос</em><br/>энд байна</h2>
+    <p>Бүртгүүлэхэд 3 минут л хэрэгтэй. Баталгаажсан профайл, аюулгүй орчин.</p>
+
+```
+<div class="perks">
+  <div class="perk">
+    <div class="perk-icon">🔒</div>
+    <div class="perk-text">
+      <h4>100% аюулгүй</h4>
+      <p>Бүх профайл гараар баталгаажна. Хуурамч хаяг нэвтрэхгүй.</p>
+    </div>
+  </div>
+  <div class="perk">
+    <div class="perk-icon">🎯</div>
+    <div class="perk-text">
+      <h4>Тохирох таарц</h4>
+      <p>Нас, байршил, сонирхлоор тохируулсан санал болголт.</p>
+    </div>
+  </div>
+  <div class="perk">
+    <div class="perk-icon">💌</div>
+    <div class="perk-text">
+      <h4>Хувийн мессеж</h4>
+      <p>Таалагдсан хүнтэйгээ шууд харилцаарай.</p>
+    </div>
+  </div>
+</div>
+
+<div class="trust-row">
+  <div class="trust-avatars">
+    <div class="trust-av" style="background:linear-gradient(135deg,#C1607A,#8B2E4A);">Н</div>
+    <div class="trust-av" style="background:linear-gradient(135deg,#5B8FB9,#2C5282);">Б</div>
+    <div class="trust-av" style="background:linear-gradient(135deg,#7B9E5B,#3D5C2A);">О</div>
+    <div class="trust-av" style="background:linear-gradient(135deg,#B9855B,#7A4A20);">Д</div>
+  </div>
+  <div class="trust-text">
+    <strong>1,200+</strong> хэрэглэгч бүртгэлтэй.<br/>
+    Өнөөдөр та ч нэгдэнэ үү?
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- RIGHT -->
+
+  <div class="right-panel">
+
+```
+<!-- Step indicator -->
+<div class="step-indicator">
+  <div class="step-dot active" id="dot1"></div>
+  <div class="step-dot" id="dot2"></div>
+  <div class="step-dot" id="dot3"></div>
+  <div class="step-dot" id="dot4"></div>
+</div>
+
+<!-- STEP 1: Basic info -->
+<div class="form-step active" id="step1">
+  <div class="form-header">
+    <h3>Үндсэн мэдээлэл</h3>
+    <p>Алхам 1/4 — Таны тухай товч мэдэгдэнэ үү</p>
+  </div>
+
+  <div class="field">
+    <label>Нэр</label>
+    <input type="text" id="name" placeholder="Таны нэр" />
+  </div>
+
+  <div class="grid-2">
+    <div class="field">
+      <label>Нас</label>
+      <input type="number" id="age" placeholder="40" min="35" max="65" />
+    </div>
+    <div class="field">
+      <label>Утасны дугаар</label>
+      <input type="tel" id="phone" placeholder="9999 9999" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Хүйс</label>
+    <div class="gender-group">
+      <button class="gender-btn" onclick="selectGender(this,'Эрэгтэй')">👨 Эрэгтэй</button>
+      <button class="gender-btn" onclick="selectGender(this,'Эмэгтэй')">👩 Эмэгтэй</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Дүүрэг</label>
+    <select id="district">
+      <option value="" disabled selected>Дүүргээ сонго</option>
+      <option>Баянгол</option>
+      <option>Баянзүрх</option>
+      <option>Сүхбаатар</option>
+      <option>Хан-Уул</option>
+      <option>Чингэлтэй</option>
+      <option>Налайх</option>
+      <option>Багануур</option>
+      <option>Сонгинохайрхан</option>
+      <option>Орон нутаг</option>
+    </select>
+  </div>
+
+  <div class="form-nav">
+    <button class="btn-next" onclick="nextStep(1)">Үргэлжлүүлэх →</button>
+  </div>
+</div>
+
+<!-- STEP 2: Photo + About -->
+<div class="form-step" id="step2">
+  <div class="form-header">
+    <h3>Профайл зураг</h3>
+    <p>Алхам 2/4 — Зураг тавиад өөрийн тухай бичнэ үү</p>
+  </div>
+
+  <div class="field">
+    <label>Профайл зураг</label>
+    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+      <img class="photo-preview" id="photoPreview" />
+      <div class="icon" id="uploadIcon">📸</div>
+      <p><strong>Зураг оруулах</strong><br/>JPG, PNG • Хамгийн ихдээ 5MB</p>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="previewPhoto(this)" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Өөрийн тухай</label>
+    <textarea id="about" placeholder="Та хэрхэн хүн бэ? Юу дуртай вэ? Ямар хос хайж байна вэ?..."></textarea>
+  </div>
+
+  <div class="field">
+    <label>Сонирхол (3-аас дээш сонго)</label>
+    <div class="interests-grid" id="interestsGrid">
+      <span class="int-tag" onclick="toggleInterest(this)">🏔️ Аялал</span>
+      <span class="int-tag" onclick="toggleInterest(this)">📚 Ном</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🍳 Хоол хийх</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🎵 Хөгжим</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🏃 Спорт</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🌿 Байгаль</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🎬 Кино</span>
+      <span class="int-tag" onclick="toggleInterest(this)">☕ Кофе</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🐕 Амьтан</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🌸 Цэцэрлэг</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🧘 Медитаци</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🎨 Урлаг</span>
+    </div>
+  </div>
+
+  <div class="form-nav">
+    <button class="btn-prev" onclick="prevStep(2)">← Буцах</button>
+    <button class="btn-next" onclick="nextStep(2)">Үргэлжлүүлэх →</button>
+  </div>
+</div>
+
+<!-- STEP 3: Plan -->
+<div class="form-step" id="step3">
+  <div class="form-header">
+    <h3>Эрх сонгох</h3>
+    <p>Алхам 3/4 — Үнэгүй эхэлж болно, дурын үед шилжинэ</p>
+  </div>
+
+  <div class="premium-card" onclick="selectPlan('premium')" id="planPremium" style="cursor:pointer">
+    <h4>Premium эрх</h4>
+    <div class="price">₮19,900 <span style="font-size:.9rem;color:var(--muted);font-weight:400">/сар</span></div>
+    <ul>
+      <li>Хязгааргүй таарч харах</li>
+      <li>Хязгааргүй мессеж илгээх</li>
+      <li>Миний профайлыг хэн харсан</li>
+      <li>Verified badge — найдвартай тэмдэг</li>
+      <li>Хайлтын эхэнд гарч ирэх</li>
+    </ul>
+  </div>
+
+  <div class="free-option" onclick="selectPlan('free')" id="planFree">
+    <div>
+      <strong>Үнэгүй хувилбар</strong>
+      <p>Өдөрт 5 таарч харах, 3 мессеж</p>
+    </div>
+    <span style="color:var(--muted);font-size:1.2rem">›</span>
+  </div>
+
+  <div class="form-nav" style="margin-top:24px">
+    <button class="btn-prev" onclick="prevStep(3)">← Буцах</button>
+    <button class="btn-next" onclick="nextStep(3)">Үргэлжлүүлэх →</button>
+  </div>
+</div>
+
+<!-- STEP 4: Payment (Premium only) -->
+<div class="form-step" id="step4">
+  <div class="form-header">
+    <h3>Төлбөр төлөх</h3>
+    <p>Алхам 4/4 — Дансаар шилжүүлж, скриншот илгээнэ үү</p>
+  </div>
+
+  <div class="bank-card">
+    <div class="bank-row">
+      <span>Банк</span>
+      <span>Хаан банк</span>
+    </div>
+    <div class="bank-row">
+      <span>Данс</span>
+      <span>
+        <span id="accountNum">5001 2345 6789</span>
+        <button class="copy-btn" onclick="copyAccount()" style="margin-left:8px">Хуулах</button>
+      </span>
+    </div>
+    <div class="bank-row">
+      <span>Эзэмшигч</span>
+      <span>Холбоо ХХК</span>
+    </div>
+    <div class="bank-row">
+      <span>Дүн</span>
+      <span style="color:var(--gold);font-size:1.1rem">₮19,900</span>
+    </div>
+    <div class="bank-row">
+      <span>Гүйлгээний утга</span>
+      <span id="transferNote" style="color:var(--rose)">ХОС-<span id="userRef">loading...</span></span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Гүйлгээний скриншот</label>
+    <div class="upload-proof">
+      <input type="file" accept="image/*" onchange="proofUploaded(this)" />
+      <div style="font-size:1.8rem" id="proofIcon">📤</div>
+      <p id="proofText">Скриншот upload хийнэ үү</p>
+    </div>
+  </div>
+
+  <div style="background:rgba(232,168,124,.08);border:1px solid rgba(232,168,124,.2);border-radius:12px;padding:16px;margin-bottom:8px;font-size:.82rem;color:var(--muted);line-height:1.6">
+    💡 Скриншотыг илгээсний дараа <strong style="color:var(--gold-lt)">24 цагийн</strong> дотор таны Premium эрх идэвхжинэ. Асуулт байвал <strong style="color:var(--gold-lt)">9911 2233</strong> дугаарт холбогдно уу.
+  </div>
+
+  <div class="form-nav">
+    <button class="btn-prev" onclick="prevStep(4)">← Буцах</button>
+    <button class="btn-next" onclick="submitForm()">Илгээх ✓</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="big-icon">💗</div>
+  <h3>Амжилттай бүртгүүллээ!</h3>
+  <p>Таны профайл хүлээн авлаа.<br/>Бид удахгүй баталгаажуулж, мэдэгдэл илгээнэ.</p>
+  <div class="check-items">
+    <div class="check-item"><span>✓</span> Профайл хянагдаж байна (24 цаг)</div>
+    <div class="check-item"><span>✓</span> Баталгаажсан тухай SMS ирнэ</div>
+    <div class="check-item"><span>✓</span> Анхны таарц санал болгогдоно</div>
+  </div>
+  <a href="index.html" style="display:inline-block;margin-top:8px;background:linear-gradient(135deg,var(--rose),#a8405a);color:#fff;padding:14px 36px;border-radius:50px;text-decoration:none;font-weight:600;font-size:.95rem">Нүүр хуудас руу →</a>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  let selectedGender = '';
+  let selectedPlan = 'free';
+  let selectedInterests = [];
+
+  // Generate user ref
+  document.getElementById('userRef').textContent = Math.floor(Math.random()*90000+10000);
+
+  function updateDots(step) {
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById('dot' + i);
+      dot.className = 'step-dot';
+      if (i < step)  dot.classList.add('done');
+      if (i === step) dot.classList.add('active');
+    }
+  }
+
+  function nextStep(from) {
+    // Validation
+    if (from === 1) {
+      if (!document.getElementById('name').value.trim()) return alert('Нэрээ оруулна уу');
+      if (!document.getElementById('age').value) return alert('Насаа оруулна уу');
+      if (!document.getElementById('phone').value.trim()) return alert('Утасны дугаараа оруулна уу');
+      if (!selectedGender) return alert('Хүйсээ сонгоно уу');
+      if (!document.getElementById('district').value) return alert('Дүүргээ сонгоно уу');
+    }
+    if (from === 3 && selectedPlan === 'free') {
+      submitForm(); return;
+    }
+
+    document.getElementById('step' + from).classList.remove('active');
+    currentStep = from + 1;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateDots(currentStep);
+    window.scrollTo(0, 0);
+  }
+
+  function prevStep(from) {
+    document.getElementById('step' + from).classList.remove('active');
+    currentStep = from - 1;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateDots(currentStep);
+    window.scrollTo(0, 0);
+  }
+
+  function selectGender(btn, val) {
+    selectedGender = val;
+    document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function toggleInterest(el) {
+    el.classList.toggle('selected');
+  }
+
+  function selectPlan(plan) {
+    selectedPlan = plan;
+    document.getElementById('planPremium').style.borderColor = plan === 'premium' ? 'var(--rose)' : 'var(--border)';
+    document.getElementById('planFree').style.borderColor    = plan === 'free'    ? 'var(--gold)' : 'var(--border)';
+  }
+  selectPlan('premium'); // default
+
+  function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('photoPreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        document.getElementById('uploadIcon').style.display = 'none';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function proofUploaded(input) {
+    if (input.files && input.files[0]) {
+      document.getElementById('proofIcon').textContent = '✅';
+      document.getElementById('proofText').textContent = input.files[0].name + ' — Амжилттай';
+      document.getElementById('proofText').style.color = 'var(--gold)';
+    }
+  }
+
+  function copyAccount() {
+    navigator.clipboard.writeText('5001234567890').then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Хуулагдлаа ✓';
+      btn.style.color = 'var(--gold)';
+      setTimeout(() => { btn.textContent = 'Хуулах'; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  function submitForm() {
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    document.querySelector('.step-indicator').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    updateDots(5);
+  }
+</script>
+
+</body>
+</html>
