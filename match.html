@@ -3,486 +3,358 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Холбоо — Таарч харах</title>
+  <title>Холбоо — Хосоо ол</title>
+  
+  <script>
+    // МАШ ЧУХАЛ: Хэрэглэгч бүртгүүлээгүй бол match.html рүү шууд орохыг зөвшөөрөхгүй, register.html рүү буцаана
+    if (!localStorage.getItem('currentUser')) {
+      window.location.href = 'register.html';
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #1A0E1C; --bg2: #221428; --gold: #E8A87C; --gold-lt: #F2D4C2;
-      --rose: #C1607A; --text: #F5EDE8; --muted: #9C8A86;
-      --card: #2B1830; --border: #3D2240; --input: #1f1226;
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
-
-    /* SIDEBAR */
-    .sidebar {
-      width: 240px; flex-shrink: 0;
-      background: var(--bg2);
-      border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      padding: 28px 0;
-      position: fixed; top: 0; left: 0; bottom: 0;
-    }
-    .sidebar-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem; color: var(--gold);
-      padding: 0 24px 28px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sidebar-logo span { color: var(--rose); }
-
-    .sidebar-user {
-      display: flex; align-items: center; gap: 12px;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sidebar-av {
-      width: 42px; height: 42px; border-radius: 50%;
-      background: linear-gradient(135deg, #C1607A, #8B2E4A);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 700; color: #fff; flex-shrink: 0;
-    }
-    .sidebar-uname { font-size: .9rem; font-weight: 600; }
-    .sidebar-plan {
-      font-size: .72rem; color: var(--gold);
-      background: rgba(232,168,124,.1);
-      padding: 2px 8px; border-radius: 50px;
-      display: inline-block; margin-top: 3px;
+      --bg:       #1A0E1C;
+      --bg2:      #221428;
+      --gold:     #E8A87C;
+      --gold-lt:  #F2D4C2;
+      --rose:     #C1607A;
+      --text:     #F5EDE8;
+      --muted:    #9C8A86;
+      --card:     #2B1830;
+      --border:   #3D2240;
     }
 
-    .nav-items { padding: 16px 0; flex: 1; }
-    .nav-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 24px;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: .9rem;
-      transition: all .2s;
-      border-left: 3px solid transparent;
-    }
-    .nav-item:hover { color: var(--text); background: rgba(255,255,255,.03); }
-    .nav-item.active { color: var(--text); border-left-color: var(--rose); background: rgba(193,96,122,.07); }
-    .nav-item .icon { font-size: 1.1rem; width: 22px; text-align: center; }
-    .nav-badge {
-      margin-left: auto;
-      background: var(--rose);
-      color: #fff; font-size: .68rem; font-weight: 700;
-      padding: 2px 7px; border-radius: 50px;
-    }
-
-    /* MAIN */
-    .main { margin-left: 240px; flex: 1; padding: 32px 32px; max-width: 1100px; }
-
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-    .page-header h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; }
-    .page-header p { color: var(--muted); font-size: .88rem; margin-top: 4px; }
-
-    /* FILTERS */
-    .filters {
-      display: flex; gap: 12px; flex-wrap: wrap;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin-bottom: 28px;
-      align-items: center;
-    }
-    .filter-label { font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-right: 4px; }
-    select.filter-select {
-      background: var(--input);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 14px;
-      font-size: .85rem;
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
       color: var(--text);
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      cursor: pointer;
-      transition: border-color .2s;
+      min-height: 100vh;
+      padding-top: 80px;
     }
-    select.filter-select:focus { border-color: var(--rose); }
-    .filter-btn {
-      background: var(--rose);
-      color: #fff;
-      border: none;
-      padding: 9px 20px;
-      border-radius: 10px;
-      font-size: .85rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      margin-left: auto;
-      transition: background .2s;
-    }
-    .filter-btn:hover { background: #d4506b; }
 
-    /* PROFILES GRID */
-    .profiles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .logo span { color: var(--rose); }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--rose);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-left: 8px;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover {
+      color: #ff4a5a;
+      border-color: #ff4a5a;
+    }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    /* ── MATCH INTERACTION ── */
+    .match-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .profile-img {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--rose));
+      margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(193,96,122,0.3);
+    }
+
+    .profile-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .profile-meta {
+      color: var(--gold);
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .profile-bio {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .interest-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(193,96,122,0.15);
+      border: 1px solid rgba(193,96,122,0.3);
+      color: var(--rose);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 32px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
       gap: 20px;
     }
 
-    .pcard {
-      background: var(--card);
+    .btn-action {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .btn-action.dislike:hover {
+      background: #3a1e25;
+      border-color: #632230;
+    }
+    .btn-action.like {
+      background: var(--rose);
+      border: none;
+      color: white;
+      box-shadow: 0 6px 16px rgba(193,96,122,0.3);
+    }
+    .btn-action.like:hover {
+      transform: scale(1.08);
+      box-shadow: 0 8px 20px rgba(193,96,122,0.5);
+    }
+
+    /* ── MESSAGE DRAWER ── */
+    .message-container {
+      margin-top: 40px;
+      display: none;
+      background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 20px;
-      overflow: hidden;
-      transition: transform .25s, border-color .25s, box-shadow .25s;
-      cursor: pointer;
-      position: relative;
+      padding: 24px;
+      text-align: left;
     }
-    .pcard:hover { transform: translateY(-4px); border-color: rgba(193,96,122,.4); box-shadow: 0 12px 32px rgba(0,0,0,.3); }
-
-    .pcard-img {
-      height: 180px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 3.5rem; font-weight: 700; color: #fff;
-      position: relative;
-    }
-    .pcard-img .online-dot {
-      position: absolute; top: 12px; right: 12px;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: #4ade80;
-      border: 2px solid var(--card);
-    }
-    .pcard-img .verified {
-      position: absolute; top: 12px; left: 12px;
-      background: rgba(0,0,0,.5);
-      backdrop-filter: blur(4px);
-      padding: 3px 8px;
-      border-radius: 50px;
-      font-size: .65rem;
-      font-weight: 700;
+    .message-header {
+      font-weight: 600;
       color: var(--gold);
-      letter-spacing: .04em;
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
     }
-
-    .pcard-body { padding: 16px; }
-    .pcard-name { font-size: 1rem; font-weight: 600; margin-bottom: 2px; }
-    .pcard-info { font-size: .8rem; color: var(--muted); margin-bottom: 12px; }
-    .pcard-interests { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .pcard-tag {
-      font-size: .68rem;
-      padding: 3px 10px;
-      background: rgba(193,96,122,.1);
-      border-radius: 50px;
-      color: var(--rose);
+    .message-input-area {
+      display: flex;
+      gap: 12px;
     }
-
-    .pcard-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .action-btn {
-      padding: 9px;
-      border-radius: 10px;
+    .message-input {
+      flex: 1;
+      background: var(--bg);
       border: 1px solid var(--border);
-      background: transparent;
-      font-size: .8rem;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
+      border-radius: 12px;
+      padding: 12px 16px;
       color: var(--text);
-      transition: all .2s;
     }
-    .action-btn.like { border-color: rgba(193,96,122,.3); color: var(--rose); }
-    .action-btn.like:hover, .action-btn.like.active { background: rgba(193,96,122,.15); border-color: var(--rose); }
-    .action-btn.msg  { border-color: rgba(232,168,124,.2); color: var(--gold); }
-    .action-btn.msg:hover { background: rgba(232,168,124,.08); border-color: var(--gold); }
-
-    /* MATCH POPUP */
-    .match-overlay {
-      display: none;
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,.75);
-      backdrop-filter: blur(6px);
-      align-items: center; justify-content: center;
-    }
-    .match-overlay.show { display: flex; }
-    .match-popup {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 48px 40px;
-      text-align: center;
-      max-width: 380px; width: 90%;
-      animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
-    }
-    @keyframes popIn { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .match-popup .big { font-size: 3.5rem; margin-bottom: 16px; }
-    .match-popup h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); margin-bottom: 10px; }
-    .match-popup p { color: var(--muted); font-size: .9rem; line-height: 1.6; margin-bottom: 28px; }
-    .popup-btns { display: flex; gap: 10px; }
-    .popup-btn {
-      flex: 1; padding: 13px;
+    .btn-send {
+      background: var(--rose);
+      color: #fff;
+      border: none;
+      padding: 0 24px;
       border-radius: 12px;
-      font-size: .9rem; font-weight: 600;
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all .2s;
+      cursor: pointer;
+      font-weight: 600;
     }
-    .popup-btn.primary { background: var(--rose); color: #fff; border: none; box-shadow: 0 6px 20px rgba(193,96,122,.35); }
-    .popup-btn.secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
 
-    /* PROFILE MODAL */
-    .profile-overlay {
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--rose);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 50px;
       display: none;
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,.75);
-      backdrop-filter: blur(6px);
-      align-items: flex-start; justify-content: center;
-      padding: 40px 20px; overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      z-index: 200;
     }
-    .profile-overlay.show { display: flex; }
-    .profile-modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      width: 100%; max-width: 480px;
-      overflow: hidden;
-      animation: slideUp .35s cubic-bezier(.34,1.56,.64,1);
-    }
-    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .modal-hero {
-      height: 220px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 5rem; font-weight: 700; color: #fff;
-      position: relative;
-    }
-    .modal-close {
-      position: absolute; top: 16px; right: 16px;
-      width: 36px; height: 36px; border-radius: 50%;
-      background: rgba(0,0,0,.4);
-      border: none; color: #fff; font-size: 1.1rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .modal-body { padding: 28px; }
-    .modal-name { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 4px; }
-    .modal-meta { color: var(--muted); font-size: .88rem; margin-bottom: 20px; }
-    .modal-section { margin-bottom: 20px; }
-    .modal-section-title { font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
-    .modal-about { font-size: .9rem; color: var(--gold-lt); line-height: 1.7; }
-    .modal-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .modal-tag { font-size: .8rem; padding: 6px 14px; background: rgba(193,96,122,.1); border-radius: 50px; color: var(--rose); border: 1px solid rgba(193,96,122,.2); }
-    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
-    .modal-btn {
-      padding: 14px;
-      border-radius: 12px;
-      font-size: .92rem; font-weight: 600;
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all .2s;
-    }
-    .modal-btn.like { background: var(--rose); color: #fff; border: none; box-shadow: 0 6px 20px rgba(193,96,122,.3); }
-    .modal-btn.msg  { background: transparent; color: var(--gold); border: 1px solid rgba(232,168,124,.3); }
-    .modal-btn.msg:hover { background: rgba(232,168,124,.08); }
 
-    @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .main { margin-left: 0; padding: 20px 16px; }
+    @media(max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .match-box { padding: 24px 16px; }
     }
   </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">Хол<span>бо</span>о</div>
-  <div class="sidebar-user">
-    <div class="sidebar-av">Д</div>
-    <div>
-      <div class="sidebar-uname">Дэлгэрмаа</div>
-      <span class="sidebar-plan">⭐ Premium</span>
+  <div class="toast" id="toast">Та хоёр таарлаа! 💖</div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="logo">Хол<span>бо</span>о</a>
+    <div class="nav-user">
+      <div class="user-avatar" id="navAvatar">У</div>
+      <span id="navName">Хэрэглэгч</span>
+      <button class="btn-logout" onclick="logoutUser()">Гарах</button>
     </div>
-  </div>
-  <nav class="nav-items">
-    <a class="nav-item active" href="matches.html">
-      <span class="icon">🔍</span> Таарч харах
-    </a>
-    <a class="nav-item" href="messages.html">
-      <span class="icon">💌</span> Мессеж
-      <span class="nav-badge">3</span>
-    </a>
-    <a class="nav-item" href="profile.html">
-      <span class="icon">👤</span> Профайл
-    </a>
-    <a class="nav-item" href="liked.html">
-      <span class="icon">💗</span> Надад дурласан
-    </a>
-    <a class="nav-item" href="index.html">
-      <span class="icon">🚪</span> Гарах
-    </a>
   </nav>
-</aside>
 
-<!-- MAIN -->
-<main class="main">
-  <div class="page-header">
-    <div>
-      <h1>Таарч харах</h1>
-      <p>Өнөөдөр 24 шинэ хэрэглэгч нэгдлээ</p>
-    </div>
-  </div>
+  <div class="container">
+    <h2 class="section-title">Таны дараагийн таарц</h2>
 
-  <!-- FILTERS -->
-  <div class="filters">
-    <span class="filter-label">Шүүх:</span>
-    <select class="filter-select" id="filterGender">
-      <option value="">Бүх хүйс</option>
-      <option value="Эрэгтэй">Эрэгтэй</option>
-      <option value="Эмэгтэй">Эмэгтэй</option>
-    </select>
-    <select class="filter-select" id="filterAge">
-      <option value="">Бүх нас</option>
-      <option value="40-44">40–44</option>
-      <option value="45-49">45–49</option>
-      <option value="50-55">50–55</option>
-    </select>
-    <select class="filter-select" id="filterDistrict">
-      <option value="">Бүх дүүрэг</option>
-      <option>Баянгол</option>
-      <option>Баянзүрх</option>
-      <option>Сүхбаатар</option>
-      <option>Хан-Уул</option>
-      <option>Чингэлтэй</option>
-      <option>Сонгинохайрхан</option>
-    </select>
-    <button class="filter-btn" onclick="applyFilter()">🔍 Хайх</button>
-  </div>
+    <div class="match-box" id="profileBox">
+      <div class="profile-img" id="pAvatar">А</div>
+      <div class="profile-name" id="pName">Алтанцэцэг</div>
+      <div class="profile-meta" id="pMeta">42 нас • Сүхбаатар дүүрэг</div>
+      <div class="profile-bio" id="pBio">Би аялах, шинэ зүйлс сурах дуртай. Эерэг халуун дулаан яриа өрнүүлэх сайн хань хайж байна.</div>
+      <span class="interest-badge" id="pInterest">Аялах сонирхолтой</span>
 
-  <!-- PROFILES -->
-  <div class="profiles-grid" id="profilesGrid"></div>
-</main>
-
-<!-- MATCH POPUP -->
-<div class="match-overlay" id="matchOverlay">
-  <div class="match-popup">
-    <div class="big">💗</div>
-    <h3>Таарлаа!</h3>
-    <p id="matchMsg">Тэд таныг мэдэгдэж байна. Одоо мессеж илгээгээрэй!</p>
-    <div class="popup-btns">
-      <button class="popup-btn primary" onclick="goMessage()">💌 Мессеж илгээх</button>
-      <button class="popup-btn secondary" onclick="closeMatch()">Дараа нь</button>
-    </div>
-  </div>
-</div>
-
-<!-- PROFILE MODAL -->
-<div class="profile-overlay" id="profileOverlay">
-  <div class="profile-modal">
-    <div class="modal-hero" id="modalHero">
-      <button class="modal-close" onclick="closeProfile()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-name" id="modalName"></div>
-      <div class="modal-meta" id="modalMeta"></div>
-      <div class="modal-section">
-        <div class="modal-section-title">Өөрийн тухай</div>
-        <div class="modal-about" id="modalAbout"></div>
+      <div class="actions">
+        <button class="btn-action dislike" onclick="nextProfile()">❌</button>
+        <button class="btn-action like" onclick="likeProfile()">💗</button>
       </div>
-      <div class="modal-section">
-        <div class="modal-section-title">Сонирхол</div>
-        <div class="modal-tags" id="modalTags"></div>
-      </div>
-      <div class="modal-actions">
-        <button class="modal-btn like" id="modalLikeBtn" onclick="likeFromModal()">💗 Мэдэгдэх</button>
-        <button class="modal-btn msg" onclick="closeProfile(); window.location='messages.html'">💌 Мессеж</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<script>
-const profiles = [
-  { id:1, name:'Батбаяр', age:47, gender:'Эрэгтэй', district:'Баянзүрх', emoji:'Б', color:'linear-gradient(135deg,#5B8FB9,#2C5282)', online:true,  verified:true,  about:'Байгаль дуртай, амгалан тайван хүн хайж байна. Долоо хоног бүр агнуур, загасчлалд явдаг. Гэртээ хоол хийхдээ дуртай.', interests:['🌿 Байгаль','🏔️ Аялал','🍳 Хоол'] },
-  { id:2, name:'Наранцэцэг', age:43, gender:'Эмэгтэй', district:'Сүхбаатар', emoji:'Н', color:'linear-gradient(135deg,#C1607A,#8B2E4A)', online:true,  verified:true,  about:'Ном уншдаг, аялах дуртай. Ухаантай, хошин шогтой хүнтэй танилцахыг хүсэж байна.', interests:['📚 Ном','🏔️ Аялал','☕ Кофе'] },
-  { id:3, name:'Ганбаатар', age:49, gender:'Эрэгтэй', district:'Хан-Уул', emoji:'Г', color:'linear-gradient(135deg,#7B9E5B,#3D5C2A)', online:false, verified:true,  about:'Бизнесмэн, спортод дуртай. Амьдралыг хамт бүтээх хүн хайж байна.', interests:['🏃 Спорт','🎵 Хөгжим','🐕 Амьтан'] },
-  { id:4, name:'Оюунцэцэг', age:45, gender:'Эмэгтэй', district:'Чингэлтэй', emoji:'О', color:'linear-gradient(135deg,#9B6B9B,#5C3A6E)', online:true,  verified:false, about:'Урлаг, кино дуртай. Амьдралд гоо сайхныг хардаг хүн.', interests:['🎨 Урлаг','🎬 Кино','🌸 Цэцэрлэг'] },
-  { id:5, name:'Дамдинсүрэн', age:51, gender:'Эрэгтэй', district:'Баянгол', emoji:'Д', color:'linear-gradient(135deg,#B9855B,#7A4A20)', online:false, verified:true,  about:'Тайван зантай, хошин шогтой хүн. Хоол хийх, загасчлах дуртай.', interests:['🍳 Хоол','🌿 Байгаль','☕ Кофе'] },
-  { id:6, name:'Номин', age:42, gender:'Эмэгтэй', district:'Сонгинохайрхан', emoji:'Н', color:'linear-gradient(135deg,#5BA8B9,#2C6282)', online:true,  verified:true,  about:'Хүүхэд хайрладаг, гэр бүлч хүн. Хамт аялах, амьдрал барих хүнтэй уулзахыг хүсэж байна.', interests:['🏔️ Аялал','🧘 Медитаци','📚 Ном'] },
-  { id:7, name:'Мөнхбаяр', age:48, gender:'Эрэгтэй', district:'Баянзүрх', emoji:'М', color:'linear-gradient(135deg,#6B7B9B,#3A4A6E)', online:true,  verified:true,  about:'Инженер мэргэжилтэй, цэгцтэй хүн. Хөгжим сонсох, явган аялах дуртай.', interests:['🎵 Хөгжим','🏃 Спорт','🎬 Кино'] },
-  { id:8, name:'Энхцэцэг', age:46, gender:'Эмэгтэй', district:'Хан-Уул', emoji:'Э', color:'linear-gradient(135deg,#B96B7A,#7A3A4A)', online:false, verified:true,  about:'Эмч мэргэжилтэй. Тайван, ухаантай, халамжтай хүнийг хайж байна.', interests:['🌸 Цэцэрлэг','☕ Кофе','🐕 Амьтан'] },
-];
-
-let likedIds = new Set();
-let currentModalId = null;
-
-function renderProfiles(list) {
-  const grid = document.getElementById('profilesGrid');
-  grid.innerHTML = list.map(p => `
-    <div class="pcard" onclick="openProfile(${p.id})">
-      <div class="pcard-img" style="background:${p.color}">
-        ${p.emoji}
-        ${p.online ? '<div class="online-dot"></div>' : ''}
-        ${p.verified ? '<div class="verified">✓ Баталгаажсан</div>' : ''}
-      </div>
-      <div class="pcard-body">
-        <div class="pcard-name">${p.name}</div>
-        <div class="pcard-info">${p.age} нас • ${p.district}</div>
-        <div class="pcard-interests">
-          ${p.interests.slice(0,2).map(i => `<span class="pcard-tag">${i}</span>`).join('')}
-        </div>
-        <div class="pcard-actions" onclick="event.stopPropagation()">
-          <button class="action-btn like ${likedIds.has(p.id)?'active':''}" onclick="likeProfile(${p.id}, this)">
-            ${likedIds.has(p.id) ? '💗 Мэдэгдсэн' : '🤍 Мэдэгдэх'}
-          </button>
-          <button class="action-btn msg" onclick="window.location='messages.html'">💌 Мессеж</button>
+      <!-- Чатлах хэсэг -->
+      <div class="message-container" id="msgContainer">
+        <div class="message-header">💬 Зурвас илгээх</div>
+        <div class="message-input-area">
+          <input type="text" class="message-input" id="msgText" placeholder="Сайн уу, танилцаж болох уу?..." />
+          <button class="btn-send" onclick="sendMessage()">Илгээх</button>
         </div>
       </div>
     </div>
-  `).join('');
-}
+  </div>
 
-function applyFilter() {
-  const gender   = document.getElementById('filterGender').value;
-  const ageRange = document.getElementById('filterAge').value;
-  const district = document.getElementById('filterDistrict').value;
+  <script>
+    // Mock Profiles
+    const mockProfiles = [
+      { name: "Баярсайхан", age: 48, location: "Хан-Уул", bio: "Спорт болон байгальд дуртай. Амралтын өдрүүдээр салхинд гарах дуртай хүнтэй танилцана.", interest: "Байгаль дуртай", gender: "male", avatar: "Б" },
+      { name: "Солонго", age: 41, location: "Баянзүрх", bio: "Урлаг сонирхдог, гэртээ тухтай орчин бүрдүүлэх дуртай. Ухаалаг, төлөв даруу хань хайж байна.", interest: "Урлаг сонирхдог", gender: "female", avatar: "С" },
+      { name: "Пүрэвсүрэн", age: 50, location: "Чингэлтэй", bio: "Унших, хувийн хөгжилдөө анхаардаг. Харилцан яриа маш чухал гэж боддог.", interest: "Ном уншдаг", gender: "male", avatar: "П" },
+      { name: "Гэрэлмаа", age: 45, location: "Баянгол", bio: "Хоол хийх дуртай, гэр бүлсэг. Хөгжилтэй, нээлттэй найдвартай залуутай танилцана.", interest: "Хоол хийх", gender: "female", avatar: "Г" }
+    ];
 
-  let filtered = profiles.filter(p => {
-    if (gender && p.gender !== gender) return false;
-    if (district && p.district !== district) return false;
-    if (ageRange) {
-      const [min, max] = ageRange.split('-').map(Number);
-      if (p.age < min || p.age > max) return false;
+    let currentIdx = 0;
+
+    window.onload = function() {
+      const stored = localStorage.getItem('currentUser');
+      if (stored) {
+        const user = JSON.parse(stored);
+        document.getElementById('navName').textContent = user.name;
+        document.getElementById('navAvatar').textContent = user.name.charAt(0).toUpperCase();
+      }
+      showProfile();
     }
-    return true;
-  });
-  renderProfiles(filtered);
-}
 
-function likeProfile(id, btn) {
-  if (likedIds.has(id)) return;
-  likedIds.add(id);
-  btn.classList.add('active');
-  btn.textContent = '💗 Мэдэгдсэн';
+    function showProfile() {
+      if(currentIdx >= mockProfiles.length) {
+        currentIdx = 0;
+      }
+      const p = mockProfiles[currentIdx];
+      document.getElementById('pAvatar').textContent = p.avatar;
+      document.getElementById('pName').textContent = p.name;
+      document.getElementById('pMeta').textContent = `${p.age} нас • ${p.location} дүүрэг`;
+      document.getElementById('pBio').textContent = p.bio;
+      document.getElementById('pInterest').textContent = p.interest;
+      document.getElementById('msgContainer').style.display = 'none';
+    }
 
-  // 40% chance of mutual match popup
-  if (Math.random() < 0.4) {
-    const p = profiles.find(x => x.id === id);
-    document.getElementById('matchMsg').textContent = `${p.name} таныг мэдэгдэж байсан байна! Одоо мессеж илгээгээрэй.`;
-    document.getElementById('matchOverlay').classList.add('show');
-  }
-}
+    function nextProfile() {
+      currentIdx++;
+      showProfile();
+    }
 
-function openProfile(id) {
-  const p = profiles.find(x => x.id === id);
-  currentModalId = id;
-  document.getElementById('modalHero').style.background = p.color;
-  document.getElementById('modalHero').childNodes[0].textContent = p.emoji;
-  document.getElementById('modalName').textContent = p.name + (p.verified ? ' ✓' : '');
-  document.getElementById('modalMeta').textContent = `${p.age} нас • ${p.district} • ${p.online ? '🟢 Онлайн' : '⚫ Офлайн'}`;
-  document.getElementById('modalAbout').textContent = p.about;
-  document.getElementById('modalTags').innerHTML = p.interests.map(i => `<span class="modal-tag">${i}</span>`).join('');
-  const likeBtn = document.getElementById('modalLikeBtn');
-  likeBtn.textContent = likedIds.has(id) ? '💗 Мэдэгдсэн' : '💗 Мэдэгдэх';
-  document.getElementById('profileOverlay').classList.add('show');
-}
+    function likeProfile() {
+      const toast = document.getElementById('toast');
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+        document.getElementById('msgContainer').style.display = 'block';
+      }, 1000);
+    }
 
-function closeProfile() { document.getElementById('profileOverlay').classList.remove('show'); }
-function closeMatch()   { document.getElementById('matchOverlay').classList.remove('show'); }
-function goMessage()    { closeMatch(); window.location = 'messages.html'; }
+    function sendMessage() {
+      const txt = document.getElementById('msgText').value;
+      if (txt.trim() === '') return;
+      
+      const toast = document.getElementById('toast');
+      toast.textContent = 'Зурвас илгээгдлээ! 💌';
+      toast.style.display = 'block';
+      document.getElementById('msgText').value = '';
+      
+      setTimeout(() => {
+        toast.style.display = 'none';
+        toast.textContent = 'Та хоёр таарлаа! 💖';
+        nextProfile();
+      }, 1500);
+    }
 
-function likeFromModal() {
-  if (currentModalId) likeProfile(currentModalId, document.getElementById('modalLikeBtn'));
-}
+    // Системээс гарах функц
+    function logoutUser() {
+      localStorage.removeItem('currentUser'); // Санах ойг устгах
+      window.location.href = 'index.html'; // Нүүр хуудас руу шилжих
+    }
+  </script>
 
-renderProfiles(profiles);
-</script>
 </body>
 </html>
