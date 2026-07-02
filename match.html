@@ -1,312 +1,428 @@
 <!DOCTYPE html>
+
 <html lang="mn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Холбоо — Бүртгүүлэх</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Холбоо — Хосоо олох</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #1A0E1C;
+    --bg2: #221428;
+    --gold: #E8A87C;
+    --gold-lt: #F2D4C2;
+    --rose: #C1607A;
+    --text: #F5EDE8;
+    --muted: #9C8A86;
+    --card: #2B1830;
+    --border: #3D2240;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 100px;
+  }
+  .topbar {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+  }
+  .logo span { color: var(--rose); }
+  .back-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+  .back-link:hover { color: var(--gold); }
 
-    :root {
-      --bg:       #1A0E1C;
-      --bg2:      #221428;
-      --gold:     #E8A87C;
-      --gold-lt:  #F2D4C2;
-      --rose:     #C1607A;
-      --text:     #F5EDE8;
-      --muted:    #9C8A86;
-      --card:     #2B1830;
-      --border:   #3D2240;
-    }
+/* ── Card stack ── */
+.stack {
+position: relative;
+width: 100%;
+max-width: 380px;
+height: 560px;
+}
+.card {
+position: absolute;
+inset: 0;
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 24px;
+box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+overflow: hidden;
+display: flex;
+flex-direction: column;
+transition: transform 0.35s ease, opacity 0.35s ease;
+touch-action: pan-y;
+cursor: grab;
+}
+.card:active { cursor: grabbing; }
+.card-photo {
+flex: 1;
+background: linear-gradient(135deg, var(–rose), #6b2f45);
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘Playfair Display’, serif;
+font-size: 5rem;
+color: rgba(255,255,255,0.9);
+position: relative;
+}
+.card-photo .badge {
+position: absolute;
+top: 16px;
+right: 16px;
+background: rgba(0,0,0,0.35);
+color: var(–gold-lt);
+font-size: 0.75rem;
+padding: 5px 10px;
+border-radius: 8px;
+}
+.card-info {
+padding: 20px 22px 24px;
+background: var(–card);
+}
+.card-name {
+font-family: ‘Playfair Display’, serif;
+font-size: 1.4rem;
+color: var(–text);
+margin-bottom: 4px;
+}
+.card-name .age { color: var(–muted); font-weight: 400; font-size: 1.1rem; }
+.card-loc {
+font-size: 0.85rem;
+color: var(–gold-lt);
+margin-bottom: 10px;
+}
+.card-tag {
+display: inline-block;
+background: var(–bg2);
+border: 1px solid var(–border);
+color: var(–muted);
+font-size: 0.78rem;
+padding: 5px 12px;
+border-radius: 20px;
+}
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
+.swipe-hint {
+position: absolute;
+top: 24px;
+font-family: ‘Playfair Display’, serif;
+font-size: 1.6rem;
+font-weight: 700;
+padding: 6px 16px;
+border-radius: 10px;
+border: 3px solid;
+opacity: 0;
+pointer-events: none;
+transform: rotate(-12deg);
+z-index: 5;
+}
+.hint-like { left: 24px; color: #4ade80; border-color: #4ade80; }
+.hint-nope { right: 24px; color: var(–rose); border-color: var(–rose); transform: rotate(12deg); }
 
-    .register-container {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 40px 32px;
-      width: 100%;
-      max-width: 450px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-    }
+.actions {
+display: flex;
+gap: 24px;
+margin-top: 28px;
+}
+.action-btn {
+width: 58px;
+height: 58px;
+border-radius: 50%;
+border: 1px solid var(–border);
+background: var(–card);
+color: var(–text);
+font-size: 1.4rem;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: transform 0.15s;
+}
+.action-btn:hover { transform: translateY(-2px); }
+.action-btn.nope { color: var(–rose); }
+.action-btn.like { color: #4ade80; }
 
-    .logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      color: var(--gold);
-      text-align: center;
-      margin-bottom: 8px;
-    }
-    .logo span { color: var(--rose); }
+.empty-state, .loading-state {
+max-width: 380px;
+text-align: center;
+padding: 60px 24px;
+color: var(–muted);
+}
+.empty-state .title, .loading-state .title {
+font-family: ‘Playfair Display’, serif;
+font-size: 1.3rem;
+color: var(–gold);
+margin-bottom: 10px;
+}
 
-    .title {
-      text-align: center;
-      font-size: 1.1rem;
-      color: var(--muted);
-      margin-bottom: 32px;
-    }
+.toast {
+position: fixed;
+top: 24px;
+background: #2b5c3f;
+border: 1px solid #3d8c5a;
+color: #e6f7ed;
+padding: 14px 22px;
+border-radius: 12px;
+font-size: 0.9rem;
+display: none;
+z-index: 1000;
+box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+</style>
 
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--gold-lt);
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .form-control {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      transition: border-color 0.2s;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--rose);
-    }
-
-    .row {
-      display: flex;
-      gap: 16px;
-    }
-
-    .row .form-group {
-      flex: 1;
-    }
-
-    select.form-control {
-      appearance: none;
-      cursor: pointer;
-    }
-
-    .btn-submit {
-      width: 100%;
-      background: linear-gradient(135deg, var(--rose), #a8405a);
-      color: #fff;
-      border: none;
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: transform 0.15s, box-shadow 0.2s;
-      box-shadow: 0 6px 20px rgba(193,96,122,0.25);
-    }
-
-    .btn-submit:disabled {
-      background: var(--muted);
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 24px;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: color 0.2s;
-    }
-
-    .back-link:hover {
-      color: var(--gold);
-    }
-
-    .toast {
-      position: fixed;
-      top: 24px;
-      background: #2b5c3f;
-      border: 1px solid #3d8c5a;
-      color: #e6f7ed;
-      padding: 16px 24px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      display: none;
-      z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-    }
-  </style>
 </head>
 <body>
 
-  <div class="toast" id="toast">Бүртгэл амжилттай үүсэв! Түр хүлээнэ үү...</div>
+<div class="toast" id="toast">Таарлаа! 🎉</div>
 
-  <div class="register-container">
-    <div class="logo">Хол<span>бо</span>о</div>
-    <div class="title">Хосоо олох анхны алхам</div>
+<div class="topbar">
+  <div class="logo">Хол<span>бо</span>о</div>
+  <a href="index.html" class="back-link">← Нүүр хуудас</a>
+</div>
 
-    <form id="registerForm">
-      <div class="form-group">
-        <label for="name">Таны нэр</label>
-        <input type="text" id="name" class="form-control" placeholder="Жишээ нь: Анужин" required />
-      </div>
+<div id="loadingState" class="loading-state">
+  <div class="title">Ачааллаж байна…</div>
+  <p>Танд тохирох хосуудыг хайж байна</p>
+</div>
 
-      <div class="row">
-        <div class="form-group">
-          <label for="age">Нас</label>
-          <input type="number" id="age" class="form-control" min="18" max="100" placeholder="40" required />
-        </div>
-        <div class="form-group">
-          <label for="gender">Хүйс</label>
-          <select id="gender" class="form-control" required>
-            <option value="" disabled selected>Сонгох</option>
-            <option value="female">Эмэгтэй</option>
-            <option value="male">Эрэгтэй</option>
-          </select>
-        </div>
-      </div>
+<div id="emptyState" class="empty-state" style="display:none;">
+  <div class="title">Одоогоор хэн ч алга 🌙</div>
+  <p>Түр хүлээгээд дахин шалгаарай, эсвэл найзаа урьж бүртгүүлүүлээрэй.</p>
+</div>
 
-      <div class="form-group">
-        <label for="location">Байршил / Дүүрэг</label>
-        <select id="location" class="form-control" required>
-          <option value="" disabled selected>Сонгох</option>
-          <option value="Хан-Уул">Хан-Уул</option>
-          <option value="Баянзүрх">Баянзүрх</option>
-          <option value="Сүхбаатар">Сүхбаатар</option>
-          <option value="Чингэлтэй">Чингэлтэй</option>
-          <option value="Баянгол">Баянгол</option>
-          <option value="Сонгинохайрхан">Сонгинохайрхан</option>
-          <option value="Орон нутаг">Орон нутаг</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="interest">Таны сонирхол (Tag)</label>
-        <input type="text" id="interest" class="form-control" placeholder="Жишээ нь: Ном унших, Аялал" required />
-      </div>
-
-      <button type="submit" class="btn-submit" id="submitBtn">Бүртгүүлэх</button>
-    </form>
-
-    <a href="index.html" class="back-link">← Нүүр хуудас руу буцах</a>
+<div id="stackWrap" style="display:none; display:flex; flex-direction:column; align-items:center;">
+  <div class="stack" id="stack"></div>
+  <div class="actions">
+    <button class="action-btn nope" id="btnNope" title="Алгасах">✕</button>
+    <button class="action-btn like" id="btnLike" title="Таалагдлаа">♥</button>
   </div>
+</div>
 
-  <!-- Firebase Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+<!-- Firebase Scripts -->
 
-    // Firebase тохиргоог байгаль орчны хувьсагчаас авах
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'olboo-dating-app';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-      apiKey: "", // Автоматаар ажиллах тул хоосон үлдээнэ
-      authDomain: "dummy-dating-project.firebaseapp.com",
-      projectId: "dummy-dating-project",
-      storageBucket: "dummy-dating-project.appspot.com",
-      messagingSenderId: "123456",
-      appId: "1:123456:web:123"
-    };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, collection, doc, getDocs, setDoc, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'olboo-dating-app';
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+  apiKey: "",
+  authDomain: "dummy-dating-project.firebaseapp.com",
+  projectId: "dummy-dating-project",
+  storageBucket: "dummy-dating-project.appspot.com",
+  messagingSenderId: "123456",
+  appId: "1:123456:web:123"
+};
 
-    let activeUser = null;
+let app, auth, db;
+let activeUser = null;
+let useMockMode = false;
 
-    // Нэвтрэлт шалгах
-    const initAuth = async () => {
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (err) {
-        console.error("Auth error:", err);
-      }
-    };
-    initAuth();
+try {
+  if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "") {
+    console.warn("Firebase тохиргоо хоосон байна. Туршилтын горимд шилжлээ.");
+    useMockMode = true;
+  } else {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  }
+} catch (e) {
+  console.error("Firebase init error, switching to Mock Mode:", e);
+  useMockMode = true;
+}
 
-    onAuthStateChanged(auth, (user) => {
-      activeUser = user;
-      if (user) {
-        // Хэрэглэгч аль хэдийн бүртгүүлсэн бол match.html рүү шилжүүлэх
-        if (localStorage.getItem('currentUser')) {
-          window.location.href = 'match.html';
-        }
-      }
-    });
+// ── Улсын хэрэглэгчийн мэдээлэл (register.html-ээс localStorage-д хадгалагдсан) ──
+const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-    // Форм илгээх үйлдэл
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      if (!activeUser) {
-        alert("Холболт түр саатлаа. Дахин оролдоно уу.");
-        return;
-      }
+let candidates = [];
+let currentIndex = 0;
 
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Уншиж байна...";
+const stackEl = document.getElementById('stack');
+const loadingState = document.getElementById('loadingState');
+const emptyState = document.getElementById('emptyState');
+const stackWrap = document.getElementById('stackWrap');
+const toast = document.getElementById('toast');
 
-      const name = document.getElementById('name').value;
-      const age = parseInt(document.getElementById('age').value);
-      const gender = document.getElementById('gender').value;
-      const location = document.getElementById('location').value;
-      const interest = document.getElementById('interest').value;
+async function loadCandidates() {
+  if (useMockMode || !db) {
+    // ── Туршилтын горим: жишээ хэрэглэгчид ──
+    candidates = [
+      { uid: 'demo1', name: 'Анужин', age: 27, gender: 'female', location: 'Хан-Уул', interest: 'Ном унших, Аялал' },
+      { uid: 'demo2', name: 'Батбаяр', age: 31, gender: 'male', location: 'Баянзүрх', interest: 'Спорт, Кино' },
+      { uid: 'demo3', name: 'Оюунаа', age: 25, gender: 'female', location: 'Сүхбаатар', interest: 'Хөгжим, Кофе' },
+      { uid: 'demo4', name: 'Төмөрбаатар', age: 29, gender: 'male', location: 'Чингэлтэй', interest: 'Гал тогоо, Тоглоом' }
+    ];
+    renderStack();
+    return;
+  }
 
-      const userData = {
-        uid: activeUser.uid,
-        name,
-        age,
-        gender,
-        location,
-        interest,
-        avatar: name.charAt(0).toUpperCase(),
-        status: "pending", // Шалгагдаж буй
-        registeredAt: new Date().toISOString()
-      };
-
-      try {
-        // RULE 1 Дагуу бичих: /artifacts/{appId}/public/data/users/{userId}
-        const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
-        await setDoc(userDocRef, userData);
-
-        // Хөтөч дээрээ давхар хадгална
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-
-        // Амжилттай мэдэгдэл харуулах
-        const toast = document.getElementById('toast');
-        toast.style.display = 'block';
-
-        setTimeout(() => {
-          window.location.href = 'match.html';
-        }, 1500);
-
-      } catch (error) {
-        console.error("Бодит санд хадгалахад алдаа гарлаа:", error);
-        alert("Алдаа гарлаа. Дахин оролдоно уу.");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Бүртгүүлэх";
+  try {
+    const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+    const snap = await getDocs(usersRef);
+    const all = [];
+    snap.forEach(d => {
+      const data = d.data();
+      if (!currentUser || data.uid !== currentUser.uid) {
+        all.push(data);
       }
     });
-  </script>
+    candidates = all;
+    renderStack();
+  } catch (err) {
+    console.error("Хэрэглэгчдийг татахад алдаа гарлаа:", err);
+    candidates = [];
+    renderStack();
+  }
+}
+
+function renderStack() {
+  loadingState.style.display = 'none';
+
+  if (candidates.length === 0 || currentIndex >= candidates.length) {
+    stackWrap.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+  stackWrap.style.display = 'flex';
+  stackEl.innerHTML = '';
+
+  // Дараагийн 3 картыг л render хийнэ (гүйцэтгэл сайжруулах)
+  const visible = candidates.slice(currentIndex, currentIndex + 3).reverse();
+  visible.forEach((person, i) => {
+    const depth = visible.length - 1 - i;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.zIndex = 10 - depth;
+    card.style.transform = `scale(${1 - depth * 0.04}) translateY(${depth * 10}px)`;
+    card.style.opacity = depth > 2 ? 0 : 1;
+    card.innerHTML = `
+      <div class="card-photo">
+        ${(person.name || '?').charAt(0).toUpperCase()}
+        <span class="badge">${person.gender === 'female' ? 'Эмэгтэй' : 'Эрэгтэй'}</span>
+      </div>
+      <div class="card-info">
+        <div class="card-name">${person.name || 'Тодорхойгүй'} <span class="age">${person.age || ''}</span></div>
+        <div class="card-loc">📍 ${person.location || 'Байршилгүй'}</div>
+        <span class="card-tag">${person.interest || 'Сонирхол оруулаагүй'}</span>
+      </div>
+    `;
+    if (depth === 0) attachSwipe(card, person);
+    stackEl.appendChild(card);
+  });
+}
+
+function attachSwipe(card, person) {
+  let startX = 0, startY = 0, dx = 0, dragging = false;
+
+  function onDown(x, y) { dragging = true; startX = x; startY = y; card.style.transition = 'none'; }
+  function onMove(x, y) {
+    if (!dragging) return;
+    dx = x - startX;
+    const dy = y - startY;
+    card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 18}deg)`;
+  }
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    card.style.transition = 'transform 0.3s ease';
+    if (dx > 100) {
+      swipeAway(card, 1, person);
+    } else if (dx < -100) {
+      swipeAway(card, -1, person);
+    } else {
+      card.style.transform = '';
+    }
+    dx = 0;
+  }
+
+  card.addEventListener('mousedown', e => onDown(e.clientX, e.clientY));
+  window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  window.addEventListener('mouseup', onUp);
+  card.addEventListener('touchstart', e => onDown(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  card.addEventListener('touchmove', e => onMove(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  card.addEventListener('touchend', onUp);
+
+  document.getElementById('btnLike').onclick = () => swipeAway(card, 1, person);
+  document.getElementById('btnNope').onclick = () => swipeAway(card, -1, person);
+}
+
+function swipeAway(card, dir, person) {
+  card.style.transform = `translate(${dir * 500}px, -40px) rotate(${dir * 30}deg)`;
+  card.style.opacity = '0';
+  if (dir === 1) handleLike(person);
+  setTimeout(() => {
+    currentIndex++;
+    renderStack();
+  }, 300);
+}
+
+async function handleLike(person) {
+  if (useMockMode || !db || !currentUser) {
+    showToast(`Та ${person.name}-д таалагдлаа гэж тэмдэглэлээ 💕`);
+    return;
+  }
+  try {
+    const likeRef = doc(db, 'artifacts', appId, 'public', 'data', 'likes', `${currentUser.uid}_${person.uid}`);
+    await setDoc(likeRef, {
+      fromUid: currentUser.uid,
+      toUid: person.uid,
+      createdAt: new Date().toISOString()
+    });
+    showToast(`Та ${person.name}-д таалагдлаа гэж тэмдэглэлээ 💕`);
+  } catch (err) {
+    console.error("Like хадгалахад алдаа гарлаа:", err);
+  }
+}
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 1800);
+}
+
+// ── Нэвтрэлт, дараа нь өгөгдөл татах ──
+if (!useMockMode && auth) {
+  const initAuth = async () => {
+    try {
+      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await signInWithCustomToken(auth, __initial_auth_token);
+      } else {
+        await signInAnonymously(auth);
+      }
+    } catch (err) {
+      console.error("Auth error:", err);
+      useMockMode = true;
+    }
+    loadCandidates();
+  };
+  onAuthStateChanged(auth, (user) => { activeUser = user; });
+  initAuth();
+} else {
+  loadCandidates();
+}
+</script>
+
 </body>
 </html>
