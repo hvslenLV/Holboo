@@ -3,15 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Холбоо — Хосоо ол</title>
-  
-  <script>
-    // МАШ ЧУХАЛ: Хэрэглэгч бүртгүүлээгүй бол match.html рүү шууд орохыг зөвшөөрөхгүй, register.html рүү буцаана
-    if (!localStorage.getItem('currentUser')) {
-      window.location.href = 'register.html';
-    }
-  </script>
-
+  <title>Холбоо — Бүртгүүлэх</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -34,327 +26,287 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding-top: 80px;
-    }
-
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 48px;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-    }
-    .logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      color: var(--gold);
-      text-decoration: none;
-    }
-    .logo span { color: var(--rose); }
-
-    .nav-user {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 12px;
-    }
-    .user-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--rose);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700;
-      font-size: 0.9rem;
-    }
-    .btn-logout {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 6px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      margin-left: 8px;
-      transition: all 0.2s;
-    }
-    .btn-logout:hover {
-      color: #ff4a5a;
-      border-color: #ff4a5a;
+      justify-content: center;
+      padding: 24px;
     }
 
-    /* ── CONTAINER ── */
-    .container {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 24px;
-    }
-
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    /* ── MATCH INTERACTION ── */
-    .match-box {
+    .register-container {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 40px;
-      text-align: center;
-      max-width: 480px;
-      margin: 0 auto;
-      box-shadow: 0 12px 36px rgba(0,0,0,0.2);
-      position: relative;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
     }
 
-    .profile-img {
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--gold), var(--rose));
-      margin: 0 auto 20px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 3.5rem;
-      font-weight: 700;
-      color: #fff;
-      box-shadow: 0 8px 24px rgba(193,96,122,0.3);
-    }
-
-    .profile-name {
+    .logo {
       font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      font-weight: 700;
+      font-size: 2rem;
+      color: var(--gold);
+      text-align: center;
       margin-bottom: 8px;
     }
+    .logo span { color: var(--rose); }
 
-    .profile-meta {
-      color: var(--gold);
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-      font-weight: 500;
-    }
-
-    .profile-bio {
+    .title {
+      text-align: center;
+      font-size: 1.1rem;
       color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-
-    .interest-badge {
-      display: inline-block;
-      padding: 6px 16px;
-      background: rgba(193,96,122,0.15);
-      border: 1px solid rgba(193,96,122,0.3);
-      color: var(--rose);
-      border-radius: 50px;
-      font-size: 0.8rem;
-      font-weight: 500;
       margin-bottom: 32px;
     }
 
-    .actions {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
+    .form-group {
+      margin-bottom: 20px;
     }
 
-    .btn-action {
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s;
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--gold-lt);
+      margin-bottom: 8px;
+      font-weight: 500;
     }
 
-    .btn-action.dislike:hover {
-      background: #3a1e25;
-      border-color: #632230;
-    }
-    .btn-action.like {
-      background: var(--rose);
-      border: none;
-      color: white;
-      box-shadow: 0 6px 16px rgba(193,96,122,0.3);
-    }
-    .btn-action.like:hover {
-      transform: scale(1.08);
-      box-shadow: 0 8px 20px rgba(193,96,122,0.5);
-    }
-
-    /* ── MESSAGE DRAWER ── */
-    .message-container {
-      margin-top: 40px;
-      display: none;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 24px;
-      text-align: left;
-    }
-    .message-header {
-      font-weight: 600;
-      color: var(--gold);
-      margin-bottom: 16px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .message-input-area {
-      display: flex;
-      gap: 12px;
-    }
-    .message-input {
-      flex: 1;
+    .form-control {
+      width: 100%;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 12px 16px;
+      padding: 14px 16px;
       color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
     }
-    .btn-send {
-      background: var(--rose);
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--rose);
+    }
+
+    .row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .row .form-group {
+      flex: 1;
+    }
+
+    select.form-control {
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--rose), #a8405a);
       color: #fff;
       border: none;
-      padding: 0 24px;
+      padding: 16px;
       border-radius: 12px;
-      cursor: pointer;
+      font-size: 1rem;
       font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 6px 20px rgba(193,96,122,0.25);
     }
 
-    /* Toast */
+    .btn-submit:disabled {
+      background: var(--muted);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--gold);
+    }
+
     .toast {
       position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--rose);
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 50px;
+      top: 24px;
+      background: #2b5c3f;
+      border: 1px solid #3d8c5a;
+      color: #e6f7ed;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
       display: none;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      z-index: 200;
-    }
-
-    @media(max-width: 640px) {
-      nav { padding: 16px 20px; }
-      .match-box { padding: 24px 16px; }
+      z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     }
   </style>
 </head>
 <body>
 
-  <div class="toast" id="toast">Та хоёр таарлаа! 💖</div>
+  <div class="toast" id="toast">Бүртгэл амжилттай үүсэв! Түр хүлээнэ үү...</div>
 
-  <!-- NAV -->
-  <nav>
-    <a href="index.html" class="logo">Хол<span>бо</span>о</a>
-    <div class="nav-user">
-      <div class="user-avatar" id="navAvatar">У</div>
-      <span id="navName">Хэрэглэгч</span>
-      <button class="btn-logout" onclick="logoutUser()">Гарах</button>
-    </div>
-  </nav>
+  <div class="register-container">
+    <div class="logo">Хол<span>бо</span>о</div>
+    <div class="title">Хосоо олох анхны алхам</div>
 
-  <div class="container">
-    <h2 class="section-title">Таны дараагийн таарц</h2>
-
-    <div class="match-box" id="profileBox">
-      <div class="profile-img" id="pAvatar">А</div>
-      <div class="profile-name" id="pName">Алтанцэцэг</div>
-      <div class="profile-meta" id="pMeta">42 нас • Сүхбаатар дүүрэг</div>
-      <div class="profile-bio" id="pBio">Би аялах, шинэ зүйлс сурах дуртай. Эерэг халуун дулаан яриа өрнүүлэх сайн хань хайж байна.</div>
-      <span class="interest-badge" id="pInterest">Аялах сонирхолтой</span>
-
-      <div class="actions">
-        <button class="btn-action dislike" onclick="nextProfile()">❌</button>
-        <button class="btn-action like" onclick="likeProfile()">💗</button>
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="name">Таны нэр</label>
+        <input type="text" id="name" class="form-control" placeholder="Жишээ нь: Анужин" required />
       </div>
 
-      <!-- Чатлах хэсэг -->
-      <div class="message-container" id="msgContainer">
-        <div class="message-header">💬 Зурвас илгээх</div>
-        <div class="message-input-area">
-          <input type="text" class="message-input" id="msgText" placeholder="Сайн уу, танилцаж болох уу?..." />
-          <button class="btn-send" onclick="sendMessage()">Илгээх</button>
+      <div class="row">
+        <div class="form-group">
+          <label for="age">Нас</label>
+          <input type="number" id="age" class="form-control" min="18" max="100" placeholder="40" required />
+        </div>
+        <div class="form-group">
+          <label for="gender">Хүйс</label>
+          <select id="gender" class="form-control" required>
+            <option value="" disabled selected>Сонгох</option>
+            <option value="female">Эмэгтэй</option>
+            <option value="male">Эрэгтэй</option>
+          </select>
         </div>
       </div>
-    </div>
+
+      <div class="form-group">
+        <label for="location">Байршил / Дүүрэг</label>
+        <select id="location" class="form-control" required>
+          <option value="" disabled selected>Сонгох</option>
+          <option value="Хан-Уул">Хан-Уул</option>
+          <option value="Баянзүрх">Баянзүрх</option>
+          <option value="Сүхбаатар">Сүхбаатар</option>
+          <option value="Чингэлтэй">Чингэлтэй</option>
+          <option value="Баянгол">Баянгол</option>
+          <option value="Сонгинохайрхан">Сонгинохайрхан</option>
+          <option value="Орон нутаг">Орон нутаг</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="interest">Таны сонирхол (Tag)</label>
+        <input type="text" id="interest" class="form-control" placeholder="Жишээ нь: Ном унших, Аялал" required />
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">Бүртгүүлэх</button>
+    </form>
+
+    <a href="index.html" class="back-link">← Нүүр хуудас руу буцах</a>
   </div>
 
-  <script>
-    // Mock Profiles
-    const mockProfiles = [
-      { name: "Баярсайхан", age: 48, location: "Хан-Уул", bio: "Спорт болон байгальд дуртай. Амралтын өдрүүдээр салхинд гарах дуртай хүнтэй танилцана.", interest: "Байгаль дуртай", gender: "male", avatar: "Б" },
-      { name: "Солонго", age: 41, location: "Баянзүрх", bio: "Урлаг сонирхдог, гэртээ тухтай орчин бүрдүүлэх дуртай. Ухаалаг, төлөв даруу хань хайж байна.", interest: "Урлаг сонирхдог", gender: "female", avatar: "С" },
-      { name: "Пүрэвсүрэн", age: 50, location: "Чингэлтэй", bio: "Унших, хувийн хөгжилдөө анхаардаг. Харилцан яриа маш чухал гэж боддог.", interest: "Ном уншдаг", gender: "male", avatar: "П" },
-      { name: "Гэрэлмаа", age: 45, location: "Баянгол", bio: "Хоол хийх дуртай, гэр бүлсэг. Хөгжилтэй, нээлттэй найдвартай залуутай танилцана.", interest: "Хоол хийх", gender: "female", avatar: "Г" }
-    ];
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    let currentIdx = 0;
+    // Firebase тохиргоог байгаль орчны хувьсагчаас авах
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'olboo-dating-app';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+      apiKey: "", // Автоматаар ажиллах тул хоосон үлдээнэ
+      authDomain: "dummy-dating-project.firebaseapp.com",
+      projectId: "dummy-dating-project",
+      storageBucket: "dummy-dating-project.appspot.com",
+      messagingSenderId: "123456",
+      appId: "1:123456:web:123"
+    };
 
-    window.onload = function() {
-      const stored = localStorage.getItem('currentUser');
-      if (stored) {
-        const user = JSON.parse(stored);
-        document.getElementById('navName').textContent = user.name;
-        document.getElementById('navAvatar').textContent = user.name.charAt(0).toUpperCase();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let activeUser = null;
+
+    // Нэвтрэлт шалгах
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.error("Auth error:", err);
       }
-      showProfile();
-    }
+    };
+    initAuth();
 
-    function showProfile() {
-      if(currentIdx >= mockProfiles.length) {
-        currentIdx = 0;
+    onAuthStateChanged(auth, (user) => {
+      activeUser = user;
+      if (user) {
+        // Хэрэглэгч аль хэдийн бүртгүүлсэн бол match.html рүү шилжүүлэх
+        if (localStorage.getItem('currentUser')) {
+          window.location.href = 'match.html';
+        }
       }
-      const p = mockProfiles[currentIdx];
-      document.getElementById('pAvatar').textContent = p.avatar;
-      document.getElementById('pName').textContent = p.name;
-      document.getElementById('pMeta').textContent = `${p.age} нас • ${p.location} дүүрэг`;
-      document.getElementById('pBio').textContent = p.bio;
-      document.getElementById('pInterest').textContent = p.interest;
-      document.getElementById('msgContainer').style.display = 'none';
-    }
+    });
 
-    function nextProfile() {
-      currentIdx++;
-      showProfile();
-    }
-
-    function likeProfile() {
-      const toast = document.getElementById('toast');
-      toast.style.display = 'block';
-      setTimeout(() => {
-        toast.style.display = 'none';
-        document.getElementById('msgContainer').style.display = 'block';
-      }, 1000);
-    }
-
-    function sendMessage() {
-      const txt = document.getElementById('msgText').value;
-      if (txt.trim() === '') return;
+    // Форм илгээх үйлдэл
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
       
-      const toast = document.getElementById('toast');
-      toast.textContent = 'Зурвас илгээгдлээ! 💌';
-      toast.style.display = 'block';
-      document.getElementById('msgText').value = '';
-      
-      setTimeout(() => {
-        toast.style.display = 'none';
-        toast.textContent = 'Та хоёр таарлаа! 💖';
-        nextProfile();
-      }, 1500);
-    }
+      if (!activeUser) {
+        alert("Холболт түр саатлаа. Дахин оролдоно уу.");
+        return;
+      }
 
-    // Системээс гарах функц
-    function logoutUser() {
-      localStorage.removeItem('currentUser'); // Санах ойг устгах
-      window.location.href = 'index.html'; // Нүүр хуудас руу шилжих
-    }
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Уншиж байна...";
+
+      const name = document.getElementById('name').value;
+      const age = parseInt(document.getElementById('age').value);
+      const gender = document.getElementById('gender').value;
+      const location = document.getElementById('location').value;
+      const interest = document.getElementById('interest').value;
+
+      const userData = {
+        uid: activeUser.uid,
+        name,
+        age,
+        gender,
+        location,
+        interest,
+        avatar: name.charAt(0).toUpperCase(),
+        status: "pending", // Шалгагдаж буй
+        registeredAt: new Date().toISOString()
+      };
+
+      try {
+        // RULE 1 Дагуу бичих: /artifacts/{appId}/public/data/users/{userId}
+        const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
+        await setDoc(userDocRef, userData);
+
+        // Хөтөч дээрээ давхар хадгална
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+
+        // Амжилттай мэдэгдэл харуулах
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+
+        setTimeout(() => {
+          window.location.href = 'match.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error("Бодит санд хадгалахад алдаа гарлаа:", error);
+        alert("Алдаа гарлаа. Дахин оролдоно уу.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Бүртгүүлэх";
+      }
+    });
   </script>
-
 </body>
 </html>
