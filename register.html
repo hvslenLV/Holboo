@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="mn">
 <head>
   <meta charset="UTF-8" />
@@ -8,496 +9,699 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:       #1A0E1C;
-      --bg2:      #221428;
-      --gold:     #E8A87C;
-      --gold-lt:  #F2D4C2;
-      --rose:     #C1607A;
-      --text:     #F5EDE8;
-      --muted:    #9C8A86;
-      --card:     #2B1830;
-      --border:   #3D2240;
+      --bg:     #1A0E1C;
+      --bg2:    #221428;
+      --gold:   #E8A87C;
+      --rose:   #C1607A;
+      --text:   #F5EDE8;
+      --muted:  #9C8A86;
+      --card:   #2B1830;
+      --border: #3D2240;
+      --input:  #1f1226;
     }
-
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      position: relative;
-      overflow-x: hidden;
     }
 
-    /* Floating hearts background */
-    .hearts-bg {
-      position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1;
-    }
-    .hearts-bg span {
-      position: absolute;
-      font-size: 1.2rem;
-      opacity: 0;
-      animation: floatHeart linear infinite;
-    }
-    @keyframes floatHeart {
-      0%   { opacity: 0; transform: translateY(0) scale(.8); }
-      10%  { opacity: .12; }
-      90%  { opacity: .06; }
-      100% { opacity: 0; transform: translateY(-100vh) scale(1.1); }
-    }
+```
+/* NAV */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 48px;
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); }
+.logo span { color: var(--rose); }
+.nav-back { color: var(--muted); text-decoration: none; font-size: .88rem; display: flex; align-items: center; gap: 6px; transition: color .2s; }
+.nav-back:hover { color: var(--gold); }
 
-    .register-container {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 40px 32px;
-      width: 100%;
-      max-width: 450px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-      position: relative;
-      z-index: 10;
-    }
+/* LAYOUT */
+.page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 65px);
+}
 
-    .logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      color: var(--gold);
-      text-align: center;
-      margin-bottom: 8px;
-    }
-    .logo span { color: var(--rose); }
+/* LEFT PANEL */
+.left-panel {
+  background: linear-gradient(160deg, #2B1830 0%, #1A0E1C 100%);
+  border-right: 1px solid var(--border);
+  padding: 60px 48px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.left-panel::before {
+  content: '';
+  position: absolute; left: -100px; top: 50%; transform: translateY(-50%);
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(193,96,122,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.left-panel h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem; line-height: 1.2;
+  margin-bottom: 16px;
+}
+.left-panel h2 em { font-style: italic; color: var(--gold); }
+.left-panel p { color: var(--muted); line-height: 1.7; margin-bottom: 40px; font-size: .95rem; }
 
-    .title {
-      text-align: center;
-      font-size: 1.1rem;
-      color: var(--muted);
-      margin-bottom: 28px;
-    }
+.perks { display: flex; flex-direction: column; gap: 18px; }
+.perk { display: flex; align-items: flex-start; gap: 14px; }
+.perk-icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(193,96,122,.12);
+  border: 1px solid rgba(193,96,122,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+.perk-text h4 { font-size: .9rem; font-weight: 600; margin-bottom: 4px; }
+.perk-text p  { font-size: .82rem; color: var(--muted); line-height: 1.5; margin: 0; }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
+.trust-row {
+  margin-top: 40px; padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.trust-avatars { display: flex; }
+.trust-av {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 700; color: #fff;
+  margin-left: -8px;
+}
+.trust-av:first-child { margin-left: 0; }
+.trust-text { font-size: .82rem; color: var(--muted); line-height: 1.4; }
+.trust-text strong { color: var(--gold); }
 
-    .form-group label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--gold-lt);
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
+/* RIGHT PANEL — FORM */
+.right-panel { padding: 60px 48px; overflow-y: auto; }
+.form-header { margin-bottom: 36px; }
+.step-indicator {
+  display: flex; gap: 8px; margin-bottom: 24px;
+}
+.step-dot {
+  height: 4px; border-radius: 2px; flex: 1;
+  background: var(--border); transition: background .3s;
+}
+.step-dot.active { background: var(--rose); }
+.step-dot.done   { background: var(--gold); }
 
-    .form-control {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      transition: border-color 0.2s;
-    }
+.form-header h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 6px; }
+.form-header p  { color: var(--muted); font-size: .88rem; }
 
-    .form-control:focus {
-      outline: none;
-      border-color: var(--rose);
-    }
+/* STEPS */
+.form-step { display: none; }
+.form-step.active { display: block; }
 
-    .row {
-      display: flex;
-      gap: 16px;
-    }
+.field { margin-bottom: 20px; }
+label { display: block; font-size: .82rem; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: .04em; text-transform: uppercase; }
 
-    .row .form-group {
-      flex: 1;
-    }
+input[type=text], input[type=tel], input[type=number], select, textarea {
+  width: 100%;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: .95rem;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(193,96,122,.12);
+}
+input::placeholder, textarea::placeholder { color: rgba(156,138,134,.5); }
+textarea { resize: vertical; min-height: 90px; }
 
-    select.form-control {
-      appearance: none;
-      cursor: pointer;
-    }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-    .btn-submit {
-      width: 100%;
-      background: linear-gradient(135deg, var(--rose), #a8405a);
-      color: #fff;
-      border: none;
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: transform 0.15s, box-shadow 0.2s;
-      box-shadow: 0 6px 20px rgba(193,96,122,0.25);
-    }
+/* Gender select */
+.gender-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gender-btn {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--input);
+  color: var(--muted);
+  font-size: .9rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all .2s;
+}
+.gender-btn.selected {
+  border-color: var(--rose);
+  background: rgba(193,96,122,.1);
+  color: var(--text);
+}
 
-    .btn-submit:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(193,96,122,0.4);
-    }
+/* Photo upload */
+.photo-upload {
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 36px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.photo-upload:hover { border-color: var(--rose); background: rgba(193,96,122,.04); }
+.photo-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.photo-upload .icon { font-size: 2.4rem; margin-bottom: 10px; }
+.photo-upload p { color: var(--muted); font-size: .88rem; }
+.photo-upload strong { color: var(--gold); }
+.photo-preview {
+  display: none;
+  width: 100px; height: 100px; border-radius: 50%;
+  object-fit: cover; margin: 0 auto 12px;
+  border: 3px solid var(--rose);
+}
 
-    .btn-submit:disabled {
-      background: var(--muted);
-      cursor: not-allowed;
-      box-shadow: none;
-    }
+/* Interests */
+.interests-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.int-tag {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  background: var(--input);
+  color: var(--muted);
+  font-size: .82rem;
+  cursor: pointer;
+  transition: all .2s;
+  user-select: none;
+}
+.int-tag.selected {
+  border-color: var(--rose);
+  background: rgba(193,96,122,.12);
+  color: var(--text);
+}
 
-    .btn-ghost {
-      width: 100%;
-      background: transparent;
-      color: var(--gold-lt);
-      border: 1px solid rgba(232,168,124,.25);
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 12px;
-    }
-    .btn-ghost:hover {
-      border-color: var(--gold);
-      background: rgba(232,168,124,.06);
-    }
+/* Premium card */
+.premium-card {
+  background: linear-gradient(135deg, #2B1830, #1f1225);
+  border: 1px solid var(--rose);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.premium-card::before {
+  content: '⭐ Хамгийн их сонгогддог';
+  position: absolute; top: 16px; right: 16px;
+  background: var(--rose);
+  color: #fff; font-size: .68rem; font-weight: 700;
+  padding: 4px 12px; border-radius: 50px;
+  letter-spacing: .06em;
+}
+.premium-card h4 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 4px; }
+.premium-card .price { color: var(--gold); font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; }
+.premium-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.premium-card ul li { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.premium-card ul li::before { content: '✓'; color: var(--gold); font-weight: 700; }
 
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 24px;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: color 0.2s;
-    }
+.free-option {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer;
+}
+.free-option p { font-size: .88rem; color: var(--muted); }
+.free-option strong { color: var(--text); font-size: .95rem; }
 
-    .back-link:hover {
-      color: var(--gold);
-    }
+/* Bank transfer */
+.bank-card {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.bank-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.bank-row:last-child { border-bottom: none; padding-bottom: 0; }
+.bank-row span:first-child { font-size: .82rem; color: var(--muted); }
+.bank-row span:last-child  { font-size: .9rem; font-weight: 600; }
+.copy-btn {
+  background: rgba(232,168,124,.1);
+  border: 1px solid rgba(232,168,124,.2);
+  color: var(--gold);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: .75rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.copy-btn:hover { background: rgba(232,168,124,.2); }
 
-    /* Амжилттай болсон үед харуулах мэдэгдэл */
-    .toast {
-      position: fixed;
-      top: 24px;
-      background: #2b5c3f;
-      border: 1px solid #3d8c5a;
-      color: #e6f7ed;
-      padding: 16px 24px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      display: none;
-      z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      animation: slideDown 0.3s ease-out;
-    }
-    @keyframes slideDown {
-      from { transform: translateY(-20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
+.upload-proof {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: border-color .2s;
+}
+.upload-proof:hover { border-color: var(--gold); }
+.upload-proof input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.upload-proof p { color: var(--muted); font-size: .85rem; margin-top: 8px; }
 
-    /* ── BANK DETAILS ── */
-    .bank-badge {
-      background: #E11C33;
-      color: white;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: inline-block;
-      margin-top: 16px;
-      margin-bottom: 12px;
-      letter-spacing: 0.05em;
-    }
+/* NAV BUTTONS */
+.form-nav {
+  display: flex; gap: 12px; margin-top: 32px;
+}
+.btn-next {
+  flex: 1;
+  background: linear-gradient(135deg, var(--rose), #a8405a);
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 1rem; font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: transform .15s, box-shadow .2s;
+  box-shadow: 0 6px 20px rgba(193,96,122,.3);
+}
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(193,96,122,.45); }
+.btn-prev {
+  padding: 16px 24px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 12px;
+  font-size: .95rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: border-color .2s, color .2s;
+}
+.btn-prev:hover { border-color: var(--gold); color: var(--gold); }
 
-    .bank-info-box {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      text-align: left;
-      margin-bottom: 24px;
-    }
-    
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 0.85rem;
-      border-bottom: 1px dashed rgba(255,255,255,0.05);
-      padding-bottom: 6px;
-    }
-    .info-row:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
-    .info-lbl { color: var(--muted); }
-    .info-val { font-weight: 600; color: var(--text); }
-    .info-val.highlight { color: var(--gold); font-size: 1rem; }
+/* SUCCESS */
+.success-screen {
+  display: none;
+  text-align: center;
+  padding: 40px 0;
+}
+.success-screen .big-icon { font-size: 4rem; margin-bottom: 20px; animation: popIn .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.success-screen h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 12px; }
+.success-screen p  { color: var(--muted); line-height: 1.7; font-size: .92rem; }
+.success-screen .check-items { margin: 28px auto; max-width: 320px; text-align: left; display: flex; flex-direction: column; gap: 12px; }
+.check-item { display: flex; align-items: center; gap: 10px; font-size: .88rem; color: var(--muted); }
+.check-item span { color: var(--gold); font-size: 1rem; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .page { grid-template-columns: 1fr; }
+  .left-panel { display: none; }
+  .right-panel { padding: 32px 20px; }
+  nav { padding: 16px 20px; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+```
+
   </style>
 </head>
 <body>
 
-  <!-- Floating hearts bg -->
-  <div class="hearts-bg" id="heartsBg"></div>
+<nav>
+  <div class="logo">Хол<span>бо</span>о</div>
+  <a class="nav-back" href="index.html">← Нүүр хуудас руу</a>
+</nav>
 
-  <div class="toast" id="toast">Бүртгэл амжилттай үүсэв! 🎉</div>
+<div class="page">
 
-  <div class="register-container">
-    <div class="logo">Хол<span>бо</span>о</div>
+  <!-- LEFT -->
 
-    <!-- АЛХАМ 1: БҮРТГЭЛИЙН ФОРМ -->
-    <div id="stepForm">
-      <div class="title">Хосоо олох анхны алхам</div>
-      <!-- form tag дээр шууд onsubmit preventDefault зааж өгч, хуудас дахин ачаалахаас сэргийлэв -->
-      <form id="registerForm" onsubmit="event.preventDefault();">
-        <div class="form-group">
-          <label for="name">Таны нэр</label>
-          <input type="text" id="name" class="form-control" placeholder="Жишээ нь: Анужин" required />
-        </div>
+  <div class="left-panel">
+    <h2>Таны <em>жинхэнэ хос</em><br/>энд байна</h2>
+    <p>Бүртгүүлэхэд 3 минут л хэрэгтэй. Баталгаажсан профайл, аюулгүй орчин.</p>
 
-        <div class="row">
-          <div class="form-group">
-            <label for="age">Нас</label>
-            <input type="number" id="age" class="form-control" min="18" max="100" placeholder="40" required />
-          </div>
-          <div class="form-group">
-            <label for="gender">Хүйс</label>
-            <select id="gender" class="form-control" required>
-              <option value="" disabled selected>Сонгох</option>
-              <option value="female">Эмэгтэй</option>
-              <option value="male">Эрэгтэй</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="location">Байршил / Дүүрэг</label>
-          <select id="location" class="form-control" required>
-            <option value="" disabled selected>Сонгох</option>
-            <option value="Хан-Уул">Хан-Уул</option>
-            <option value="Баянзүрх">Баянзүрх</option>
-            <option value="Сүхбаатар">Сүхбаатар</option>
-            <option value="Чингэлтэй">Чингэлтэй</option>
-            <option value="Баянгол">Баянгол</option>
-            <option value="Сонгинохайрхан">Сонгинохайрхан</option>
-            <option value="Орон нутаг">Орон нутаг</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="interest">Таны сонирхол (Tag)</label>
-          <input type="text" id="interest" class="form-control" placeholder="Жишээ нь: Ном унших, Аялал" required />
-        </div>
-
-        <button type="submit" class="btn-submit" id="submitBtn">Бүртгүүлэх</button>
-      </form>
-      <a href="index.html" class="back-link">← Нүүр хуудас руу буцах</a>
+```
+<div class="perks">
+  <div class="perk">
+    <div class="perk-icon">🔒</div>
+    <div class="perk-text">
+      <h4>100% аюулгүй</h4>
+      <p>Бүх профайл гараар баталгаажна. Хуурамч хаяг нэвтрэхгүй.</p>
     </div>
-
-    <!-- АЛХАМ 2: ХААН БАНК ТӨЛБӨРИЙН ХЭСЭГ (Сонголттой) -->
-    <div id="stepPayment" style="display: none;">
-      <div class="title" style="color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.35rem; margin-bottom: 8px;">Бүртгэл амжилттай! 🎉</div>
-      <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin-bottom: 16px;">
-        Одоо Premium багцаа идэвхжүүлж, хязгааргүй чатлах болон бусад олон боломжийг аваарай.
-      </p>
-
-      <div class="bank-badge">KHAN BANK</div>
-      
-      <div class="bank-info-box">
-        <div class="info-row">
-          <div class="info-lbl">Дансны дугаар:</div>
-          <div class="info-val highlight">5404840683</div>
-        </div>
-        <div class="info-row">
-          <div class="info-lbl">Хүлээн авагч нэр:</div>
-          <div class="info-val">Хүсэлдалай .О</div>
-        </div>
-        <div class="info-row">
-          <div class="info-lbl">Шилжүүлэх дүн:</div>
-          <div class="info-val highlight">19,900 ₮</div>
-        </div>
-        <div class="info-row">
-          <div class="info-lbl">Гүйлгээний утга:</div>
-          <div class="info-val" style="color: var(--rose); font-weight: bold;" id="dynRef">Анужин Premium</div>
-        </div>
-      </div>
-
-      <button class="btn-submit" id="btnPaid">Шилжүүлсэн, бэлэн боллоо</button>
-      <button class="btn-ghost" id="btnFree">Үнэгүй хувилбараар үргэлжлүүлэх</button>
+  </div>
+  <div class="perk">
+    <div class="perk-icon">🎯</div>
+    <div class="perk-text">
+      <h4>Тохирох таарц</h4>
+      <p>Нас, байршил, сонирхлоор тохируулсан санал болголт.</p>
     </div>
+  </div>
+  <div class="perk">
+    <div class="perk-icon">💌</div>
+    <div class="perk-text">
+      <h4>Хувийн мессеж</h4>
+      <p>Таалагдсан хүнтэйгээ шууд харилцаарай.</p>
+    </div>
+  </div>
+</div>
+
+<div class="trust-row">
+  <div class="trust-avatars">
+    <div class="trust-av" style="background:linear-gradient(135deg,#C1607A,#8B2E4A);">Н</div>
+    <div class="trust-av" style="background:linear-gradient(135deg,#5B8FB9,#2C5282);">Б</div>
+    <div class="trust-av" style="background:linear-gradient(135deg,#7B9E5B,#3D5C2A);">О</div>
+    <div class="trust-av" style="background:linear-gradient(135deg,#B9855B,#7A4A20);">Д</div>
+  </div>
+  <div class="trust-text">
+    <strong>1,200+</strong> хэрэглэгч бүртгэлтэй.<br/>
+    Өнөөдөр та ч нэгдэнэ үү?
+  </div>
+</div>
+```
 
   </div>
 
-  <!-- Firebase Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  <!-- RIGHT -->
 
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'olboo-dating-app';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-      apiKey: "", // Хэрэв Vercel дээр хоосон байвал систем автоматаар туршилтын горимд шилжинэ
-      authDomain: "dummy-dating-project.firebaseapp.com",
-      projectId: "dummy-dating-project",
-      storageBucket: "dummy-dating-project.appspot.com",
-      messagingSenderId: "123456",
-      appId: "1:123456:web:123"
-    };
+  <div class="right-panel">
 
-    let app, auth, db;
-    let activeUser = null;
-    let tempUserData = null;
-    let useMockMode = false;
+```
+<!-- Step indicator -->
+<div class="step-indicator">
+  <div class="step-dot active" id="dot1"></div>
+  <div class="step-dot" id="dot2"></div>
+  <div class="step-dot" id="dot3"></div>
+  <div class="step-dot" id="dot4"></div>
+</div>
 
-    // Firebase-ийг аюулгүй тохируулах (Алдаа гарвал Mock Mode-д шилжинэ)
-    try {
-      if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "") {
-        console.warn("Firebase тохиргоо хоосон байна. Туршилтын горимд шилжлээ.");
-        useMockMode = true;
-      } else {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
+<!-- STEP 1: Basic info -->
+<div class="form-step active" id="step1">
+  <div class="form-header">
+    <h3>Үндсэн мэдээлэл</h3>
+    <p>Алхам 1/4 — Таны тухай товч мэдэгдэнэ үү</p>
+  </div>
 
-        const initAuth = async () => {
-          try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-              await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-              await signInAnonymously(auth);
-            }
-          } catch (err) {
-            console.error("Auth error:", err);
-            useMockMode = true;
-          }
-        };
-        initAuth();
+  <div class="field">
+    <label>Нэр</label>
+    <input type="text" id="name" placeholder="Таны нэр" />
+  </div>
 
-        onAuthStateChanged(auth, (user) => {
-          activeUser = user;
-        });
-      }
-    } catch (e) {
-      console.error("Firebase init error, switching to Mock Mode:", e);
-      useMockMode = true;
+  <div class="grid-2">
+    <div class="field">
+      <label>Нас</label>
+      <input type="number" id="age" placeholder="40" min="35" max="65" />
+    </div>
+    <div class="field">
+      <label>Утасны дугаар</label>
+      <input type="tel" id="phone" placeholder="9999 9999" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Хүйс</label>
+    <div class="gender-group">
+      <button class="gender-btn" onclick="selectGender(this,'Эрэгтэй')">👨 Эрэгтэй</button>
+      <button class="gender-btn" onclick="selectGender(this,'Эмэгтэй')">👩 Эмэгтэй</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Дүүрэг</label>
+    <select id="district">
+      <option value="" disabled selected>Дүүргээ сонго</option>
+      <option>Баянгол</option>
+      <option>Баянзүрх</option>
+      <option>Сүхбаатар</option>
+      <option>Хан-Уул</option>
+      <option>Чингэлтэй</option>
+      <option>Налайх</option>
+      <option>Багануур</option>
+      <option>Сонгинохайрхан</option>
+      <option>Орон нутаг</option>
+    </select>
+  </div>
+
+  <div class="form-nav">
+    <button class="btn-next" onclick="nextStep(1)">Үргэлжлүүлэх →</button>
+  </div>
+</div>
+
+<!-- STEP 2: Photo + About -->
+<div class="form-step" id="step2">
+  <div class="form-header">
+    <h3>Профайл зураг</h3>
+    <p>Алхам 2/4 — Зураг тавиад өөрийн тухай бичнэ үү</p>
+  </div>
+
+  <div class="field">
+    <label>Профайл зураг</label>
+    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+      <img class="photo-preview" id="photoPreview" />
+      <div class="icon" id="uploadIcon">📸</div>
+      <p><strong>Зураг оруулах</strong><br/>JPG, PNG • Хамгийн ихдээ 5MB</p>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="previewPhoto(this)" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Өөрийн тухай</label>
+    <textarea id="about" placeholder="Та хэрхэн хүн бэ? Юу дуртай вэ? Ямар хос хайж байна вэ?..."></textarea>
+  </div>
+
+  <div class="field">
+    <label>Сонирхол (3-аас дээш сонго)</label>
+    <div class="interests-grid" id="interestsGrid">
+      <span class="int-tag" onclick="toggleInterest(this)">🏔️ Аялал</span>
+      <span class="int-tag" onclick="toggleInterest(this)">📚 Ном</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🍳 Хоол хийх</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🎵 Хөгжим</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🏃 Спорт</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🌿 Байгаль</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🎬 Кино</span>
+      <span class="int-tag" onclick="toggleInterest(this)">☕ Кофе</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🐕 Амьтан</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🌸 Цэцэрлэг</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🧘 Медитаци</span>
+      <span class="int-tag" onclick="toggleInterest(this)">🎨 Урлаг</span>
+    </div>
+  </div>
+
+  <div class="form-nav">
+    <button class="btn-prev" onclick="prevStep(2)">← Буцах</button>
+    <button class="btn-next" onclick="nextStep(2)">Үргэлжлүүлэх →</button>
+  </div>
+</div>
+
+<!-- STEP 3: Plan -->
+<div class="form-step" id="step3">
+  <div class="form-header">
+    <h3>Эрх сонгох</h3>
+    <p>Алхам 3/4 — Үнэгүй эхэлж болно, дурын үед шилжинэ</p>
+  </div>
+
+  <div class="premium-card" onclick="selectPlan('premium')" id="planPremium" style="cursor:pointer">
+    <h4>Premium эрх</h4>
+    <div class="price">₮19,900 <span style="font-size:.9rem;color:var(--muted);font-weight:400">/сар</span></div>
+    <ul>
+      <li>Хязгааргүй таарч харах</li>
+      <li>Хязгааргүй мессеж илгээх</li>
+      <li>Миний профайлыг хэн харсан</li>
+      <li>Verified badge — найдвартай тэмдэг</li>
+      <li>Хайлтын эхэнд гарч ирэх</li>
+    </ul>
+  </div>
+
+  <div class="free-option" onclick="selectPlan('free')" id="planFree">
+    <div>
+      <strong>Үнэгүй хувилбар</strong>
+      <p>Өдөрт 5 таарч харах, 3 мессеж</p>
+    </div>
+    <span style="color:var(--muted);font-size:1.2rem">›</span>
+  </div>
+
+  <div class="form-nav" style="margin-top:24px">
+    <button class="btn-prev" onclick="prevStep(3)">← Буцах</button>
+    <button class="btn-next" onclick="nextStep(3)">Үргэлжлүүлэх →</button>
+  </div>
+</div>
+
+<!-- STEP 4: Payment (Premium only) -->
+<div class="form-step" id="step4">
+  <div class="form-header">
+    <h3>Төлбөр төлөх</h3>
+    <p>Алхам 4/4 — Дансаар шилжүүлж, скриншот илгээнэ үү</p>
+  </div>
+
+  <div class="bank-card">
+    <div class="bank-row">
+      <span>Банк</span>
+      <span>Хаан банк</span>
+    </div>
+    <div class="bank-row">
+      <span>Данс</span>
+      <span>
+        <span id="accountNum">5001 2345 6789</span>
+        <button class="copy-btn" onclick="copyAccount()" style="margin-left:8px">Хуулах</button>
+      </span>
+    </div>
+    <div class="bank-row">
+      <span>Эзэмшигч</span>
+      <span>Холбоо ХХК</span>
+    </div>
+    <div class="bank-row">
+      <span>Дүн</span>
+      <span style="color:var(--gold);font-size:1.1rem">₮19,900</span>
+    </div>
+    <div class="bank-row">
+      <span>Гүйлгээний утга</span>
+      <span id="transferNote" style="color:var(--rose)">ХОС-<span id="userRef">loading...</span></span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Гүйлгээний скриншот</label>
+    <div class="upload-proof">
+      <input type="file" accept="image/*" onchange="proofUploaded(this)" />
+      <div style="font-size:1.8rem" id="proofIcon">📤</div>
+      <p id="proofText">Скриншот upload хийнэ үү</p>
+    </div>
+  </div>
+
+  <div style="background:rgba(232,168,124,.08);border:1px solid rgba(232,168,124,.2);border-radius:12px;padding:16px;margin-bottom:8px;font-size:.82rem;color:var(--muted);line-height:1.6">
+    💡 Скриншотыг илгээсний дараа <strong style="color:var(--gold-lt)">24 цагийн</strong> дотор таны Premium эрх идэвхжинэ. Асуулт байвал <strong style="color:var(--gold-lt)">9911 2233</strong> дугаарт холбогдно уу.
+  </div>
+
+  <div class="form-nav">
+    <button class="btn-prev" onclick="prevStep(4)">← Буцах</button>
+    <button class="btn-next" onclick="submitForm()">Илгээх ✓</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="big-icon">💗</div>
+  <h3>Амжилттай бүртгүүллээ!</h3>
+  <p>Таны профайл хүлээн авлаа.<br/>Бид удахгүй баталгаажуулж, мэдэгдэл илгээнэ.</p>
+  <div class="check-items">
+    <div class="check-item"><span>✓</span> Профайл хянагдаж байна (24 цаг)</div>
+    <div class="check-item"><span>✓</span> Баталгаажсан тухай SMS ирнэ</div>
+    <div class="check-item"><span>✓</span> Анхны таарц санал болгогдоно</div>
+  </div>
+  <a href="index.html" style="display:inline-block;margin-top:8px;background:linear-gradient(135deg,var(--rose),#a8405a);color:#fff;padding:14px 36px;border-radius:50px;text-decoration:none;font-weight:600;font-size:.95rem">Нүүр хуудас руу →</a>
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  let selectedGender = '';
+  let selectedPlan = 'free';
+  let selectedInterests = [];
+
+  // Generate user ref
+  document.getElementById('userRef').textContent = Math.floor(Math.random()*90000+10000);
+
+  function updateDots(step) {
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById('dot' + i);
+      dot.className = 'step-dot';
+      if (i < step)  dot.classList.add('done');
+      if (i === step) dot.classList.add('active');
+    }
+  }
+
+  function nextStep(from) {
+    // Validation
+    if (from === 1) {
+      if (!document.getElementById('name').value.trim()) return alert('Нэрээ оруулна уу');
+      if (!document.getElementById('age').value) return alert('Насаа оруулна уу');
+      if (!document.getElementById('phone').value.trim()) return alert('Утасны дугаараа оруулна уу');
+      if (!selectedGender) return alert('Хүйсээ сонгоно уу');
+      if (!document.getElementById('district').value) return alert('Дүүргээ сонгоно уу');
+    }
+    if (from === 3 && selectedPlan === 'free') {
+      submitForm(); return;
     }
 
-    // Форм илгээх үйлдэл
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-      e.preventDefault(); // Хуудас дахин ачаалахаас 100% хамгаална
+    document.getElementById('step' + from).classList.remove('active');
+    currentStep = from + 1;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateDots(currentStep);
+    window.scrollTo(0, 0);
+  }
 
-      const submitBtn = document.getElementById('submitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Бүртгэж байна...";
+  function prevStep(from) {
+    document.getElementById('step' + from).classList.remove('active');
+    currentStep = from - 1;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateDots(currentStep);
+    window.scrollTo(0, 0);
+  }
 
-      const name = document.getElementById('name').value.trim();
-      const age = parseInt(document.getElementById('age').value);
-      const gender = document.getElementById('gender').value;
-      const location = document.getElementById('location').value;
-      const interest = document.getElementById('interest').value.trim();
+  function selectGender(btn, val) {
+    selectedGender = val;
+    document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
 
-      tempUserData = {
-        uid: activeUser ? activeUser.uid : "mock-user-id-" + Math.random().toString(36).substr(2, 9),
-        name,
-        age,
-        gender,
-        location,
-        interest,
-        avatar: name.charAt(0).toUpperCase(),
-        status: "pending",
-        paymentStatus: "none",
-        registeredAt: new Date().toISOString()
+  function toggleInterest(el) {
+    el.classList.toggle('selected');
+  }
+
+  function selectPlan(plan) {
+    selectedPlan = plan;
+    document.getElementById('planPremium').style.borderColor = plan === 'premium' ? 'var(--rose)' : 'var(--border)';
+    document.getElementById('planFree').style.borderColor    = plan === 'free'    ? 'var(--gold)' : 'var(--border)';
+  }
+  selectPlan('premium'); // default
+
+  function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('photoPreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        document.getElementById('uploadIcon').style.display = 'none';
       };
-
-      // Хэрэв Firebase ажиллахгүй эсвэл Туршилтын горимд байгаа бол:
-      if (useMockMode || !db) {
-        localStorage.setItem('currentUser', JSON.stringify(tempUserData));
-        showSuccessAndPayment(name);
-        return;
-      }
-
-      try {
-        // Бодит үүлэн санд хадгалах
-        const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
-        await setDoc(userDocRef, tempUserData);
-
-        localStorage.setItem('currentUser', JSON.stringify(tempUserData));
-        showSuccessAndPayment(name);
-
-      } catch (error) {
-        console.error("Firestore Error:", error);
-        // Сан руу бичихэд алдаа гарсан ч хэрэглэгчийг гацаахгүйгээр төлбөрийн шат руу урагшлуулна
-        localStorage.setItem('currentUser', JSON.stringify(tempUserData));
-        showSuccessAndPayment(name);
-      }
-    });
-
-    // Төлбөрийн хэсгийг дэлгэцэнд харуулах функц
-    function showSuccessAndPayment(name) {
-      const toast = document.getElementById('toast');
-      toast.style.display = 'block';
-
-      setTimeout(() => {
-        toast.style.display = 'none';
-        
-        // Хуудас сэргээхгүйгээр (no refresh) зөвхөн формыг сольж харуулна
-        document.getElementById('stepForm').style.display = 'none';
-        document.getElementById('stepPayment').style.display = 'block';
-        
-        document.getElementById('dynRef').textContent = `${name} Premium`;
-      }, 1000);
+      reader.readAsDataURL(input.files[0]);
     }
+  }
 
-    // Шилжүүлсэн бэлэн боллоо товч дарах үед
-    document.getElementById('btnPaid').addEventListener('click', async function() {
-      const btn = this;
-      btn.disabled = true;
-      btn.textContent = "Шинэчилж байна...";
-
-      if (useMockMode || !db || !activeUser) {
-        localStorage.setItem('paymentStatus', 'pending');
-        window.location.href = 'match.html';
-        return;
-      }
-
-      try {
-        const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
-        await updateDoc(userDocRef, { paymentStatus: "pending" });
-
-        tempUserData.paymentStatus = "pending";
-        localStorage.setItem('currentUser', JSON.stringify(tempUserData));
-        localStorage.setItem('paymentStatus', 'pending');
-
-        alert("Баярлалаа! Төлбөрийн шилжүүлэг орсон эсэхийг админ 5-10 минутад шалгаж идэвхжүүлнэ.");
-        window.location.href = 'match.html';
-
-      } catch (err) {
-        console.error("Payment Update Error:", err);
-        window.location.href = 'match.html';
-      }
-    });
-
-    // Үнэгүй үргэлжлүүлэх
-    document.getElementById('btnFree').addEventListener('click', function() {
-      window.location.href = 'match.html';
-    });
-
-    // Хөвөх зүрхнүүд үүсгэх
-    const bg = document.getElementById('heartsBg');
-    const emojis = ['💗','💕','✨','💞','🌸'];
-    for (let i = 0; i < 15; i++) {
-      const s = document.createElement('span');
-      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      s.style.left = Math.random() * 100 + '%';
-      s.style.top  = Math.random() * 100 + '%';
-      s.style.animationDuration = (12 + Math.random() * 16) + 's';
-      s.style.animationDelay   = (Math.random() * 10) + 's';
-      s.style.fontSize = (.7 + Math.random() * .8) + 'rem';
-      bg.appendChild(s);
+  function proofUploaded(input) {
+    if (input.files && input.files[0]) {
+      document.getElementById('proofIcon').textContent = '✅';
+      document.getElementById('proofText').textContent = input.files[0].name + ' — Амжилттай';
+      document.getElementById('proofText').style.color = 'var(--gold)';
     }
-  </script>
+  }
+
+  function copyAccount() {
+    navigator.clipboard.writeText('5001234567890').then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Хуулагдлаа ✓';
+      btn.style.color = 'var(--gold)';
+      setTimeout(() => { btn.textContent = 'Хуулах'; btn.style.color = ''; }, 2000);
+    });
+  }
+
+  function submitForm() {
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    document.querySelector('.step-indicator').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    updateDots(5);
+  }
+</script>
+
 </body>
 </html>
