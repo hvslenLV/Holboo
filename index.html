@@ -6,7 +6,7 @@
   <title>Холбоо — Таны хосыг олъё</title>
   
   <script>
-    // МАШ ЧУХАЛ: Хэрэглэгч бүртгүүлсэн бол нүүр хуудсыг алгасаж шууд match.html рүү үсрүүлнэ
+    // Хэрэглэгч бүртгүүлсэн бол нүүр хуудсыг алгасаж шууд match.html рүү үсрүүлнэ
     if (localStorage.getItem('currentUser')) {
       window.location.href = 'match.html';
     }
@@ -340,7 +340,8 @@
     .plan ul li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
     .plan ul li.no { color: rgba(156,138,134,.4); }
     .plan ul li.no::before { content: '×'; color: rgba(156,138,134,.3); }
-    .plan-btn {
+    
+    .plan-btn, .plan-pay-btn {
       display: block;
       margin-top: 32px;
       text-align: center;
@@ -351,10 +352,11 @@
       text-decoration: none;
       border: 1px solid var(--border);
       color: var(--text);
+      cursor: pointer;
       transition: all .2s;
     }
-    .plan.featured .plan-btn { background: var(--rose); border-color: var(--rose); color: #fff; box-shadow: 0 6px 24px rgba(193,96,122,.4); }
-    .plan-btn:hover { transform: translateY(-1px); }
+    .plan.featured .plan-pay-btn { background: var(--rose); border-color: var(--rose); color: #fff; box-shadow: 0 6px 24px rgba(193,96,122,0.4); }
+    .plan-btn:hover, .plan-pay-btn:hover { transform: translateY(-1px); }
 
     /* ── TESTIMONIALS ── */
     .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 48px; }
@@ -406,6 +408,91 @@
       flex-wrap: wrap; gap: 16px;
       font-size: .82rem; color: var(--muted);
     }
+
+    /* ── BANK PAYMENT MODAL ── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(14, 7, 15, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .payment-modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      position: relative;
+      text-align: center;
+    }
+    .modal-close {
+      position: absolute; top: 20px; right: 20px;
+      background: none; border: none;
+      color: var(--muted); font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-close:hover { color: #fff; }
+    
+    .bank-badge {
+      background: #E11C33; /* Хаан банкны үндсэн улаан өнгө */
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+    .payment-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      color: var(--gold);
+    }
+    .payment-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .bank-info-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+      padding-bottom: 8px;
+    }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    .info-lbl { color: var(--muted); }
+    .info-val { font-weight: 600; color: var(--text); }
+    .info-val.highlight { color: var(--gold); font-size: 1.1rem; }
+
+    .btn-done {
+      width: 100%;
+      background: linear-gradient(135deg, var(--rose), #a8405a);
+      color: white;
+      border: none; padding: 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .btn-done:hover { transform: translateY(-1px); }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 640px) {
@@ -566,6 +653,8 @@
       </ul>
       <a class="plan-btn" href="register.html">Эхлэх</a>
     </div>
+    
+    <!-- Premium Багц (ХААН Банк Данс холбосон) -->
     <div class="plan featured">
       <div class="plan-badge">Хамгийн их сонгогддог</div>
       <div class="plan-name">Premium</div>
@@ -579,8 +668,10 @@
         <li>Эхний хуудсанд гарч ирэх</li>
         <li>Дэмжлэг үзүүлэх зөвлөх</li>
       </ul>
-      <a class="plan-btn" href="register.html">Premium эхлэх</a>
+      <button class="plan-pay-btn" onclick="openPaymentModal('Premium Багц', '19,900₮')">Premium эхлэх</button>
     </div>
+    
+    <!-- VIP Зуучлал (ХААН Банк Данс холбосон) -->
     <div class="plan">
       <div class="plan-name">VIP Зуучлал</div>
       <div class="plan-price">₮49,900</div>
@@ -593,7 +684,7 @@
         <li>Нэг сарын дагалдах үйлчилгээ</li>
         <li>Буцааж олгох баталгаа</li>
       </ul>
-      <a class="plan-btn" href="register.html">Зуучлал захиалах</a>
+      <button class="plan-pay-btn" onclick="openPaymentModal('VIP Зуучлал Багц', '49,900₮')">Зуучлал захиалах</button>
     </div>
   </div>
 </section>
@@ -656,7 +747,60 @@
   </div>
 </footer>
 
+<!-- KHAN BANK PAYMENT MODAL -->
+<div class="modal-backdrop" id="paymentModal">
+  <div class="payment-modal">
+    <button class="modal-close" onclick="closePaymentModal()">×</button>
+    <div class="bank-badge">KHAN BANK</div>
+    <div class="payment-title" id="modalPackName">Premium Багц</div>
+    <p class="payment-desc">Доорх дансанд төлбөрөө шилжүүлснээр таны багц 5-10 минутын дотор идэвхжинэ.</p>
+    
+    <div class="bank-info-box">
+      <div class="info-row">
+        <div class="info-lbl">Банк:</div>
+        <div class="info-val">Хаан Банк (Khan Bank)</div>
+      </div>
+      <div class="info-row">
+        <div class="info-lbl">Хүлээн авагч данс:</div>
+        <div class="info-val highlight">5404840683</div> 
+      </div>
+      <div class="info-row">
+        <div class="info-lbl">Хүлээн авагчийн нэр:</div>
+        <div class="info-val">Хүсэлдалай</div> 
+      </div>
+      <div class="info-row">
+        <div class="info-lbl">Шилжүүлэх дүн:</div>
+        <div class="info-val highlight" id="modalPrice">19,900 ₮</div>
+      </div>
+      <div class="info-row">
+        <div class="info-lbl">Гүйлгээний утга:</div>
+        <div class="info-val" style="color: var(--rose);">таны_утасны_дугаар</div>
+      </div>
+    </div>
+    
+    <button class="btn-done" onclick="completePayment()">Шилжүүлсэн, бэлэн боллоо</button>
+  </div>
+</div>
+
 <script>
+  // Modal controllers
+  function openPaymentModal(packName, price) {
+    document.getElementById('modalPackName').textContent = packName;
+    document.getElementById('modalPrice').textContent = price;
+    document.getElementById('paymentModal').style.display = 'flex';
+  }
+
+  function closePaymentModal() {
+    document.getElementById('paymentModal').style.display = 'none';
+  }
+
+  function completePayment() {
+    alert("Баярлалаа! Төлбөрийн мэдээллийг хүлээж авлаа. Админ 5-10 минутын дотор шалгаж идэвхжүүлнэ.");
+    // Төлбөрийн хүсэлт илгээсэн гэдгийг тэмдэглэх
+    localStorage.setItem('paymentStatus', 'pending');
+    closePaymentModal();
+  }
+
   // Floating hearts
   const bg = document.getElementById('heartsBg');
   const emojis = ['💗','💕','✨','💞','🌸'];
