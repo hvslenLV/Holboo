@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Монголын 40+ насныханд зориулсан хос олох платформ. Найдвартай, хувийн, халуун дулаан." />
-  <meta name="keywords" content="хос олох, dating, монгол, 40+ нас, хайр дурлал" />
+  <meta name="description" content="Холбоо - Монголын 40+ насныханд зориулсан хос олох платформ" />
   <meta name="theme-color" content="#1A0E1C" />
-  <title>Холбоо — Таны хосыг олъё</title>
+  <title>Холбоо — Dashboard</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -22,10 +21,14 @@
       --gold-lt:  #F2D4C2;
       --rose:     #C1607A;
       --rose-dark:#a8405a;
+      --rose-light:rgba(193,96,122,0.12);
       --text:     #F5EDE8;
       --muted:    #9C8A86;
       --card:     #2B1830;
       --border:   #3D2240;
+      --success:  #22c55e;
+      --error:    #ef4444;
+      --online:   #4ade80;
     }
 
     html { scroll-behavior: smooth; }
@@ -39,39 +42,133 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* ── BACKGROUND ── */
+    .page-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(193,96,122,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(232,168,124,0.06) 0%, transparent 50%);
+    }
+
     /* ── NAV ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 48px;
-      background: linear-gradient(to bottom, rgba(26,14,28,.95), transparent);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      padding: 16px 40px;
+      background: rgba(26,14,28,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
     }
     .logo {
       font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       color: var(--gold);
       letter-spacing: .04em;
       text-decoration: none;
     }
     .logo span { color: var(--rose); }
-    nav ul { list-style: none; display: flex; gap: 32px; }
-    nav ul a { color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
-    nav ul a:hover { color: var(--gold); }
-    .nav-cta {
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 6px;
+    }
+    .nav-tab {
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all .2s;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+    .nav-tab:hover { color: var(--gold); }
+    .nav-tab.active {
       background: var(--rose);
       color: #fff;
-      padding: 10px 24px;
-      border-radius: 50px;
-      font-size: .88rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background .2s, transform .15s;
-      border: none;
-      cursor: pointer;
     }
-    .nav-cta:hover { background: var(--rose-dark); transform: translateY(-1px); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .notif-btn {
+      position: relative;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+    }
+    .notif-btn:hover { border-color: var(--rose); color: var(--gold); }
+    .notif-badge {
+      position: absolute; top: -2px; right: -2px;
+      width: 18px; height: 18px;
+      background: var(--rose);
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg);
+    }
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 6px 12px 6px 6px;
+      border-radius: 50px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      transition: border-color .2s;
+    }
+    .user-menu:hover { border-color: var(--rose); }
+    .user-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .user-name {
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: .8rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color .2s;
+      font-family: inherit;
+    }
+    .logout-btn:hover { color: var(--error); }
 
     /* Mobile menu */
     .mobile-menu-btn {
@@ -79,1075 +176,1143 @@
       background: none;
       border: none;
       color: var(--text);
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       cursor: pointer;
     }
-    .mobile-nav {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      padding: 20px;
-    }
-    .mobile-nav.active { display: block; }
-    .mobile-nav a {
-      display: block;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 12px 0;
-      font-size: 1rem;
-      transition: color .2s;
-    }
-    .mobile-nav a:hover { color: var(--gold); }
-    .mobile-nav .nav-cta {
-      display: block;
-      text-align: center;
-      margin-top: 10px;
+
+    /* ── MAIN LAYOUT ── */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 90px 24px 40px;
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
     }
 
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center;
-      padding: 120px 24px 80px;
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+    .sidebar-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .sidebar-title {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      margin-bottom: 4px;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+    .filter-item:hover { background: var(--bg2); color: var(--text); }
+    .filter-item.active { background: var(--rose-light); color: var(--rose); }
+    .filter-icon { font-size: 1.1rem; }
+
+    .stat-mini {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-mini:last-child { border-bottom: none; }
+    .stat-mini-label { font-size: .82rem; color: var(--muted); }
+    .stat-mini-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    /* ── CENTER CONTENT ── */
+    .center-col { min-width: 0; }
+
+    /* Welcome banner */
+    .welcome-banner {
+      background: linear-gradient(135deg, var(--card) 0%, #1f1225 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 24px;
       position: relative;
       overflow: hidden;
     }
-    .hero::before {
+    .welcome-banner::before {
       content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(193,96,122,.18) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hearts-bg {
-      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
-    }
-    .hearts-bg span {
       position: absolute;
-      font-size: 1.2rem;
-      opacity: 0;
-      animation: floatHeart linear infinite;
-    }
-    @keyframes floatHeart {
-      0%   { opacity: 0; transform: translateY(0) scale(.8); }
-      10%  { opacity: .18; }
-      90%  { opacity: .08; }
-      100% { opacity: 0; transform: translateY(-100vh) scale(1.1); }
-    }
-
-    .eyebrow {
-      display: inline-block;
-      font-size: .78rem;
-      font-weight: 600;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--rose);
-      background: rgba(193,96,122,.12);
-      border: 1px solid rgba(193,96,122,.3);
-      padding: 6px 18px;
-      border-radius: 50px;
-      margin-bottom: 28px;
-      position: relative;
-      z-index: 1;
-    }
-
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2.6rem, 6vw, 4.4rem);
-      line-height: 1.12;
-      font-weight: 700;
-      max-width: 800px;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-    }
-    h1 em {
-      font-style: italic;
-      color: var(--gold);
-    }
-
-    .hero-sub {
-      font-size: clamp(.95rem, 2vw, 1.1rem);
-      color: var(--muted);
-      max-width: 520px;
-      line-height: 1.7;
-      margin-bottom: 48px;
-      font-weight: 300;
-      position: relative;
-      z-index: 1;
-    }
-
-    .match-preview {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 56px auto 16px;
-      width: 320px; height: 160px;
-      z-index: 1;
-    }
-    .profile-card {
-      width: 120px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px 12px;
-      text-align: center;
-      position: absolute;
-      transition: transform .6s cubic-bezier(.34,1.56,.64,1);
-    }
-    .profile-card .avatar {
-      width: 54px; height: 54px;
-      border-radius: 50%;
-      margin: 0 auto 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #fff;
-    }
-    .profile-card .pname { font-size: .82rem; font-weight: 600; color: var(--text); }
-    .profile-card .page  { font-size: .72rem; color: var(--muted); margin-top: 2px; }
-
-    .card-left  { left: 0;   animation: slideLeft 1s .3s cubic-bezier(.34,1.56,.64,1) both; }
-    .card-right { right: 0;  animation: slideRight 1s .3s cubic-bezier(.34,1.56,.64,1) both; }
-
-    @keyframes slideLeft  { from { transform: translateX(-60px) rotate(-6deg); opacity: 0; } to { transform: translateX(0) rotate(-4deg); opacity: 1; } }
-    @keyframes slideRight { from { transform: translateX(60px) rotate(6deg); opacity: 0; }  to { transform: translateX(0) rotate(4deg);  opacity: 1; } }
-
-    .heart-center {
-      position: absolute; left: 50%; top: 50%;
-      transform: translate(-50%,-50%);
-      font-size: 2.2rem;
-      animation: heartBeat 1.6s ease-in-out infinite;
-      z-index: 10;
-      filter: drop-shadow(0 0 12px rgba(193,96,122,.7));
-    }
-    @keyframes heartBeat {
-      0%, 100% { transform: translate(-50%,-50%) scale(1); }
-      50%       { transform: translate(-50%,-50%) scale(1.18); }
-    }
-
-    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 40px; position: relative; z-index: 1; }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
-      color: #fff;
-      padding: 16px 36px;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: transform .15s, box-shadow .2s;
-      box-shadow: 0 8px 28px rgba(193,96,122,.35);
-      border: none;
-      cursor: pointer;
-      display: inline-block;
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(193,96,122,.5); }
-    .btn-ghost {
-      color: var(--gold-lt);
-      padding: 16px 36px;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 500;
-      text-decoration: none;
-      border: 1px solid rgba(232,168,124,.25);
-      transition: border-color .2s, background .2s;
-      background: transparent;
-      cursor: pointer;
-      display: inline-block;
-    }
-    .btn-ghost:hover { border-color: var(--gold); background: rgba(232,168,124,.06); }
-
-    .stat-row {
-      display: flex; gap: 40px; justify-content: center;
-      margin-top: 64px; flex-wrap: wrap;
-      position: relative;
-      z-index: 1;
-    }
-    .stat { text-align: center; }
-    .stat-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--gold);
-    }
-    .stat-label { font-size: .78rem; color: var(--muted); margin-top: 4px; letter-spacing: .06em; text-transform: uppercase; }
-
-    /* ── HOW IT WORKS ── */
-    .section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
-    .section-tag {
-      font-size: .75rem; font-weight: 600; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--rose); margin-bottom: 14px;
-    }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      margin-bottom: 16px;
-    }
-    .section-sub { color: var(--muted); max-width: 520px; line-height: 1.7; margin-bottom: 60px; font-size: .95rem; }
-
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-    .step {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 28px;
-      position: relative;
-      transition: border-color .25s, transform .25s;
-    }
-    .step:hover { border-color: rgba(193,96,122,.5); transform: translateY(-4px); }
-    .step-icon { font-size: 2rem; margin-bottom: 18px; }
-    .step-num {
-      position: absolute; top: 24px; right: 24px;
-      font-family: 'Playfair Display', serif;
-      font-size: 3rem; font-weight: 700;
-      color: rgba(255,255,255,.04);
-      line-height: 1;
-    }
-    .step h3 { font-size: 1rem; font-weight: 600; margin-bottom: 10px; }
-    .step p  { font-size: .88rem; color: var(--muted); line-height: 1.65; }
-
-    /* ── PROFILES SECTION ── */
-    .profiles-section { background: var(--bg2); padding: 100px 24px; }
-    .profiles-inner { max-width: 1100px; margin: 0 auto; }
-    .profiles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 48px; }
-    .pcard {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px 20px;
-      text-align: center;
-      transition: transform .25s, border-color .25s;
-      cursor: pointer;
-    }
-    .pcard:hover { transform: translateY(-4px); border-color: var(--rose); }
-    .pcard .av {
-      width: 72px; height: 72px; border-radius: 50%;
-      margin: 0 auto 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; font-weight: 700; color: #fff;
-    }
-    .pcard .pn { font-weight: 600; font-size: .95rem; margin-bottom: 4px; }
-    .pcard .pi { font-size: .8rem; color: var(--muted); }
-    .pcard .tag {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 4px 12px;
-      background: rgba(193,96,122,.12);
-      border-radius: 50px;
-      font-size: .72rem;
-      color: var(--rose);
-    }
-    .pcard .match-btn {
-      display: block;
-      margin-top: 14px;
-      padding: 9px;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--gold);
-      font-size: .8rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background .2s, border-color .2s;
-      width: 100%;
-    }
-    .pcard .match-btn:hover { background: rgba(232,168,124,.1); border-color: var(--gold); }
-    .pcard .match-btn.notified {
-      background: rgba(193,96,122,.15);
-      border-color: var(--rose);
-      color: var(--rose);
-    }
-
-    /* ── PRICING ── */
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 48px; }
-    .plan {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 36px 32px;
-      position: relative;
-      transition: transform .25s;
-    }
-    .plan:hover { transform: translateY(-4px); }
-    .plan.featured {
-      border-color: var(--rose);
-      background: linear-gradient(160deg, #2B1830 0%, #1f1225 100%);
-    }
-    .plan-badge {
-      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-      background: var(--rose);
-      color: #fff;
-      font-size: .7rem; font-weight: 700;
-      padding: 4px 16px; border-radius: 50px;
-      letter-spacing: .08em; text-transform: uppercase;
-      white-space: nowrap;
-    }
-    .plan-name { font-size: .8rem; font-weight: 600; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }
-    .plan-price { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 700; color: var(--text); }
-    .plan-price sub { font-size: 1rem; font-family: 'Inter', sans-serif; color: var(--muted); }
-    .plan-per  { font-size: .8rem; color: var(--muted); margin-top: 4px; margin-bottom: 24px; }
-    .plan ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-    .plan ul li { font-size: .88rem; color: var(--muted); display: flex; align-items: center; gap: 10px; }
-    .plan ul li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
-    .plan ul li.no { color: rgba(156,138,134,.4); }
-    .plan ul li.no::before { content: '×'; color: rgba(156,138,134,.3); }
-    
-    .plan-btn, .plan-pay-btn {
-      display: block;
-      margin-top: 32px;
-      text-align: center;
-      padding: 13px;
-      border-radius: 12px;
-      font-size: .9rem;
-      font-weight: 600;
-      text-decoration: none;
-      border: 1px solid var(--border);
-      color: var(--text);
-      cursor: pointer;
-      transition: all .2s;
-      width: 100%;
-      background: transparent;
-    }
-    .plan.featured .plan-pay-btn { background: var(--rose); border-color: var(--rose); color: #fff; box-shadow: 0 6px 24px rgba(193,96,122,0.4); }
-    .plan-btn:hover, .plan-pay-btn:hover { transform: translateY(-1px); }
-
-    /* ── TESTIMONIALS ── */
-    .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 48px; }
-    .testi {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 28px;
-    }
-    .testi-quote { font-size: .95rem; color: var(--gold-lt); line-height: 1.75; margin-bottom: 20px; font-style: italic; }
-    .testi-author { display: flex; align-items: center; gap: 12px; }
-    .testi-av {
-      width: 42px; height: 42px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 700; color: #fff; flex-shrink: 0;
-    }
-    .testi-name { font-size: .88rem; font-weight: 600; }
-    .testi-meta { font-size: .78rem; color: var(--muted); }
-
-    /* ── CTA SECTION ── */
-    .cta-section {
-      text-align: center;
-      padding: 100px 24px;
-      background: linear-gradient(to bottom, var(--bg), #0e0812);
-      position: relative; overflow: hidden;
-    }
-    .cta-section::before {
-      content: '';
-      position: absolute; left: 50%; top: 50%;
-      transform: translate(-50%,-50%);
-      width: 500px; height: 500px;
+      top: -50%; right: -10%;
+      width: 300px; height: 300px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(193,96,122,.15) 0%, transparent 70%);
       pointer-events: none;
     }
-    .cta-section h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      max-width: 640px;
-      margin: 0 auto 20px;
+    .welcome-text {
       position: relative;
       z-index: 1;
     }
-    .cta-section p { color: var(--muted); margin-bottom: 40px; font-size: .95rem; position: relative; z-index: 1; }
+    .welcome-greeting {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .welcome-sub {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .welcome-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-sm {
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all .2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-sm-primary {
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(193,96,122,0.3);
+    }
+    .btn-sm-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(193,96,122,0.4); }
+    .btn-sm-ghost {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid rgba(232,168,124,.25);
+    }
+    .btn-sm-ghost:hover { border-color: var(--gold); background: rgba(232,168,124,.06); }
 
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 40px 48px;
+    /* Section header */
+    .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+    .section-header a {
       font-size: .82rem;
+      color: var(--rose);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity .2s;
+    }
+    .section-header a:hover { opacity: .8; text-decoration: underline; }
+
+    /* Match cards - swipe style */
+    .match-carousel {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 24px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .match-carousel::-webkit-scrollbar { height: 4px; }
+    .match-carousel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .match-card {
+      flex: 0 0 200px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px 20px;
+      text-align: center;
+      transition: all .25s;
+      cursor: pointer;
+      position: relative;
+    }
+    .match-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--rose);
+      box-shadow: 0 8px 32px rgba(193,96,122,0.15);
+    }
+    .match-card .match-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; font-weight: 700; color: #fff;
+      position: relative;
+    }
+    .match-card .match-avatar .online-dot {
+      position: absolute;
+      bottom: 4px; right: 4px;
+      width: 14px; height: 14px;
+      background: var(--online);
+      border-radius: 50%;
+      border: 2px solid var(--card);
+    }
+    .match-card .match-name { font-weight: 600; font-size: .95rem; margin-bottom: 2px; }
+    .match-card .match-info { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+    .match-card .match-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .match-card .match-tag {
+      padding: 3px 10px;
+      background: var(--bg2);
+      border-radius: 50px;
+      font-size: .7rem;
       color: var(--muted);
     }
-    footer a { color: var(--muted); text-decoration: none; transition: color .2s; }
-    footer a:hover { color: var(--gold); }
+    .match-card .match-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .match-btn-action {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all .2s;
+    }
+    .match-btn-action.like:hover { background: var(--rose); border-color: var(--rose); color: #fff; }
+    .match-btn-action.msg:hover { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+    .match-btn-action.skip:hover { background: var(--border); color: var(--text); }
 
-    /* ── BANK PAYMENT MODAL ── */
-    .modal-backdrop {
+    /* Messages list */
+    .msg-list {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .msg-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .msg-item:last-child { border-bottom: none; }
+    .msg-item:hover { background: var(--bg2); }
+    .msg-item.unread { background: var(--rose-light); }
+    .msg-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .msg-avatar .online-dot {
+      position: absolute;
+      bottom: 2px; right: 2px;
+      width: 12px; height: 12px;
+      background: var(--online);
+      border-radius: 50%;
+      border: 2px solid var(--card);
+    }
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .msg-name { font-weight: 600; font-size: .9rem; }
+    .msg-time { font-size: .75rem; color: var(--muted); }
+    .msg-preview {
+      font-size: .82rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .msg-item.unread .msg-preview { color: var(--text); font-weight: 500; }
+    .msg-unread-badge {
+      width: 20px; height: 20px;
+      background: var(--rose);
+      color: #fff;
+      border-radius: 50%;
+      font-size: .7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Activity feed */
+    .activity-feed {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+    }
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .activity-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .activity-text { font-size: .85rem; color: var(--muted); line-height: 1.5; }
+    .activity-text strong { color: var(--text); font-weight: 600; }
+    .activity-time { font-size: .75rem; color: var(--muted); opacity: .6; margin-top: 2px; }
+
+    /* ── RIGHT SIDEBAR ── */
+    .right-sidebar {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+
+    .profile-mini {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .profile-mini-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 700; color: #fff;
+    }
+    .profile-mini-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .profile-mini-info { font-size: .82rem; color: var(--muted); margin-bottom: 16px; }
+    .profile-mini-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .pmini-stat { text-align: center; }
+    .pmini-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .pmini-stat-label { font-size: .7rem; color: var(--muted); margin-top: 2px; }
+    .profile-mini-btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .profile-mini-btn:hover { border-color: var(--gold); background: rgba(232,168,124,.06); }
+
+    .upgrade-card {
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      border-radius: 20px;
+      padding: 24px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .upgrade-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .upgrade-card p {
+      font-size: .85rem;
+      opacity: .85;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .upgrade-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--rose);
+      border: none;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .15s;
+      font-family: inherit;
+    }
+    .upgrade-btn:hover { transform: translateY(-1px); }
+
+    /* ── CHAT MODAL ── */
+    .chat-modal-backdrop {
       position: fixed; inset: 0;
       background: rgba(14, 7, 15, 0.85);
       backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
       z-index: 1000;
       display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      opacity: 0;
-      transition: opacity .3s;
     }
-    .modal-backdrop.active {
-      display: flex;
-      opacity: 1;
-    }
-    .payment-modal {
+    .chat-modal-backdrop.active { display: flex; }
+    .chat-modal {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 32px;
       width: 100%;
-      max-width: 440px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      position: relative;
-      text-align: center;
-      transform: scale(.9);
-      transition: transform .3s;
+      max-width: 500px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
-    .modal-backdrop.active .payment-modal {
-      transform: scale(1);
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
     }
-    .modal-close {
-      position: absolute; top: 20px; right: 20px;
+    .chat-header-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 700; color: #fff;
+    }
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-weight: 600; font-size: .95rem; }
+    .chat-header-status { font-size: .78rem; color: var(--online); }
+    .chat-close {
       background: none; border: none;
       color: var(--muted); font-size: 1.5rem;
+      cursor: pointer; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      transition: all .2s;
+    }
+    .chat-close:hover { color: #fff; background: rgba(255,255,255,.1); }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-msg {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: .88rem;
+      line-height: 1.5;
+    }
+    .chat-msg.sent {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg.received {
+      align-self: flex-start;
+      background: var(--bg2);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-input-area {
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 12px 18px;
+      color: var(--text);
+      font-size: .9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .chat-input:focus { border-color: var(--rose); }
+    .chat-input::placeholder { color: var(--muted); opacity: .5; }
+    .chat-send {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--rose);
+      border: none;
+      color: #fff;
       cursor: pointer;
-      width: 36px; height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
-      transition: background .2s, color .2s;
-    }
-    .modal-close:hover { color: #fff; background: rgba(255,255,255,.1); }
-    
-    .bank-badge {
-      background: #E11C33;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      display: inline-block;
-      margin-bottom: 16px;
-      letter-spacing: 0.05em;
-    }
-    .payment-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      margin-bottom: 12px;
-      color: var(--gold);
-    }
-    .payment-desc {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-    
-    /* FIXED: Bank info box - horizontal layout */
-    .bank-info-box {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: left;
-      margin-bottom: 24px;
-    }
-    .info-row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 14px;
-      font-size: 0.9rem;
-      border-bottom: 1px dashed rgba(255,255,255,0.05);
-      padding-bottom: 10px;
-      gap: 8px;
-    }
-    .info-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-      margin-bottom: 0;
-    }
-    .info-lbl {
-      color: var(--muted);
-      flex-shrink: 0;
-      min-width: 100px;
-    }
-    .info-val {
-      font-weight: 600;
-      color: var(--text);
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .info-val.highlight {
-      color: var(--gold);
-      font-size: 1.05rem;
-    }
-    .copy-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      cursor: pointer;
       transition: all .2s;
       flex-shrink: 0;
-      white-space: nowrap;
     }
-    .copy-btn:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-    .copy-btn.copied {
-      border-color: #22c55e;
-      color: #22c55e;
-    }
-
-    .btn-done {
-      width: 100%;
-      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: transform .15s;
-    }
-    .btn-done:hover { transform: translateY(-1px); }
-
-    .success-state { display: none; }
-    .success-state.active { display: block; }
-    .form-state { display: block; }
-    .form-state.hidden { display: none; }
+    .chat-send:hover { background: var(--rose-dark); transform: scale(1.05); }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      nav ul { display: none; }
-      .mobile-menu-btn { display: block; }
-      .nav-cta { display: none; }
-      .nav-cta.mobile-show { display: block; }
-      
-      footer {
-        padding: 32px 20px;
-        justify-content: center;
-        text-align: center;
-        flex-direction: column;
-      }
-      .stat-row { gap: 24px; }
-      .match-preview { width: 280px; }
-      .pricing-grid { grid-template-columns: 1fr; }
-      .profiles-grid { grid-template-columns: repeat(2, 1fr); }
-      
-      /* Payment modal mobile fixes */
-      .payment-modal {
-        padding: 24px 16px;
-        max-width: 100%;
-      }
-      .info-row {
-        font-size: 0.85rem;
-        gap: 6px;
-      }
-      .info-lbl {
-        min-width: 80px;
-        font-size: 0.8rem;
-      }
-      .info-val {
-        font-size: 0.9rem;
-      }
-      .info-val.highlight {
-        font-size: 1rem;
-      }
-      .copy-btn {
-        padding: 3px 8px;
-        font-size: 0.7rem;
-      }
-      .bank-info-box {
-        padding: 16px;
-      }
+    @media (max-width: 1200px) {
+      .main-layout { grid-template-columns: 240px 1fr 280px; }
     }
-    
-    @media (max-width: 480px) {
-      .profiles-grid { grid-template-columns: 1fr; }
-      .steps { grid-template-columns: 1fr; }
-      .testi-grid { grid-template-columns: 1fr; }
-      h1 { font-size: 2.2rem; }
-      .hero-btns { flex-direction: column; align-items: center; }
-      .btn-primary, .btn-ghost { width: 100%; max-width: 280px; text-align: center; }
-      
-      .info-lbl {
-        min-width: 70px;
+    @media (max-width: 992px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .sidebar, .right-sidebar { display: none; }
+      .mobile-sidebar-toggle {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+        padding-bottom: 4px;
       }
+      .mobile-filter-pill {
+        padding: 8px 16px;
+        border-radius: 50px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-size: .82rem;
+        white-space: nowrap;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .mobile-filter-pill.active { background: var(--rose); color: #fff; border-color: var(--rose); }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 14px 16px; }
+      .nav-center { display: none; }
+      .mobile-menu-btn { display: block; }
+      .user-name { display: none; }
+      .main-layout { padding: 80px 16px 24px; }
+      .welcome-banner { padding: 24px; }
+      .welcome-greeting { font-size: 1.3rem; }
+      .match-card { flex: 0 0 170px; padding: 20px 16px; }
+      .match-card .match-avatar { width: 64px; height: 64px; font-size: 1.4rem; }
+    }
+    @media (max-width: 480px) {
+      .match-carousel { gap: 12px; }
+      .match-card { flex: 0 0 150px; }
+      .msg-item { padding: 12px 16px; }
+      .msg-avatar { width: 40px; height: 40px; }
     }
 
-    html { scroll-behavior: smooth; }
     ::selection { background: rgba(193,96,122,.3); color: var(--text); }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 24px;
+      font-size: .9rem;
+      color: var(--text);
+      z-index: 2000;
+      opacity: 0;
+      transition: all .3s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error { border-color: rgba(239,68,68,0.3); }
   </style>
 </head>
 <body>
 
-<!-- Floating hearts bg -->
-<div class="hearts-bg" id="heartsBg"></div>
+  <div class="page-bg"></div>
 
-<!-- NAV -->
-<nav id="navbar">
-  <a href="/" class="logo">Хол<span>бо</span>о</a>
-  <ul>
-    <li><a href="#how">Хэрхэн ажилладаг</a></li>
-    <li><a href="#profiles">Хэрэглэгчид</a></li>
-    <li><a href="#pricing">Үнэ</a></li>
-  </ul>
-  <a class="nav-cta" href="register.html">Бүртгүүлэх</a>
-  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Цэс нээх">☰</button>
-  <div class="mobile-nav" id="mobileNav">
-    <a href="#how">Хэрхэн ажилладаг</a>
-    <a href="#profiles">Хэрэглэгчид</a>
-    <a href="#pricing">Үнэ</a>
-    <a class="nav-cta" href="register.html">Бүртгүүлэх</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="eyebrow">Монголын 40+ насныханд зориулсан</div>
-  <h1>Таны <em>жинхэнэ хос</em><br/>энд хүлээж байна</h1>
-  <p class="hero-sub">Facebook группийн эмх замбараагүй байдлыг орхи. Найдвартай, хувийн, халуун дулаан орчинд хосоо ол.</p>
-
-  <div class="match-preview">
-    <div class="profile-card card-left">
-      <div class="avatar" style="background:linear-gradient(135deg,#C1607A,#8B2E4A);">Д</div>
-      <div class="pname">Дэлгэрмаа</div>
-      <div class="page">44 нас • УБ</div>
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="logo">Хол<span>бо</span>о</a>
+    <div class="nav-center">
+      <button class="nav-tab active" data-tab="discover">🔍 Олох</button>
+      <button class="nav-tab" data-tab="messages">💌 Мессеж</button>
+      <button class="nav-tab" data-tab="matches">💕 Таарц</button>
     </div>
-    <div class="heart-center">💗</div>
-    <div class="profile-card card-right">
-      <div class="avatar" style="background:linear-gradient(135deg,#5B8FB9,#2C5282);">Б</div>
-      <div class="pname">Батбаяр</div>
-      <div class="page">47 нас • УБ</div>
-    </div>
-  </div>
-
-  <div class="hero-btns">
-    <a class="btn-primary" href="register.html">Одоо эхлэх</a>
-    <a class="btn-ghost" href="#how">Хэрхэн ажилладаг вэ?</a>
-  </div>
-
-  <div class="stat-row">
-    <div class="stat">
-      <div class="stat-num">1,200+</div>
-      <div class="stat-label">Бүртгэлтэй хэрэглэгч</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">340+</div>
-      <div class="stat-label">Амжилттай таарсан хос</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">40–55</div>
-      <div class="stat-label">Насны бүлэг</div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="section" id="how">
-  <div class="section-tag">Хэрхэн ажилладаг</div>
-  <h2 class="section-title">Энгийн 4 алхам</h2>
-  <p class="section-sub">Бүртгүүлснээс хойш 24 цагийн дотор таны анхны таарц ирнэ.</p>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-icon">📝</div>
-      <h3>Бүртгэл үүсгэ</h3>
-      <p>Нэр, нас, дүүрэг, сонирхолоо оруулж, зургаа upload хий.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-icon">🔍</div>
-      <h3>Систем таарч олно</h3>
-      <p>Манай алгоритм нас, байршил, сонирхлоор тохирох хэрэглэгчийг санал болгоно.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-icon">💌</div>
-      <h3>Мессеж илгээ</h3>
-      <p>Таалагдсан хүндээ хувийн мессеж илгээгээд харилцаагаа эхлүүл.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-icon">☕</div>
-      <h3>Уулзалт товло</h3>
-      <p>Сайт дотроо цаг товлох боломжтой. Бид аюулгүй байдлыг хангана.</p>
-    </div>
-  </div>
-</section>
-
-<!-- SAMPLE PROFILES -->
-<section class="profiles-section" id="profiles">
-  <div class="profiles-inner">
-    <div class="section-tag">Хэрэглэгчид</div>
-    <h2 class="section-title">Таны хос энд байж магадгүй</h2>
-    <p class="section-sub">Бүх хэрэглэгч биечлэн баталгаажсан. Хуурамч профайл байхгүй.</p>
-    <div class="profiles-grid">
-      <div class="pcard">
-        <div class="av" style="background:linear-gradient(135deg,#C1607A,#8B2E4A);">Н</div>
-        <div class="pn">Наранцэцэг</div>
-        <div class="pi">43 нас • Сүхбаатар</div>
-        <span class="tag">Аялал дуртай</span>
-        <button class="match-btn">💗 Мэдэгдэх</button>
+    <div class="nav-right">
+      <button class="notif-btn" id="notifBtn" aria-label="Мэдэгдэл">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        </svg>
+        <span class="notif-badge" id="notifBadge">3</span>
+      </button>
+      <div class="user-menu" id="userMenu">
+        <div class="user-avatar" id="navAvatar">?</div>
+        <span class="user-name" id="navName">Хэрэглэгч</span>
       </div>
-      <div class="pcard">
-        <div class="av" style="background:linear-gradient(135deg,#5B8FB9,#2C5282);">Г</div>
-        <div class="pn">Ганбаатар</div>
-        <div class="pi">49 нас • Баянзүрх</div>
-        <span class="tag">Байгаль дуртай</span>
-        <button class="match-btn">💗 Мэдэгдэх</button>
-      </div>
-      <div class="pcard">
-        <div class="av" style="background:linear-gradient(135deg,#7B9E5B,#3D5C2A);">О</div>
-        <div class="pn">Оюунцэцэг</div>
-        <div class="pi">45 нас • Хан-Уул</div>
-        <span class="tag">Ном уншдаг</span>
-        <button class="match-btn">💗 Мэдэгдэх</button>
-      </div>
-      <div class="pcard">
-        <div class="av" style="background:linear-gradient(135deg,#B9855B,#7A4A20);">Д</div>
-        <div class="pn">Дамдинсүрэн</div>
-        <div class="pi">51 нас • Чингэлтэй</div>
-        <span class="tag">Хоол хийдэг</span>
-        <button class="match-btn">💗 Мэдэгдэх</button>
-      </div>
+      <button class="logout-btn" id="logoutBtn">Гарах</button>
     </div>
-  </div>
-</section>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </nav>
 
-<!-- PRICING -->
-<section class="section" id="pricing">
-  <div class="section-tag">Үнэ тариф</div>
-  <h2 class="section-title">Хосоо ол, зогсоолгүй</h2>
-  <p class="section-sub">Үндсэн хэрэглээ үнэгүй. Premium-д шилжихэд ихийг олж авна.</p>
-  <div class="pricing-grid">
-    <div class="plan">
-      <div class="plan-name">Үнэгүй</div>
-      <div class="plan-price">₮0</div>
-      <div class="plan-per">Цаг хугацааны хязгааргүй</div>
-      <ul>
-        <li>Профайл үүсгэх</li>
-        <li>Өдөрт 5 таарч харах</li>
-        <li>Мессеж илгээх (өдөрт 3)</li>
-        <li class="no">Хязгааргүй таарч харах</li>
-        <li class="no">Миний профайлыг хэн харав</li>
-        <li class="no">Verified badge</li>
-      </ul>
-      <a class="plan-btn" href="register.html">Эхлэх</a>
-    </div>
-    
-    <div class="plan featured">
-      <div class="plan-badge">Хамгийн их сонгогддог</div>
-      <div class="plan-name">Premium</div>
-      <div class="plan-price">₮19,900<sub>/сар</sub></div>
-      <div class="plan-per">Дурын үед цуцлах боломжтой</div>
-      <ul>
-        <li>Хязгааргүй таарч харах</li>
-        <li>Хязгааргүй мессеж</li>
-        <li>Миний профайлыг хэн харав</li>
-        <li>Verified badge</li>
-        <li>Эхний хуудсанд гарч ирэх</li>
-        <li>Дэмжлэг үзүүлэх зөвлөх</li>
-      </ul>
-      <button class="plan-pay-btn" onclick="openPaymentModal('Premium Багц', '19,900₮')">Premium эхлэх</button>
-    </div>
-    
-    <div class="plan">
-      <div class="plan-name">VIP Зуучлал</div>
-      <div class="plan-price">₮49,900</div>
-      <div class="plan-per">Нэг удаагийн үйлчилгээ</div>
-      <ul>
-        <li>Бүх Premium боломж</li>
-        <li>Хувийн зуучлагч</li>
-        <li>Гар аргаар таарч тохируулах</li>
-        <li>Уулзалтын сургалт</li>
-        <li>Нэг сарын дагалдах үйлчилгээ</li>
-        <li>Буцааж олгох баталгаа</li>
-      </ul>
-      <button class="plan-pay-btn" onclick="openPaymentModal('VIP Зуучлал Багц', '49,900₮')">Зуучлал захиалах</button>
-    </div>
-  </div>
-</section>
+  <!-- MAIN LAYOUT -->
+  <div class="main-layout">
 
-<!-- TESTIMONIALS -->
-<section class="section">
-  <div class="section-tag">Амжилтын түүх</div>
-  <h2 class="section-title">Тэд олдсон</h2>
-  <p class="section-sub">Хосоо олсон хэрэглэгчдийн жинхэнэ сэтгэгдэл.</p>
-  <div class="testi-grid">
-    <div class="testi">
-      <p class="testi-quote">"Facebook группт жил гаруй байсан ч болохгүй байлаа. Холбоо сайтад бүртгүүлснээс хойш 3 долоо хоногт Батбаяртай таарч уулзлаа. Одоо бид хамт байна."</p>
-      <div class="testi-author">
-        <div class="testi-av" style="background:linear-gradient(135deg,#C1607A,#8B2E4A);">Д</div>
-        <div>
-          <div class="testi-name">Дэлгэрмаа</div>
-          <div class="testi-meta">44 нас • Улаанбаатар</div>
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-title">Шүүлтүүр</div>
+        <div class="filter-item active" data-filter="all">
+          <span class="filter-icon">🔍</span>
+          <span>Бүгд харуулах</span>
+        </div>
+        <div class="filter-item" data-filter="online">
+          <span class="filter-icon">🟢</span>
+          <span>Онлайн</span>
+        </div>
+        <div class="filter-item" data-filter="nearby">
+          <span class="filter-icon">📍</span>
+          <span>Ойролцоо</span>
+        </div>
+        <div class="filter-item" data-filter="new">
+          <span class="filter-icon">✨</span>
+          <span>Шинээр ирсэн</span>
+        </div>
+        <div class="filter-item" data-filter="liked">
+          <span class="filter-icon">💗</span>
+          <span>Надад таалагдсан</span>
         </div>
       </div>
-    </div>
-    <div class="testi">
-      <p class="testi-quote">"Профайл маань баталгаажсан тул хуурамч хүн байхгүй. Энэ л намайг итгэлтэй болгосон. Сайн хүн олдлоо."</p>
-      <div class="testi-author">
-        <div class="testi-av" style="background:linear-gradient(135deg,#5B8FB9,#2C5282);">С</div>
-        <div>
-          <div class="testi-name">Сүрэнгэрэл</div>
-          <div class="testi-meta">48 нас • Дархан</div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Миний статистик</div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Харсан</span>
+          <span class="stat-mini-val">24</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Таалагдсан</span>
+          <span class="stat-mini-val">8</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Мессеж</span>
+          <span class="stat-mini-val">12</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Таарц</span>
+          <span class="stat-mini-val">3</span>
         </div>
       </div>
-    </div>
-    <div class="testi">
-      <p class="testi-quote">"VIP зуучлал авсан. Зуучлагч маань маш сайн хүн байлаа, бүх юмыг тайлбарлаж, зохистой хүнтэй холбосон. Үнэ цэн нь бий."</p>
-      <div class="testi-author">
-        <div class="testi-av" style="background:linear-gradient(135deg,#B9855B,#7A4A20);">Г</div>
-        <div>
-          <div class="testi-name">Ганчимэг</div>
-          <div class="testi-meta">52 нас • Улаанбаатар</div>
+    </aside>
+
+    <!-- CENTER COLUMN -->
+    <main class="center-col">
+
+      <!-- Mobile filters -->
+      <div class="mobile-sidebar-toggle" id="mobileFilters">
+        <button class="mobile-filter-pill active" data-filter="all">Бүгд</button>
+        <button class="mobile-filter-pill" data-filter="online">Онлайн</button>
+        <button class="mobile-filter-pill" data-filter="nearby">Ойролцоо</button>
+        <button class="mobile-filter-pill" data-filter="new">Шинэ</button>
+        <button class="mobile-filter-pill" data-filter="liked">Таалагдсан</button>
+      </div>
+
+      <!-- Welcome Banner -->
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <div class="welcome-greeting" id="welcomeGreeting">Сайн уу, Хэрэглэгч!</div>
+          <p class="welcome-sub">Өнөөдөр танд 5 шинэ таарц байна. Хосоо олох аялалаа үргэлжлүүлээрэй 💕</p>
+          <div class="welcome-actions">
+            <button class="btn-sm btn-sm-primary" onclick="scrollToMatches()">🔍 Хүн хайх</button>
+            <button class="btn-sm btn-sm-ghost" onclick="scrollToMessages()">💌 Мессеж харах</button>
+          </div>
         </div>
+      </div>
+
+      <!-- Matches Section -->
+      <div class="section-header">
+        <h2>🎯 Танд тохирох хүмүүс</h2>
+        <a href="#" onclick="showToast('Бүх хүмүүсийг харуулж байна', 'success')">Бүгдийг харах →</a>
+      </div>
+      <div class="match-carousel" id="matchCarousel">
+        <!-- Match cards injected by JS -->
+      </div>
+
+      <!-- Messages Section -->
+      <div class="section-header">
+        <h2>💌 Сүүлийн мессежүүд</h2>
+        <a href="#" onclick="showToast('Бүх мессежийг харуулж байна', 'success')">Бүгдийг харах →</a>
+      </div>
+      <div class="msg-list" id="msgList">
+        <!-- Messages injected by JS -->
+      </div>
+
+      <!-- Activity Section -->
+      <div class="section-header">
+        <h2>🔔 Сүүлийн үйл явдал</h2>
+      </div>
+      <div class="activity-feed" id="activityFeed">
+        <!-- Activity items injected by JS -->
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="right-sidebar">
+      <div class="profile-mini">
+        <div class="profile-mini-avatar" id="profileAvatar" style="background:linear-gradient(135deg,var(--rose),var(--rose-dark));">?</div>
+        <div class="profile-mini-name" id="profileName">Хэрэглэгч</div>
+        <div class="profile-mini-info" id="profileInfo">-- нас • --</div>
+        <div class="profile-mini-stats">
+          <div class="pmini-stat">
+            <div class="pmini-stat-num" id="statViews">0</div>
+            <div class="pmini-stat-label">Харсан</div>
+          </div>
+          <div class="pmini-stat">
+            <div class="pmini-stat-num" id="statLikes">0</div>
+            <div class="pmini-stat-label">Таалагдсан</div>
+          </div>
+          <div class="pmini-stat">
+            <div class="pmini-stat-num" id="statMatches">0</div>
+            <div class="pmini-stat-label">Таарц</div>
+          </div>
+        </div>
+        <button class="profile-mini-btn" onclick="showToast('Профайл засах хэсэг', 'success')">✏️ Профайл засах</button>
+      </div>
+
+      <div class="upgrade-card">
+        <h3>⭐ Premium болгох</h3>
+        <p>Хязгааргүй таарч харах, хэн таны профайлыг харсаныг мэдэх, эхний хуудсанд гарч ирэх.</p>
+        <button class="upgrade-btn" onclick="openPaymentModal()">₮19,900 / сар</button>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Зөвлөмж</div>
+        <div style="font-size:.85rem;color:var(--muted);line-height:1.6;">
+          <p style="margin-bottom:12px;">📝 <strong style="color:var(--text);">Профайлаа бүрэн бөглө</strong> — Зургаа upload хийж, өөрийнхөө талаар дэлгэрэнгүй бич.</p>
+          <p style="margin-bottom:12px;">💬 <strong style="color:var(--text);">Идэвхтэй бай</strong> — Өдөр бүр орж, шинэ хүмүүст мессеж илгээ.</p>
+          <p>🎯 <strong style="color:var(--text);">Шүүлтүүр ашигла</strong> — Нас, байршил, сонирхлоор хай.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- CHAT MODAL -->
+  <div class="chat-modal-backdrop" id="chatModal">
+    <div class="chat-modal">
+      <div class="chat-header">
+        <div class="chat-header-avatar" id="chatAvatar" style="background:linear-gradient(135deg,var(--rose),var(--rose-dark));">?</div>
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chatName">Хэрэглэгч</div>
+          <div class="chat-header-status">🟢 Онлайн</div>
+        </div>
+        <button class="chat-close" onclick="closeChat()">×</button>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <!-- Messages injected by JS -->
+      </div>
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Мессеж бичнэ үү..." />
+        <button class="chat-send" onclick="sendMessage()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
-</section>
 
-<!-- FINAL CTA -->
-<section class="cta-section" id="join">
-  <div class="eyebrow">Эхлэх цаг болсон</div>
-  <h2>Таны хос таныг<br/><em style="color:var(--gold);font-style:italic;">хүлээж байна</em></h2>
-  <p>Бүртгүүлэхэд 2 минут л хэрэгтэй. Зар сурталчилгаагүй, хуурамч профайлгүй.</p>
-  <a class="btn-primary" href="register.html" style="font-size:1.05rem;padding:18px 44px;">Үнэгүй бүртгүүлэх →</a>
-</section>
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="logo" style="font-size:1.2rem;">Хол<span style="color:var(--rose)">бо</span>о</div>
-  <div>© 2026 Холбоо. Монголд хийгдсэн 🇲🇳</div>
-  <div style="display:flex;gap:20px;">
-    <a href="#">Нууцлал</a>
-    <a href="#">Нөхцөл</a>
-    <a href="#">Холбоо барих</a>
-  </div>
-</footer>
-
-<!-- KHAN BANK PAYMENT MODAL -->
-<div class="modal-backdrop" id="paymentModal">
-  <div class="payment-modal">
-    <button class="modal-close" onclick="closePaymentModal()" aria-label="Хаах">×</button>
-    
-    <div class="form-state" id="formState">
-      <div class="bank-badge">KHAN BANK</div>
-      <div class="payment-title" id="modalPackName">Premium Багц</div>
-      <p class="payment-desc">Доорх дансанд төлбөрөө шилжүүлснээр таны багц 5-10 минутын дотор идэвхжнэ.</p>
-      
-      <div class="bank-info-box">
-        <div class="info-row">
-          <div class="info-lbl">Банк:</div>
-          <div class="info-val">Хаан Банк</div>
-          <button class="copy-btn" onclick="copyText('Хаан Банк', this)">Хуулах</button>
+  <!-- PAYMENT MODAL (reused from original) -->
+  <div class="modal-backdrop" id="paymentModal" style="position:fixed;inset:0;background:rgba(14,7,15,0.85);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s;">
+    <div class="payment-modal" style="background:var(--card);border:1px solid var(--border);border-radius:24px;padding:32px;width:100%;max-width:440px;box-shadow:0 20px 50px rgba(0,0,0,0.5);position:relative;text-align:center;">
+      <button class="modal-close" onclick="closePaymentModal()" style="position:absolute;top:20px;right:20px;background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .2s;">×</button>
+      <div style="background:#E11C33;color:white;padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:700;display:inline-block;margin-bottom:16px;letter-spacing:0.05em;">KHAN BANK</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:12px;color:var(--gold);">Premium Багц</div>
+      <p style="font-size:0.88rem;color:var(--muted);line-height:1.6;margin-bottom:24px;">Доорх дансанд төлбөрөө шилжүүлснээр таны багц 5-10 минутын дотор идэвхжнэ.</p>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:left;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;margin-bottom:14px;font-size:0.9rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:10px;gap:8px;">
+          <div style="color:var(--muted);flex-shrink:0;min-width:100px;">Банк:</div>
+          <div style="font-weight:600;color:var(--text);flex:1;">Хаан Банк</div>
         </div>
-        <div class="info-row">
-          <div class="info-lbl">Данс:</div>
-          <div class="info-val highlight" id="accountNum">5070XXXXXX</div>
-          <button class="copy-btn" onclick="copyText('5070XXXXXX', this)">Хуулах</button>
+        <div style="display:flex;align-items:center;margin-bottom:14px;font-size:0.9rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:10px;gap:8px;">
+          <div style="color:var(--muted);flex-shrink:0;min-width:100px;">Данс:</div>
+          <div style="font-weight:600;color:var(--gold);font-size:1.05rem;flex:1;">5070XXXXXX</div>
         </div>
-        <div class="info-row">
-          <div class="info-lbl">Нэр:</div>
-          <div class="info-val">Бат-Эрдэнэ .О</div>
-          <button class="copy-btn" onclick="copyText('Бат-Эрдэнэ .О', this)">Хуулах</button>
+        <div style="display:flex;align-items:center;margin-bottom:14px;font-size:0.9rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:10px;gap:8px;">
+          <div style="color:var(--muted);flex-shrink:0;min-width:100px;">Нэр:</div>
+          <div style="font-weight:600;color:var(--text);flex:1;">Бат-Эрдэнэ .О</div>
         </div>
-        <div class="info-row">
-          <div class="info-lbl">Дүн:</div>
-          <div class="info-val highlight" id="modalPrice">19,900 ₮</div>
-          <button class="copy-btn" onclick="copyPrice(this)">Хуулах</button>
-        </div>
-        <div class="info-row">
-          <div class="info-lbl">Утга:</div>
-          <div class="info-val" style="color: var(--rose);" id="paymentRef">Утасны дугаар</div>
-          <button class="copy-btn" onclick="copyRef(this)">Хуулах</button>
+        <div style="display:flex;align-items:center;font-size:0.9rem;gap:8px;">
+          <div style="color:var(--muted);flex-shrink:0;min-width:100px;">Дүн:</div>
+          <div style="font-weight:600;color:var(--gold);font-size:1.05rem;flex:1;">19,900 ₮</div>
         </div>
       </div>
-      
-      <button class="btn-done" onclick="completePayment()">Шилжүүлсэн, бэлэн боллоо</button>
-    </div>
-
-    <div class="success-state" id="successState">
-      <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
-      <div class="payment-title">Баярлалаа!</div>
-      <p class="payment-desc">Төлбөрийн мэдээллийг хүлээж авлаа. Админ 5-10 минутын дотор шалгаж идэвхжүүлнэ.</p>
-      <button class="btn-done" onclick="closePaymentModal()" style="margin-top:1rem;">Ойлголоо</button>
+      <button style="width:100%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:white;border:none;padding:14px;border-radius:12px;font-weight:600;cursor:pointer;font-size:0.95rem;transition:transform .15s;" onclick="completePayment()">Шилжүүлсэн, бэлэн боллоо</button>
     </div>
   </div>
-</div>
 
 <script>
-  // ===== MOBILE MENU =====
-  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-  const mobileNav = document.getElementById('mobileNav');
-  let menuOpen = false;
+  // ===== AUTH CHECK =====
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser) {
+    window.location.href = 'login.html';
+  }
 
-  mobileMenuBtn.addEventListener('click', () => {
-    menuOpen = !menuOpen;
-    mobileNav.classList.toggle('active', menuOpen);
-    mobileMenuBtn.textContent = menuOpen ? '✕' : '☰';
+  // ===== DEMO DATA =====
+  const demoMatches = [
+    { id: 1, name: 'Наранцэцэг', age: 43, location: 'Сүхбаатар', tags: ['Аялал', 'Ном'], avatar: 'Н', color: 'linear-gradient(135deg,#C1607A,#8B2E4A)', online: true },
+    { id: 2, name: 'Ганбаатар', age: 49, location: 'Баянзүрх', tags: ['Байгаль', 'Зураг'], avatar: 'Г', color: 'linear-gradient(135deg,#5B8FB9,#2C5282)', online: false },
+    { id: 3, name: 'Оюунцэцэг', age: 45, location: 'Хан-Уул', tags: ['Ном', 'Кино'], avatar: 'О', color: 'linear-gradient(135deg,#7B9E5B,#3D5C2A)', online: true },
+    { id: 4, name: 'Дамдинсүрэн', age: 51, location: 'Чингэлтэй', tags: ['Хоол', 'Спорт'], avatar: 'Д', color: 'linear-gradient(135deg,#B9855B,#7A4A20)', online: true },
+    { id: 5, name: 'Энхтуяа', age: 46, location: 'Сонгинохайрхан', tags: ['Уран зохиол', 'Аялал'], avatar: 'Э', color: 'linear-gradient(135deg,#9B59B6,#6C3483)', online: false },
+    { id: 6, name: 'Батбаяр', age: 47, location: 'Баянгол', tags: ['Машин', 'Зураг'], avatar: 'Б', color: 'linear-gradient(135deg,#E67E22,#D35400)', online: true },
+  ];
+
+  const demoMessages = [
+    { id: 1, name: 'Наранцэцэг', avatar: 'Н', color: 'linear-gradient(135deg,#C1607A,#8B2E4A)', preview: 'Сайн уу! Таны профайл их таалагдлаа 😊', time: '2 минутын өмнө', unread: true, count: 2, online: true },
+    { id: 2, name: 'Ганбаатар', avatar: 'Г', color: 'linear-gradient(135deg,#5B8FB9,#2C5282)', preview: 'Баянзүрх дүүрэгт байдаг юм байна. Би ч бас...', time: '1 цагийн өмнө', unread: false, count: 0, online: false },
+    { id: 3, name: 'Оюунцэцэг', avatar: 'О', color: 'linear-gradient(135deg,#7B9E5B,#3D5C2A)', preview: 'Ном уншдаг гэсэн байна. Сүүлд юу уншсан бэ?', time: '3 цагийн өмнө', unread: true, count: 1, online: true },
+    { id: 4, name: 'Дамдинсүрэн', avatar: 'Д', color: 'linear-gradient(135deg,#B9855B,#7A4A20)', preview: 'Сайн уу! Энэ долоо хоногт амарч байна уу?', time: 'Өчигдөр', unread: false, count: 0, online: false },
+  ];
+
+  const demoActivities = [
+    { icon: '💗', text: '<strong>Наранцэцэг</strong> таны профайлыг таалав', time: '2 минутын өмнө' },
+    { icon: '👁️', text: '<strong>Ганбаатар</strong> таны профайлыг харав', time: '15 минутын өмнө' },
+    { icon: '💌', text: '<strong>Оюунцэцэг</strong> танд мессеж илгээлээ', time: '1 цагийн өмнө' },
+    { icon: '✨', text: 'Шинэ хэрэглэгч <strong>Энхтуяа</strong> бүртгүүллээ', time: '2 цагийн өмнө' },
+    { icon: '🎯', text: 'Танд <strong>3</strong> шинэ таарц байна', time: 'Өнөөдөр' },
+  ];
+
+  const demoChatHistory = {
+    1: [
+      { sent: false, text: 'Сайн уу! Таны профайл их таалагдлаа 😊', time: '14:30' },
+      { sent: true, text: 'Сайн уу! Баярлалаа. Таны профайл ч бас гоё байна.', time: '14:32' },
+      { sent: false, text: 'Баянзүрх дүүрэгт байдаг юм уу? Би Сүхбаатар дүүрэгт байдаг.', time: '14:35' },
+    ],
+    2: [
+      { sent: false, text: 'Сайн уу! Аялал дуртай гэсэн байна.', time: '10:15' },
+      { sent: true, text: 'Тийм ээ, хаашаа аялсан бэ?', time: '10:20' },
+    ],
+    3: [
+      { sent: false, text: 'Ном уншдаг гэсэн байна. Сүүлд юу уншсан бэ?', time: '11:00' },
+    ],
+    4: [
+      { sent: false, text: 'Сайн уу! Энэ долоо хоногт амарч байна уу?', time: 'Өчигдөр' },
+      { sent: true, text: 'Сайн уу! Тийм, амарч байна. Та юу хийж байна?', time: 'Өчигдөр' },
+    ],
+  };
+
+  // ===== RENDER MATCHES =====
+  function renderMatches() {
+    const carousel = document.getElementById('matchCarousel');
+    carousel.innerHTML = demoMatches.map(m => `
+      <div class="match-card" data-id="${m.id}">
+        <div class="match-avatar" style="background:${m.color};">
+          ${m.avatar}
+          ${m.online ? '<span class="online-dot"></span>' : ''}
+        </div>
+        <div class="match-name">${m.name}</div>
+        <div class="match-info">${m.age} нас • ${m.location}</div>
+        <div class="match-tags">
+          ${m.tags.map(t => `<span class="match-tag">${t}</span>`).join('')}
+        </div>
+        <div class="match-actions">
+          <button class="match-btn-action skip" onclick="skipMatch(${m.id}, event)" title="Skip">✕</button>
+          <button class="match-btn-action like" onclick="likeMatch(${m.id}, event)" title="Like">💗</button>
+          <button class="match-btn-action msg" onclick="openChat(${m.id}, event)" title="Message">💬</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ===== RENDER MESSAGES =====
+  function renderMessages() {
+    const list = document.getElementById('msgList');
+    list.innerHTML = demoMessages.map(m => `
+      <div class="msg-item ${m.unread ? 'unread' : ''}" onclick="openChat(${m.id})">
+        <div class="msg-avatar" style="background:${m.color};">
+          ${m.avatar}
+          ${m.online ? '<span class="online-dot"></span>' : ''}
+        </div>
+        <div class="msg-body">
+          <div class="msg-top">
+            <span class="msg-name">${m.name}</span>
+            <span class="msg-time">${m.time}</span>
+          </div>
+          <div class="msg-preview">${m.preview}</div>
+        </div>
+        ${m.unread ? `<div class="msg-unread-badge">${m.count}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // ===== RENDER ACTIVITY =====
+  function renderActivity() {
+    const feed = document.getElementById('activityFeed');
+    feed.innerHTML = demoActivities.map(a => `
+      <div class="activity-item">
+        <div class="activity-icon">${a.icon}</div>
+        <div>
+          <div class="activity-text">${a.text}</div>
+          <div class="activity-time">${a.time}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ===== USER INFO =====
+  function loadUserInfo() {
+    if (!currentUser) return;
+    const initial = currentUser.name ? currentUser.name.charAt(0) : '?';
+    document.getElementById('navAvatar').textContent = initial;
+    document.getElementById('navName').textContent = currentUser.name || 'Хэрэглэгч';
+    document.getElementById('profileAvatar').textContent = initial;
+    document.getElementById('profileAvatar').style.background = 'linear-gradient(135deg,var(--rose),var(--rose-dark))';
+    document.getElementById('profileName').textContent = currentUser.name || 'Хэрэглэгч';
+    document.getElementById('profileInfo').textContent = `${currentUser.age || '--'} нас • ${currentUser.location || '--'}`;
+    document.getElementById('welcomeGreeting').textContent = `Сайн уу, ${currentUser.name || 'Хэрэглэгч'}!`;
+  }
+
+  // ===== MATCH ACTIONS =====
+  function likeMatch(id, e) {
+    if (e) e.stopPropagation();
+    showToast('Таалагдлаа! 💗', 'success');
+    updateStat('statLikes', 1);
+  }
+
+  function skipMatch(id, e) {
+    if (e) e.stopPropagation();
+    const card = document.querySelector(`.match-card[data-id="${id}"]`);
+    if (card) {
+      card.style.transform = 'translateX(-100px) rotate(-10deg)';
+      card.style.opacity = '0';
+      setTimeout(() => card.remove(), 300);
+    }
+  }
+
+  function updateStat(id, delta) {
+    const el = document.getElementById(id);
+    if (el) {
+      const current = parseInt(el.textContent) || 0;
+      el.textContent = current + delta;
+    }
+  }
+
+  // ===== CHAT =====
+  let currentChatId = null;
+
+  function openChat(id, e) {
+    if (e) e.stopPropagation();
+    currentChatId = id;
+    const match = demoMatches.find(m => m.id === id) || demoMessages.find(m => m.id === id);
+    if (!match) return;
+
+    document.getElementById('chatAvatar').style.background = match.color;
+    document.getElementById('chatAvatar').textContent = match.avatar;
+    document.getElementById('chatName').textContent = match.name;
+
+    const history = demoChatHistory[id] || [];
+    const container = document.getElementById('chatMessages');
+    container.innerHTML = history.map(msg => `
+      <div class="chat-msg ${msg.sent ? 'sent' : 'received'}">${msg.text}</div>
+    `).join('');
+
+    document.getElementById('chatModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function closeChat() {
+    document.getElementById('chatModal').classList.remove('active');
+    document.body.style.overflow = '';
+    currentChatId = null;
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text || !currentChatId) return;
+
+    const container = document.getElementById('chatMessages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-msg sent';
+    msgDiv.textContent = text;
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+    input.value = '';
+
+    // Simulate reply
+    setTimeout(() => {
+      const replyDiv = document.createElement('div');
+      replyDiv.className = 'chat-msg received';
+      replyDiv.textContent = 'Сайн байна уу! Баярлалаа мессеж илгээсэнд 😊';
+      container.appendChild(replyDiv);
+      container.scrollTop = container.scrollHeight;
+    }, 1500);
+  }
+
+  document.getElementById('chatInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
   });
 
-  mobileNav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      menuOpen = false;
-      mobileNav.classList.remove('active');
-      mobileMenuBtn.textContent = '☰';
+  document.getElementById('chatModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeChat();
+  });
+
+  // ===== NAV TABS =====
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.tab;
+      if (target === 'messages') scrollToMessages();
+      else if (target === 'discover') scrollToMatches();
+      else if (target === 'matches') showToast('Таарц хэсэг', 'success');
     });
   });
 
-  // ===== FLOATING HEARTS =====
-  const bg = document.getElementById('heartsBg');
-  const emojis = ['💗','💕','✨','💞','🌸'];
-  for (let i = 0; i < 18; i++) {
-    const s = document.createElement('span');
-    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top  = Math.random() * 100 + '%';
-    s.style.animationDuration = (12 + Math.random() * 16) + 's';
-    s.style.animationDelay   = (Math.random() * 10) + 's';
-    s.style.fontSize = (.7 + Math.random() * .8) + 'rem';
-    bg.appendChild(s);
+  // ===== FILTERS =====
+  document.querySelectorAll('.filter-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      showToast(`Шүүлтүүр: ${item.querySelector('span:last-child').textContent}`, 'success');
+    });
+  });
+
+  document.querySelectorAll('.mobile-filter-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.mobile-filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      showToast(`Шүүлтүүр: ${pill.textContent}`, 'success');
+    });
+  });
+
+  // ===== LOGOUT =====
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('currentUser');
+    window.location.href = 'login.html';
+  });
+
+  // ===== TOAST =====
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  // ===== SCROLL HELPERS =====
+  function scrollToMatches() {
+    document.querySelector('.match-carousel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function scrollToMessages() {
+    document.querySelector('.msg-list').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   // ===== PAYMENT MODAL =====
-  function openPaymentModal(packName, price) {
-    document.getElementById('modalPackName').textContent = packName;
-    document.getElementById('modalPrice').textContent = price;
-    
-    document.getElementById('formState').classList.remove('hidden');
-    document.getElementById('successState').classList.remove('active');
-    
+  function openPaymentModal() {
     const modal = document.getElementById('paymentModal');
-    modal.classList.add('active');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.style.opacity = '1', 10);
     document.body.style.overflow = 'hidden';
   }
 
   function closePaymentModal() {
     const modal = document.getElementById('paymentModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-    
+    modal.style.opacity = '0';
     setTimeout(() => {
-      document.getElementById('formState').classList.remove('hidden');
-      document.getElementById('successState').classList.remove('active');
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
     }, 300);
   }
 
   function completePayment() {
-    document.getElementById('formState').classList.add('hidden');
-    document.getElementById('successState').classList.add('active');
-    
-    localStorage.setItem('paymentStatus', 'pending');
-    localStorage.setItem('paymentTime', Date.now().toString());
+    showToast('Төлбөр хүлээн авлаа! Админ шалгаж идэвхжүүлнэ.', 'success');
+    closePaymentModal();
   }
 
   document.getElementById('paymentModal').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closePaymentModal();
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closePaymentModal();
+  // ===== MOBILE MENU =====
+  document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+    showToast('Цэс нээгдлээ', 'success');
   });
 
-  // ===== COPY FUNCTIONS =====
-  function copyText(text, btn) {
-    navigator.clipboard.writeText(text).then(() => {
-      showCopied(btn);
-    }).catch(() => {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      showCopied(btn);
-    });
-  }
-
-  function copyPrice(btn) {
-    const price = document.getElementById('modalPrice').textContent;
-    copyText(price.replace(/[^0-9]/g, ''), btn);
-  }
-
-  function copyRef(btn) {
-    const ref = document.getElementById('paymentRef').textContent;
-    copyText(ref, btn);
-  }
-
-  function showCopied(btn) {
-    const original = btn.textContent;
-    btn.textContent = '✓ Хуулсан';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.classList.remove('copied');
-    }, 2000);
-  }
-
-  // ===== PROFILE CARD INTERACTION =====
-  document.querySelectorAll('.pcard').forEach(c => {
-    const btn = c.querySelector('.match-btn');
-    c.addEventListener('click', function(e) {
-      if (e.target === btn) return;
-      btn.click();
-    });
-    
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      if (this.classList.contains('notified')) return;
-      this.textContent = '💗 Мэдэгдэл явуулсан!';
-      this.classList.add('notified');
-    });
-  });
-
-  // ===== NAVBAR SCROLL EFFECT =====
-  let lastScroll = 0;
-  const navbar = document.getElementById('navbar');
-  
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-      navbar.style.background = 'rgba(26,14,28,0.98)';
-    } else {
-      navbar.style.background = 'linear-gradient(to bottom, rgba(26,14,28,.95), transparent)';
-    }
-    
-    lastScroll = currentScroll;
-  });
-
-  // ===== SMOOTH SCROLL FOR ANCHOR LINKS =====
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      const href = this.getAttribute('href');
-      if (href === '#') return;
-      
-      e.preventDefault();
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    });
-  });
+  // ===== INIT =====
+  renderMatches();
+  renderMessages();
+  renderActivity();
+  loadUserInfo();
 </script>
 
 </body>
