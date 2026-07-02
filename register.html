@@ -212,10 +212,9 @@
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Firebase тохиргоог байгаль орчны хувьсагчаас авах
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'olboo-dating-app';
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-      apiKey: "", // Автоматаар ажиллах тул хоосон үлдээнэ
+      apiKey: "",
       authDomain: "dummy-dating-project.firebaseapp.com",
       projectId: "dummy-dating-project",
       storageBucket: "dummy-dating-project.appspot.com",
@@ -229,7 +228,6 @@
 
     let activeUser = null;
 
-    // Нэвтрэлт шалгах
     const initAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -245,15 +243,8 @@
 
     onAuthStateChanged(auth, (user) => {
       activeUser = user;
-      if (user) {
-        // Хэрэглэгч аль хэдийн бүртгүүлсэн бол match.html рүү шилжүүлэх
-        if (localStorage.getItem('currentUser')) {
-          window.location.href = 'match.html';
-        }
-      }
     });
 
-    // Форм илгээх үйлдэл
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
@@ -280,19 +271,16 @@
         location,
         interest,
         avatar: name.charAt(0).toUpperCase(),
-        status: "pending", // Шалгагдаж буй
+        status: "pending",
         registeredAt: new Date().toISOString()
       };
 
       try {
-        // RULE 1 Дагуу бичих: /artifacts/{appId}/public/data/users/{userId}
         const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
         await setDoc(userDocRef, userData);
 
-        // Хөтөч дээрээ давхар хадгална
         localStorage.setItem('currentUser', JSON.stringify(userData));
 
-        // Амжилттай мэдэгдэл харуулах
         const toast = document.getElementById('toast');
         toast.style.display = 'block';
 
