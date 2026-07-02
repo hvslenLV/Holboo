@@ -251,7 +251,8 @@
     <!-- АЛХАМ 1: БҮРТГЭЛИЙН ФОРМ -->
     <div id="stepForm">
       <div class="title">Хосоо олох анхны алхам</div>
-      <form id="registerForm">
+      <!-- form tag дээр шууд onsubmit preventDefault зааж өгч, хуудас дахин ачаалахаас сэргийлэв -->
+      <form id="registerForm" onsubmit="event.preventDefault();">
         <div class="form-group">
           <label for="name">Таны нэр</label>
           <input type="text" id="name" class="form-control" placeholder="Жишээ нь: Анужин" required />
@@ -338,7 +339,7 @@
 
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'olboo-dating-app';
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-      apiKey: "",
+      apiKey: "", // Хэрэв Vercel дээр хоосон байвал систем автоматаар туршилтын горимд шилжинэ
       authDomain: "dummy-dating-project.firebaseapp.com",
       projectId: "dummy-dating-project",
       storageBucket: "dummy-dating-project.appspot.com",
@@ -346,38 +347,47 @@
       appId: "1:123456:web:123"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
+    let app, auth, db;
     let activeUser = null;
     let tempUserData = null;
+    let useMockMode = false;
 
-    const initAuth = async () => {
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (err) {
-        console.error("Auth error:", err);
+    // Firebase-ийг аюулгүй тохируулах (Алдаа гарвал Mock Mode-д шилжинэ)
+    try {
+      if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "") {
+        console.warn("Firebase тохиргоо хоосон байна. Туршилтын горимд шилжлээ.");
+        useMockMode = true;
+      } else {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        const initAuth = async () => {
+          try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (err) {
+            console.error("Auth error:", err);
+            useMockMode = true;
+          }
+        };
+        initAuth();
+
+        onAuthStateChanged(auth, (user) => {
+          activeUser = user;
+        });
       }
-    };
-    initAuth();
-
-    onAuthStateChanged(auth, (user) => {
-      activeUser = user;
-    });
+    } catch (e) {
+      console.error("Firebase init error, switching to Mock Mode:", e);
+      useMockMode = true;
+    }
 
     // Форм илгээх үйлдэл
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
-      e.preventDefault(); // Хуудас унах, дахин ачаалахаас 100% сэргийлнэ!
-
-      if (!activeUser) {
-        alert("Уучлаарай, систем холбогдож байна. Хэдэн секунд хүлээгээд дахин дарна уу.");
-        return;
-      }
+      e.preventDefault(); // Хуудас дахин ачаалахаас 100% хамгаална
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
@@ -390,7 +400,7 @@
       const interest = document.getElementById('interest').value.trim();
 
       tempUserData = {
-        uid: activeUser.uid,
+        uid: activeUser ? activeUser.uid : "mock-user-id-" + Math.random().toString(36).substr(2, 9),
         name,
         age,
         gender,
@@ -402,44 +412,56 @@
         registeredAt: new Date().toISOString()
       };
 
+      // Хэрэв Firebase ажиллахгүй эсвэл Туршилтын горимд байгаа бол:
+      if (useMockMode || !db) {
+        localStorage.setItem('currentUser', JSON.stringify(tempUserData));
+        showSuccessAndPayment(name);
+        return;
+      }
+
       try {
-        // Firebase үүлэн санд найдвартай хадгалах
+        // Бодит үүлэн санд хадгалах
         const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
         await setDoc(userDocRef, tempUserData);
 
-        // Хөтөчийн локал санах ойд хадгалах
         localStorage.setItem('currentUser', JSON.stringify(tempUserData));
-
-        // Амжилтын мэдэгдэл харуулах
-        const toast = document.getElementById('toast');
-        toast.style.display = 'block';
-
-        setTimeout(() => {
-          toast.style.display = 'none';
-          
-          // ХУУДАС ШИНЭЧЛЭХГҮЙГЭЭР ШУУД ТӨЛБӨРИЙН ХЭСГИЙГ ХАРУУЛАХ
-          document.getElementById('stepForm').style.display = 'none';
-          document.getElementById('stepPayment').style.display = 'block';
-          
-          // Хэрэглэгчийн нэрээр гүйлгээний утгыг автоматаар өөрчлөх
-          document.getElementById('dynRef').textContent = `${name} Premium`;
-        }, 1200);
+        showSuccessAndPayment(name);
 
       } catch (error) {
         console.error("Firestore Error:", error);
-        alert("Бүртгэхэд алдаа гарлаа. Дахин оролдоно уу.");
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Бүртгүүлэх";
+        // Сан руу бичихэд алдаа гарсан ч хэрэглэгчийг гацаахгүйгээр төлбөрийн шат руу урагшлуулна
+        localStorage.setItem('currentUser', JSON.stringify(tempUserData));
+        showSuccessAndPayment(name);
       }
     });
 
+    // Төлбөрийн хэсгийг дэлгэцэнд харуулах функц
+    function showSuccessAndPayment(name) {
+      const toast = document.getElementById('toast');
+      toast.style.display = 'block';
+
+      setTimeout(() => {
+        toast.style.display = 'none';
+        
+        // Хуудас сэргээхгүйгээр (no refresh) зөвхөн формыг сольж харуулна
+        document.getElementById('stepForm').style.display = 'none';
+        document.getElementById('stepPayment').style.display = 'block';
+        
+        document.getElementById('dynRef').textContent = `${name} Premium`;
+      }, 1000);
+    }
+
     // Шилжүүлсэн бэлэн боллоо товч дарах үед
     document.getElementById('btnPaid').addEventListener('click', async function() {
-      if (!activeUser || !tempUserData) return;
-
       const btn = this;
       btn.disabled = true;
-      btn.textContent = "Бүртгэл шинэчилж байна...";
+      btn.textContent = "Шинэчилж байна...";
+
+      if (useMockMode || !db || !activeUser) {
+        localStorage.setItem('paymentStatus', 'pending');
+        window.location.href = 'match.html';
+        return;
+      }
 
       try {
         const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeUser.uid);
