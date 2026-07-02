@@ -3,10 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Монголын 40+ насныханд зориулсан хос олох платформ. Найдвартай, хувийн, халуун дулаан." />
+  <meta name="keywords" content="хос олох, dating, монгол, 40+ нас, хайр дурлал" />
+  <meta name="theme-color" content="#1A0E1C" />
   <title>Холбоо — Таны хосыг олъё</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -16,6 +21,7 @@
       --gold:     #E8A87C;
       --gold-lt:  #F2D4C2;
       --rose:     #C1607A;
+      --rose-dark:#a8405a;
       --text:     #F5EDE8;
       --muted:    #9C8A86;
       --card:     #2B1830;
@@ -30,6 +36,7 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── NAV ── */
@@ -39,12 +46,14 @@
       padding: 20px 48px;
       background: linear-gradient(to bottom, rgba(26,14,28,.95), transparent);
       backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
     .logo {
       font-family: 'Playfair Display', serif;
       font-size: 1.5rem;
       color: var(--gold);
       letter-spacing: .04em;
+      text-decoration: none;
     }
     .logo span { color: var(--rose); }
     nav ul { list-style: none; display: flex; gap: 32px; }
@@ -59,8 +68,45 @@
       font-weight: 600;
       text-decoration: none;
       transition: background .2s, transform .15s;
+      border: none;
+      cursor: pointer;
     }
-    .nav-cta:hover { background: #d4506b; transform: translateY(-1px); }
+    .nav-cta:hover { background: var(--rose-dark); transform: translateY(-1px); }
+
+    /* Mobile menu */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .mobile-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 20px;
+    }
+    .mobile-nav.active { display: block; }
+    .mobile-nav a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 12px 0;
+      font-size: 1rem;
+      transition: color .2s;
+    }
+    .mobile-nav a:hover { color: var(--gold); }
+    .mobile-nav .nav-cta {
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+    }
 
     /* ── HERO ── */
     .hero {
@@ -108,6 +154,8 @@
       padding: 6px 18px;
       border-radius: 50px;
       margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
     }
 
     h1 {
@@ -117,6 +165,8 @@
       font-weight: 700;
       max-width: 800px;
       margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
     }
     h1 em {
       font-style: italic;
@@ -130,6 +180,8 @@
       line-height: 1.7;
       margin-bottom: 48px;
       font-weight: 300;
+      position: relative;
+      z-index: 1;
     }
 
     /* Dual profile card */
@@ -140,6 +192,7 @@
       justify-content: center;
       margin: 56px auto 16px;
       width: 320px; height: 160px;
+      z-index: 1;
     }
     .profile-card {
       width: 120px;
@@ -182,9 +235,9 @@
       50%       { transform: translate(-50%,-50%) scale(1.18); }
     }
 
-    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 40px; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 40px; position: relative; z-index: 1; }
     .btn-primary {
-      background: linear-gradient(135deg, var(--rose), #a8405a);
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
       color: #fff;
       padding: 16px 36px;
       border-radius: 50px;
@@ -193,6 +246,9 @@
       text-decoration: none;
       transition: transform .15s, box-shadow .2s;
       box-shadow: 0 8px 28px rgba(193,96,122,.35);
+      border: none;
+      cursor: pointer;
+      display: inline-block;
     }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(193,96,122,.5); }
     .btn-ghost {
@@ -204,12 +260,17 @@
       text-decoration: none;
       border: 1px solid rgba(232,168,124,.25);
       transition: border-color .2s, background .2s;
+      background: transparent;
+      cursor: pointer;
+      display: inline-block;
     }
     .btn-ghost:hover { border-color: var(--gold); background: rgba(232,168,124,.06); }
 
     .stat-row {
       display: flex; gap: 40px; justify-content: center;
       margin-top: 64px; flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
     }
     .stat { text-align: center; }
     .stat-num {
@@ -297,8 +358,14 @@
       font-weight: 500;
       cursor: pointer;
       transition: background .2s, border-color .2s;
+      width: 100%;
     }
     .pcard .match-btn:hover { background: rgba(232,168,124,.1); border-color: var(--gold); }
+    .pcard .match-btn.notified {
+      background: rgba(193,96,122,.15);
+      border-color: var(--rose);
+      color: var(--rose);
+    }
 
     /* ── PRICING ── */
     .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 48px; }
@@ -347,6 +414,8 @@
       color: var(--text);
       cursor: pointer;
       transition: all .2s;
+      width: 100%;
+      background: transparent;
     }
     .plan.featured .plan-pay-btn { background: var(--rose); border-color: var(--rose); color: #fff; box-shadow: 0 6px 24px rgba(193,96,122,0.4); }
     .plan-btn:hover, .plan-pay-btn:hover { transform: translateY(-1px); }
@@ -390,8 +459,10 @@
       font-size: clamp(2rem, 5vw, 3.2rem);
       max-width: 640px;
       margin: 0 auto 20px;
+      position: relative;
+      z-index: 1;
     }
-    .cta-section p { color: var(--muted); margin-bottom: 40px; font-size: .95rem; }
+    .cta-section p { color: var(--muted); margin-bottom: 40px; font-size: .95rem; position: relative; z-index: 1; }
 
     /* ── FOOTER ── */
     footer {
@@ -401,16 +472,25 @@
       flex-wrap: wrap; gap: 16px;
       font-size: .82rem; color: var(--muted);
     }
+    footer a { color: var(--muted); text-decoration: none; transition: color .2s; }
+    footer a:hover { color: var(--gold); }
 
     /* ── BANK PAYMENT MODAL ── */
     .modal-backdrop {
       position: fixed; inset: 0;
       background: rgba(14, 7, 15, 0.85);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       z-index: 1000;
       display: none;
       align-items: center; justify-content: center;
       padding: 20px;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
     }
     .payment-modal {
       background: var(--card);
@@ -422,14 +502,23 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
       position: relative;
       text-align: center;
+      transform: scale(.9);
+      transition: transform .3s;
+    }
+    .modal-backdrop.active .payment-modal {
+      transform: scale(1);
     }
     .modal-close {
       position: absolute; top: 20px; right: 20px;
       background: none; border: none;
       color: var(--muted); font-size: 1.5rem;
       cursor: pointer;
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      transition: background .2s, color .2s;
     }
-    .modal-close:hover { color: #fff; }
+    .modal-close:hover { color: #fff; background: rgba(255,255,255,.1); }
     
     .bank-badge {
       background: #E11C33;
@@ -465,35 +554,78 @@
     .info-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 12px;
       font-size: 0.9rem;
       border-bottom: 1px dashed rgba(255,255,255,0.05);
       padding-bottom: 8px;
+      gap: 10px;
     }
     .info-row:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
-    .info-lbl { color: var(--muted); }
-    .info-val { font-weight: 600; color: var(--text); }
+    .info-lbl { color: var(--muted); flex-shrink: 0; }
+    .info-val { font-weight: 600; color: var(--text); word-break: break-all; }
     .info-val.highlight { color: var(--gold); font-size: 1.1rem; }
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
 
     .btn-done {
       width: 100%;
-      background: linear-gradient(135deg, var(--rose), #a8405a);
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
       color: white;
       border: none; padding: 14px;
       border-radius: 12px;
       font-weight: 600;
       cursor: pointer;
       font-size: 0.95rem;
+      transition: transform .15s;
     }
     .btn-done:hover { transform: translateY(-1px); }
 
+    .success-state { display: none; }
+    .success-state.active { display: block; }
+    .form-state { display: block; }
+    .form-state.hidden { display: none; }
+
     /* ── RESPONSIVE ── */
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       nav { padding: 16px 20px; }
       nav ul { display: none; }
-      footer { padding: 32px 20px; justify-content: center; text-align: center; }
+      .mobile-menu-btn { display: block; }
+      .nav-cta { display: none; }
+      .nav-cta.mobile-show { display: block; }
+      
+      footer { padding: 32px 20px; justify-content: center; text-align: center; flex-direction: column; }
       .stat-row { gap: 24px; }
+      .match-preview { width: 280px; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .profiles-grid { grid-template-columns: repeat(2, 1fr); }
     }
+    
+    @media (max-width: 480px) {
+      .profiles-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .testi-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2.2rem; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-ghost { width: 100%; max-width: 280px; text-align: center; }
+    }
+
+    /* Smooth scroll for anchor links */
+    html { scroll-behavior: smooth; }
+    
+    /* Selection color */
+    ::selection { background: rgba(193,96,122,.3); color: var(--text); }
   </style>
 </head>
 <body>
@@ -502,21 +634,28 @@
 <div class="hearts-bg" id="heartsBg"></div>
 
 <!-- NAV -->
-<nav>
-  <div class="logo">Хол<span>бо</span>о</div>
+<nav id="navbar">
+  <a href="/" class="logo">Хол<span>бо</span>о</a>
   <ul>
     <li><a href="#how">Хэрхэн ажилладаг</a></li>
     <li><a href="#profiles">Хэрэглэгчид</a></li>
     <li><a href="#pricing">Үнэ</a></li>
   </ul>
-  <a class="nav-cta" href="register.html">Бүртгүүлэх</a>
+  <a class="nav-cta" href="#register" id="navCta">Бүртгүүлэх</a>
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Цэс нээх">☰</button>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#how">Хэрхэн ажилладаг</a>
+    <a href="#profiles">Хэрэглэгчид</a>
+    <a href="#pricing">Үнэ</a>
+    <a class="nav-cta" href="#register" id="mobileNavCta">Бүртгүүлэх</a>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="eyebrow">Монголын 40+ насныханд зориулсан</div>
   <h1>Таны <em>жинхэнэ хос</em><br/>энд хүлээж байна</h1>
-  <p class="hero-sub">Facebook gruppийн эмх замбараагүй байдлыг орхи. Найдвартай, хувийн, халуун дулаан орчинд хосоо ол.</p>
+  <p class="hero-sub">Facebook группийн эмх замбараагүй байдлыг орхи. Найдвартай, хувийн, халуун дулаан орчинд хосоо ол.</p>
 
   <!-- Signature: two cards + heart -->
   <div class="match-preview">
@@ -534,7 +673,7 @@
   </div>
 
   <div class="hero-btns">
-    <a class="btn-primary" href="register.html">Одоо эхлэх</a>
+    <a class="btn-primary" href="#register" id="heroCta">Одоо эхлэх</a>
     <a class="btn-ghost" href="#how">Хэрхэн ажилладаг вэ?</a>
   </div>
 
@@ -644,7 +783,7 @@
         <li class="no">Миний профайлыг хэн харав</li>
         <li class="no">Verified badge</li>
       </ul>
-      <a class="plan-btn" href="register.html">Эхлэх</a>
+      <a class="plan-btn" href="#register">Эхлэх</a>
     </div>
     
     <!-- Premium Багц (ХААН Банк Данс холбосон) -->
@@ -726,7 +865,7 @@
   <div class="eyebrow">Эхлэх цаг болсон</div>
   <h2>Таны хос таныг<br/><em style="color:var(--gold);font-style:italic;">хүлээж байна</em></h2>
   <p>Бүртгүүлэхэд 2 минут л хэрэгтэй. Зар сурталчилгаагүй, хуурамч профайлгүй.</p>
-  <a class="btn-primary" href="register.html" style="font-size:1.05rem;padding:18px 44px;">Үнэгүй бүртгүүлэх →</a>
+  <a class="btn-primary" href="#register" id="ctaBtn" style="font-size:1.05rem;padding:18px 44px;">Үнэгүй бүртгүүлэх →</a>
 </section>
 
 <!-- FOOTER -->
@@ -734,94 +873,94 @@
   <div class="logo" style="font-size:1.2rem;">Хол<span style="color:var(--rose)">бо</span>о</div>
   <div>© 2026 Холбоо. Монголд хийгдсэн 🇲🇳</div>
   <div style="display:flex;gap:20px;">
-    <a href="#" style="color:var(--muted);text-decoration:none;">Нууцлал</a>
-    <a href="#" style="color:var(--muted);text-decoration:none;">Нөхцөл</a>
-    <a href="#" style="color:var(--muted);text-decoration:none;">Холбоо барих</a>
+    <a href="#">Нууцлал</a>
+    <a href="#">Нөхцөл</a>
+    <a href="#">Холбоо барих</a>
   </div>
 </footer>
 
 <!-- KHAN BANK PAYMENT MODAL -->
 <div class="modal-backdrop" id="paymentModal">
   <div class="payment-modal">
-    <button class="modal-close" onclick="closePaymentModal()">×</button>
-    <div class="bank-badge">KHAN BANK</div>
-    <div class="payment-title" id="modalPackName">Premium Багц</div>
-    <p class="payment-desc">Доорх дансанд төлбөрөө шилжүүлснээр таны багц 5-10 минутын дотор идэвхжнэ.</p>
+    <button class="modal-close" onclick="closePaymentModal()" aria-label="Хаах">×</button>
     
-    <div class="bank-info-box">
-      <div class="info-row">
-        <div class="info-lbl">Банк:</div>
-        <div class="info-val">Хаан Банк (Khan Bank)</div>
+    <div class="form-state" id="formState">
+      <div class="bank-badge">KHAN BANK</div>
+      <div class="payment-title" id="modalPackName">Premium Багц</div>
+      <p class="payment-desc">Доорх дансанд төлбөрөө шилжүүлснээр таны багц 5-10 минутын дотор идэвхжнэ.</p>
+      
+      <div class="bank-info-box">
+        <div class="info-row">
+          <div class="info-lbl">Банк:</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="info-val">Хаан Банк (Khan Bank)</div>
+            <button class="copy-btn" onclick="copyText('Хаан Банк (Khan Bank)', this)">Хуулах</button>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl">Хүлээн авагч данс:</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="info-val highlight" id="accountNum">5070XXXXXX</div>
+            <button class="copy-btn" onclick="copyText('5070XXXXXX', this)">Хуулах</button>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl">Хүлээн авагчийн нэр:</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="info-val">Бат-Эрдэнэ .О</div>
+            <button class="copy-btn" onclick="copyText('Бат-Эрдэнэ .О', this)">Хуулах</button>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl">Шилжүүлэх дүн:</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="info-val highlight" id="modalPrice">19,900 ₮</div>
+            <button class="copy-btn" onclick="copyPrice(this)">Хуулах</button>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-lbl">Гүйлгээний утга:</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="info-val" style="color: var(--rose);" id="paymentRef">таны_утасны_дугаар</div>
+            <button class="copy-btn" onclick="copyRef(this)">Хуулах</button>
+          </div>
+        </div>
       </div>
-      <div class="info-row">
-        <div class="info-lbl">Хүлээн авагч данс:</div>
-        <div class="info-val highlight">5070XXXXXX</div>
-      </div>
-      <div class="info-row">
-        <div class="info-lbl">Хүлээн авагчийн нэр:</div>
-        <div class="info-val">Бат-Эрдэнэ .О</div>
-      </div>
-      <div class="info-row">
-        <div class="info-lbl">Шилжүүлэх дүн:</div>
-        <div class="info-val highlight" id="modalPrice">19,900 ₮</div>
-      </div>
-      <div class="info-row">
-        <div class="info-lbl">Гүйлгээний утга:</div>
-        <div class="info-val" style="color: var(--rose);" id="paymentRef">таны_утасны_дугаар</div>
-      </div>
+      
+      <button class="btn-done" onclick="completePayment()">Шилжүүлсэн, бэлэн боллоо</button>
     </div>
-    
-    <button class="btn-done" onclick="completePayment()">Шилжүүлсэн, бэлэн боллоо</button>
+
+    <div class="success-state" id="successState">
+      <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
+      <div class="payment-title">Баярлалаа!</div>
+      <p class="payment-desc">Төлбөрийн мэдээллийг хүлээж авлаа. Админ 5-10 минутын дотор шалгаж идэвхжүүлнэ.</p>
+      <button class="btn-done" onclick="closePaymentModal()" style="margin-top:1rem;">Ойлголоо</button>
+    </div>
   </div>
 </div>
 
 <script>
-  // Modal controllers
-  function openPaymentModal(packName, price) {
-    // Хэрэв хэрэглэгч бүртгүүлсэн бол гүйлгээний утгыг автоматаар нэрээр нь солих
-    const stored = localStorage.getItem('currentUser');
-    if (stored) {
-      const user = JSON.parse(stored);
-      document.getElementById('paymentRef').textContent = `${user.name} Premium`;
-    } else {
-      document.getElementById('paymentRef').textContent = "таны_утасны_дугаар";
-    }
+  // ===== MOBILE MENU =====
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  let menuOpen = false;
 
-    document.getElementById('modalPackName').textContent = packName;
-    document.getElementById('modalPrice').textContent = price;
-    document.getElementById('paymentModal').style.display = 'flex';
-  }
-
-  function closePaymentModal() {
-    document.getElementById('paymentModal').style.display = 'none';
-  }
-
-  function completePayment() {
-    alert("Баярлалаа! Төлбөрийн мэдээллийг хүлээж авлаа. Админ 5-10 минутын дотор шалгаж идэвхжүүлнэ.");
-    localStorage.setItem('paymentStatus', 'pending');
-    closePaymentModal();
-  }
-
-  // Dynamic Check: Хэрэглэгч бүртгүүлсэн эсэхийг ухаалгаар шалгаж товчлуурыг солих
-  window.addEventListener('DOMContentLoaded', () => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      // Хэрэглэгч аль хэдийн бүртгүүлсэн байгаа тул товчлуурын линкийг match.html болгож өөрчлөх
-      const registerButtons = document.querySelectorAll('a[href="register.html"]');
-      registerButtons.forEach(btn => {
-        btn.setAttribute('href', 'match.html');
-        if (btn.classList.contains('nav-cta')) {
-          btn.textContent = 'Хосоо олох';
-        } else if (btn.classList.contains('btn-primary')) {
-          btn.textContent = 'Шууд орох →';
-        } else {
-          btn.textContent = 'Хосоо харах';
-        }
-      });
-    }
+  mobileMenuBtn.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileNav.classList.toggle('active', menuOpen);
+    mobileMenuBtn.textContent = menuOpen ? '✕' : '☰';
   });
 
-  // Floating hearts
+  // Close mobile menu when clicking a link
+  mobileNav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      menuOpen = false;
+      mobileNav.classList.remove('active');
+      mobileMenuBtn.textContent = '☰';
+    });
+  });
+
+  // ===== FLOATING HEARTS =====
   const bg = document.getElementById('heartsBg');
   const emojis = ['💗','💕','✨','💞','🌸'];
   for (let i = 0; i < 18; i++) {
@@ -835,16 +974,148 @@
     bg.appendChild(s);
   }
 
-  // Card hover interaction
+  // ===== PAYMENT MODAL =====
+  function openPaymentModal(packName, price) {
+    document.getElementById('modalPackName').textContent = packName;
+    document.getElementById('modalPrice').textContent = price;
+    
+    // Reset states
+    document.getElementById('formState').classList.remove('hidden');
+    document.getElementById('successState').classList.remove('active');
+    
+    const modal = document.getElementById('paymentModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    
+    // Reset after animation
+    setTimeout(() => {
+      document.getElementById('formState').classList.remove('hidden');
+      document.getElementById('successState').classList.remove('active');
+    }, 300);
+  }
+
+  function completePayment() {
+    document.getElementById('formState').classList.add('hidden');
+    document.getElementById('successState').classList.add('active');
+    
+    // Store payment status
+    localStorage.setItem('paymentStatus', 'pending');
+    localStorage.setItem('paymentTime', Date.now().toString());
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('paymentModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closePaymentModal();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePaymentModal();
+  });
+
+  // ===== COPY FUNCTIONS =====
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      showCopied(btn);
+    }).catch(() => {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showCopied(btn);
+    });
+  }
+
+  function copyPrice(btn) {
+    const price = document.getElementById('modalPrice').textContent;
+    copyText(price.replace(/[^0-9]/g, ''), btn);
+  }
+
+  function copyRef(btn) {
+    const ref = document.getElementById('paymentRef').textContent;
+    copyText(ref, btn);
+  }
+
+  function showCopied(btn) {
+    const original = btn.textContent;
+    btn.textContent = '✓ Хуулсан';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('copied');
+    }, 2000);
+  }
+
+  // ===== PROFILE CARD INTERACTION =====
   document.querySelectorAll('.pcard').forEach(c => {
-    c.addEventListener('click', function() {
-      const btn = this.querySelector('.match-btn');
-      btn.textContent = '💗 Мэдэгдэл явуулсан!';
-      btn.style.background = 'rgba(193,96,122,.15)';
-      btn.style.borderColor = 'var(--rose)';
+    const btn = c.querySelector('.match-btn');
+    c.addEventListener('click', function(e) {
+      if (e.target === btn) return;
+      btn.click();
+    });
+    
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (this.classList.contains('notified')) return;
+      this.textContent = '💗 Мэдэгдэл явуулсан!';
+      this.classList.add('notified');
+    });
+  });
+
+  // ===== NAVBAR SCROLL EFFECT =====
+  let lastScroll = 0;
+  const navbar = document.getElementById('navbar');
+  
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    
+    if (currentScroll > 100) {
+      navbar.style.background = 'rgba(26,14,28,0.98)';
+    } else {
+      navbar.style.background = 'linear-gradient(to bottom, rgba(26,14,28,.95), transparent)';
+    }
+    
+    lastScroll = currentScroll;
+  });
+
+  // ===== SMOOTH SCROLL FOR ANCHOR LINKS =====
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href === '#') return;
+      
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+
+  // ===== REGISTER BUTTON PLACEHOLDER =====
+  // Хэрэв бүртгэлийн хуудас байхгүй бол alert харуулах
+  document.querySelectorAll('a[href="#register"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      // Хэрэв register.html байхгүй бол
+      if (!btn.getAttribute('href').includes('.html')) {
+        e.preventDefault();
+        alert('Бүртгэлийн хуудас удахгүй нээгдэнэ!');
+      }
     });
   });
 </script>
 
 </body>
-</html>
+</html>'''
