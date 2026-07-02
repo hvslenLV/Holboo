@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Холбоо — Таны хосыг олъё</title>
-  <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)" />
-  <link href="[https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap](https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap)" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -410,8 +410,10 @@
 </head>
 <body>
 
+<!-- Floating hearts bg -->
 <div class="hearts-bg" id="heartsBg"></div>
 
+<!-- NAV -->
 <nav>
   <div class="logo">Хол<span>бо</span>о</div>
   <ul>
@@ -422,11 +424,13 @@
   <a class="nav-cta" href="register.html">Бүртгүүлэх</a>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
   <div class="eyebrow">Монголын 40+ насныханд зориулсан</div>
   <h1>Таны <em>жинхэнэ хос</em><br/>энд хүлээж байна</h1>
   <p class="hero-sub">Facebook gruppийн эмх замбараагүй байдлыг орхи. Найдвартай, хувийн, халуун дулаан орчинд хосоо ол.</p>
 
+  <!-- Signature: two cards + heart -->
   <div class="match-preview">
     <div class="profile-card card-left">
       <div class="avatar" style="background:linear-gradient(135deg,#C1607A,#8B2E4A);">Д</div>
@@ -462,6 +466,7 @@
   </div>
 </section>
 
+<!-- HOW IT WORKS -->
 <section class="section" id="how">
   <div class="section-tag">Хэрхэн ажилладаг</div>
   <h2 class="section-title">Энгийн 4 алхам</h2>
@@ -494,6 +499,7 @@
   </div>
 </section>
 
+<!-- SAMPLE PROFILES -->
 <section class="profiles-section" id="profiles">
   <div class="profiles-inner">
     <div class="section-tag">Хэрэглэгчид</div>
@@ -532,6 +538,7 @@
   </div>
 </section>
 
+<!-- PRICING -->
 <section class="section" id="pricing">
   <div class="section-tag">Үнэ тариф</div>
   <h2 class="section-title">Хосоо ол, зогсоолгүй</h2>
@@ -583,6 +590,7 @@
   </div>
 </section>
 
+<!-- TESTIMONIALS -->
 <section class="section">
   <div class="section-tag">Амжилтын түүх</div>
   <h2 class="section-title">Тэд олдсон</h2>
@@ -621,6 +629,7 @@
   </div>
 </section>
 
+<!-- FINAL CTA -->
 <section class="cta-section" id="join">
   <div class="eyebrow">Эхлэх цаг болсон</div>
   <h2>Таны хос таныг<br/><em style="color:var(--gold);font-style:italic;">хүлээж байна</em></h2>
@@ -628,6 +637,7 @@
   <a class="btn-primary" href="register.html" style="font-size:1.05rem;padding:18px 44px;">Үнэгүй бүртгүүлэх →</a>
 </section>
 
+<!-- FOOTER -->
 <footer>
   <div class="logo" style="font-size:1.2rem;">Хол<span style="color:var(--rose)">бо</span>о</div>
   <div>© 2026 Холбоо. Монголд хийгдсэн 🇲🇳</div>
@@ -639,6 +649,28 @@
 </footer>
 
 <script>
+  // Dynamic Check: Хэрэглэгч бүртгүүлсэн эсэхийг ухаалгаар шалгах
+  window.addEventListener('DOMContentLoaded', () => {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      // Хэрэглэгч аль хэдийн бүртгүүлсэн байна!
+      // 'register.html' холбоостой бүх товчлуурыг 'match.html' рүү үсэрдэг болгоно.
+      const registerButtons = document.querySelectorAll('a[href="register.html"]');
+      registerButtons.forEach(btn => {
+        btn.setAttribute('href', 'match.html');
+        
+        // Товчлуурын текстийг илүү тохиромжтой болгож солино
+        if (btn.classList.contains('nav-cta')) {
+          btn.textContent = 'Хосоо олох';
+        } else if (btn.classList.contains('btn-primary')) {
+          btn.textContent = 'Шууд орох →';
+        } else {
+          btn.textContent = 'Хосоо харах';
+        }
+      });
+    }
+  });
+
   // Floating hearts
   const bg = document.getElementById('heartsBg');
   const emojis = ['💗','💕','✨','💞','🌸'];
@@ -666,5 +698,3 @@
 
 </body>
 </html>
-
-```
