@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Холбоо - Монголын 40+ насныханд зориулсан хос олох платформ" />
+  <meta name="theme-color" content="#1A0E1C" />
+  <title>Холбоо — Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #1A0E1C;
+      --bg2:      #221428;
+      --gold:     #E8A87C;
+      --gold-lt:  #F2D4C2;
+      --rose:     #C1607A;
+      --rose-dark:#a8405a;
+      --rose-light:rgba(193,96,122,0.12);
+      --text:     #F5EDE8;
+      --muted:    #9C8A86;
+      --card:     #2B1830;
+      --border:   #3D2240;
+      --success:  #22c55e;
+      --error:    #ef4444;
+      --online:   #4ade80;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(193,96,122,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(232,168,124,0.06) 0%, transparent 50%);
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 40px;
+      background: rgba(26,14,28,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: .04em;
+      text-decoration: none;
+    }
+    .logo span { color: var(--rose); }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 6px;
+    }
+    .nav-tab {
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all .2s;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+    .nav-tab:hover { color: var(--gold); }
+    .nav-tab.active {
+      background: var(--rose);
+      color: #fff;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .notif-btn {
+      position: relative;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+    }
+    .notif-btn:hover { border-color: var(--rose); color: var(--gold); }
+    .notif-badge {
+      position: absolute; top: -2px; right: -2px;
+      width: 18px; height: 18px;
+      background: var(--rose);
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg);
+    }
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 6px 12px 6px 6px;
+      border-radius: 50px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      transition: border-color .2s;
+    }
+    .user-menu:hover { border-color: var(--rose); }
+    .user-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .user-name {
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: .8rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color .2s;
+      font-family: inherit;
+    }
+    .logout-btn:hover { color: var(--error); }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 90px 24px 40px;
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+    .sidebar-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .sidebar-title {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      margin-bottom: 4px;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+    .filter-item:hover { background: var(--bg2); color: var(--text); }
+    .filter-item.active { background: var(--rose-light); color: var(--rose); }
+    .filter-icon { font-size: 1.1rem; }
+
+    .stat-mini {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-mini:last-child { border-bottom: none; }
+    .stat-mini-label { font-size: .82rem; color: var(--muted); }
+    .stat-mini-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .center-col { min-width: 0; }
+
+    .welcome-banner {
+      background: linear-gradient(135deg, var(--card) 0%, #1f1225 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(193,96,122,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .welcome-text { position: relative; z-index: 1; }
+    .welcome-greeting {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .welcome-sub {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .welcome-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-sm {
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all .2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-sm-primary {
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(193,96,122,0.3);
+    }
+    .btn-sm-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(193,96,122,0.4); }
+    .btn-sm-ghost {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid rgba(232,168,124,.25);
+    }
+    .btn-sm-ghost:hover { border-color: var(--gold); background: rgba(232,168,124,.06); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+    .section-header a {
+      font-size: .82rem;
+      color: var(--rose);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity .2s;
+      cursor: pointer;
+    }
+    .section-header a:hover { opacity: .8; text-decoration: underline; }
+
+    .match-carousel {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 24px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .match-carousel::-webkit-scrollbar { height: 4px; }
+    .match-carousel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .match-card {
+      flex: 0 0 200px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px 20px;
+      text-align: center;
+      transition: all .25s;
+      cursor: pointer;
+      position: relative;
+    }
+    .match-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--rose);
+      box-shadow: 0 8px 32px rgba(193,96,122,0.15);
+    }
+    .match-card .match-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; font-weight: 700; color: #fff;
+      position: relative;
+    }
+    .match-card .match-avatar .online-dot {
+      position: absolute;
+      bottom: 4px; right: 4px;
+      width: 14px; height: 14px;
+      background: var(--online);
+      border-radius: 50%;
+      border: 2px solid var(--card);
+    }
+    .match-card .match-name { font-weight: 600; font-size: .95rem; margin-bottom: 2px; }
+    .match-card .match-info { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+    .match-card .match-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .match-card .match-tag {
+      padding: 3px 10px;
+      background: var(--bg2);
+      border-radius: 50px;
+      font-size: .7rem;
+      color: var(--muted);
+    }
+    .match-card .match-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .match-btn-action {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all .2s;
+    }
+    .match-btn-action.like:hover { background: var(--rose); border-color: var(--rose); color: #fff; }
+    .match-btn-action.msg:hover { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+    .match-btn-action.skip:hover { background: var(--border); color: var(--text); }
+
+    .msg-list {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .msg-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .msg-item:last-child { border-bottom: none; }
+    .msg-item:hover { background: var(--bg2); }
+    .msg-item.unread { background: var(--rose-light); }
+    .msg-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .msg-avatar .online-dot {
+      position: absolute;
+      bottom: 2px; right: 2px;
+      width: 12px; height: 12px;
+      background: var(--online);
+      border-radius: 50%;
+      border: 2px solid var(--card);
+    }
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .msg-name { font-weight: 600; font-size: .9rem; }
+    .msg-time { font-size: .75rem; color: var(--muted); }
+    .msg-preview {
+      font-size: .82rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .msg-item.unread .msg-preview { color: var(--text); font-weight: 500; }
+    .msg-unread-badge {
+      width: 20px; height: 20px;
+      background: var(--rose);
+      color: #fff;
+      border-radius: 50%;
+      font-size: .7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .activity-feed {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+    }
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .activity-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .activity-text { font-size: .85rem; color: var(--muted); line-height: 1.5; }
+    .activity-text strong { color: var(--text); font-weight: 600; }
+    .activity-time { font-size: .75rem; color: var(--muted); opacity: .6; margin-top: 2px; }
+
+    .right-sidebar {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+
+    .profile-mini {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .profile-mini-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 700; color: #fff;
+    }
+    .profile-mini-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .profile-mini-info { font-size: .82rem; color: var(--muted); margin-bottom: 16px; }
+    .profile-mini-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .pmini-stat { text-align: center; }
+    .pmini-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .pmini-stat-label { font-size: .7rem; color: var(--muted); margin-top: 2px; }
+    .profile-mini-btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .profile-mini-btn:hover { border-color: var(--gold); background: rgba(232,168,124,.06); }
+
+    .upgrade-card {
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      border-radius: 20px;
+      padding: 24px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .upgrade-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .upgrade-card p {
+      font-size: .85rem;
+      opacity: .85;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .upgrade-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--rose);
+      border: none;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .15s;
+      font-family: inherit;
+    }
+    .upgrade-btn:hover { transform: translateY(-1px); }
+
+    .chat-modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(14, 7, 15, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .chat-modal-backdrop.active { display: flex; }
+    .chat-modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 500px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-header-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 700; color: #fff;
+    }
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-weight: 600; font-size: .95rem; }
+    .chat-header-status { font-size: .78rem; color: var(--online); }
+    .chat-close {
+      background: none; border: none;
+      color: var(--muted); font-size: 1.5rem;
+      cursor: pointer; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      transition: all .2s;
+    }
+    .chat-close:hover { color: #fff; background: rgba(255,255,255,.1); }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-msg {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: .88rem;
+      line-height: 1.5;
+    }
+    .chat-msg.sent {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg.received {
+      align-self: flex-start;
+      background: var(--bg2);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-input-area {
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 12px 18px;
+      color: var(--text);
+      font-size: .9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .chat-input:focus { border-color: var(--rose); }
+    .chat-input::placeholder { color: var(--muted); opacity: .5; }
+    .chat-send {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--rose);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+    .chat-send:hover { background: var(--rose-dark); transform: scale(1.05); }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 24px;
+      font-size: .9rem;
+      color: var(--text);
+      z-index: 2000;
+      opacity: 0;
+      transition: all .3s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error { border-color: rgba(239,68,68,0.3); }
+
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(14, 7, 15, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+    .payment-modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      position: relative;
+      text-align: center;
+    }
+    .modal-close {
+      position: absolute; top: 20px; right: 20px;
+      background: none; border: none;
+      color: var(--muted); font-size: 1.5rem;
+      cursor: pointer; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: all .2s;
+    }
+    .modal-close:hover { color: #fff; background: rgba(255,255,255,.1); }
+
+    @media (max-width: 1200px) {
+      .main-layout { grid-template-columns: 240px 1fr 280px; }
+    }
+    @media (max-width: 992px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .sidebar, .right-sidebar { display: none; }
+      .mobile-sidebar-toggle {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .mobile-filter-pill {
+        padding: 8px 16px;
+        border-radius: 50px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-size: .82rem;
+        white-space: nowrap;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .mobile-filter-pill.active { background: var(--rose); color: #fff; border-color: var(--rose); }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 14px 16px; }
+      .nav-center { display: none; }
+      .mobile-menu-btn { display: block; }
+      .user-name { display: none; }
+      .main-layout { padding: 80px 16px 24px; }
+      .welcome-banner { padding: 24px; }
+      .welcome-greeting { font-size: 1.3rem; }
+      .match-card { flex: 0 0 170px; padding: 20px 16px; }
+      .match-card .match-avatar { width: 64px; height: 64px; font-size: 1.4rem; }
+    }
+    @media (max-width: 480px) {
+      .match-carousel { gap: 12px; }
+      .match-card { flex: 0 0 150px; }
+      .msg-item { padding: 12px 16px; }
+      .msg-avatar { width: 40px; height: 40px; }
+    }
+
+    ::selection { background: rgba(193,96,122,.3); color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <div class="page-bg"></div>
+
+  <nav>
+    <a href="dashboard.html" class="logo">Хол<span>бо</span>о</a>
+    <div class="nav-center">
+      <button class="nav-tab active" data-tab="discover">🔍 Олох</button>
+      <button class="nav-tab" data-tab="messages">💌 Мессеж</button>
+      <button class="nav-tab" data-tab="matches">💕 Таарц</button>
+    </div>
+    <div class="nav-right">
+      <button class="notif-btn" id="notifBtn" aria-label="Мэдэгдэл">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        </svg>
+        <span class="notif-badge" id="notifBadge">3</span>
+      </button>
+      <div class="user-menu" id="userMenu">
+        <div class="user-avatar" id="navAvatar">?</div>
+        <span class="user-name" id="navName">Хэрэглэгч</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Гарах</button>
+    </div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </nav>
+
+  <div class="main-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-title">Шүүлтүүр</div>
+        <div class="filter-item active" data-filter="all">
+          <span class="filter-icon">🔍</span>
+          <span>Бүгд харуулах</span>
+        </div>
+        <div class="filter-item" data-filter="online">
+          <span class="filter-icon">🟢</span>
+          <span>Онлайн</span>
+        </div>
+        <div class="filter-item" data-filter="nearby">
+          <span class="filter-icon">📍</span>
+          <span>Ойролцоо</span>
+        </div>
+        <div class="filter-item" data-filter="new">
+          <span class="filter-icon">✨</span>
+          <span>Шинээр ирсэн</span>
+        </div>
+        <div class="filter-item" data-filter="liked">
+          <span class="filter-icon">💗</span>
+          <span>Надад таалагдсан</span>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Миний статистик</div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Харсан</span>
+          <span class="stat-mini-val">24</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Таалагдсан</span>
+          <span class="stat-mini-val">8</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Мессеж</span>
+          <span class="stat-mini-val">12</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-label">Таарц</span>
+          <span class="stat-mini-val">3</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="center-col">
+
+      <div class="mobile-sidebar-toggle" id="mobileFilters">
+        <button class="mobile-filter-pill active" data-filter="all">Бүгд</button>
+        <button class="mobile-filter-pill" data-filter="online">Онлайн</button>
+        <button class="mobile-filter-pill" data-filter="nearby">Ойролцоо</button>
+        <button class="mobile-filter-pill" data-filter="new">Шинэ</button>
+        <button class="mobile-filter-pill" data-filter="liked">Таалагдсан</button>
+      </div>
+
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <div class="welcome-greeting" id="welcomeGreeting">Сайн уу, Хэрэглэгч!</div>
+          <p class="welcome-sub">Өнөөдөр танд 5 шинэ таарц байна. Хосоо олох аялалаа үргэлжлүүлээрэй 💕</p>
+          <div class="welcome-actions">
+            <button class="btn-sm btn-sm-primary" onclick="scrollToMatches()">🔍 Хүн хайх</button>
+            <button class="btn-sm btn-sm-ghost" onclick="scrollToMessages()">💌 Мессеж харах</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>🎯 Танд тохирох хүмүүс</h2>
+        <a onclick="showToast('Бүх хүмүүсийг харуулж байна', 'success')">Бүгдийг харах →</a>
+      </div>
+      <div class="match-carousel" id="matchCarousel"></div>
+
+      <div class="section-header">
+        <h2>💌 Сүүлийн мессежүүд</h2>
+        <a onclick="showToast('Бүх мессежийг харуулж байна', 'success')">Бүгдийг харах →</a>
+      </div>
+      <div class="msg-list" id="msgList"></div>
+
+      <div class="section-header">
+        <h2>🔔 Сүүлийн үйл явдал</h2>
+      </div>
+      <div class="activity-feed" id="activityFeed"></div>
+    </main>
+
+    <aside class="right-sidebar">
+      <div class="profile-mini">
+        <div class="profile-mini-avatar" id="profileAvatar" style="background:linear-gradient(135deg,var(--rose),var(--rose-dark));">?</div>
+        <div class="profile-mini-name" id="profileName">Хэрэглэгч</div>
+        <div class="profile-mini-info" id="profileInfo">-- нас • --</div>
+        <div class="profile-mini-stats">
+          <div class="pmini-stat">
+            <div class="pmini-stat-num" id="statViews">0</div>
+            <div class="pmini-stat-label">Харсан</div>
+          </div>
+          <div class="pmini-stat">
+            <div class="pmini-stat-num" id="statLikes">0</div>
+            <div class="pmini-stat-label">Таалагдсан</div>
+          </div>
+          <div class="pmini-stat">
+            <div class="pmini-stat-num" id="statMatches">0</div>
+            <div class="pmini-stat-label">Таарц</div>
+          </div>
+        </div>
+        <button class="profile-mini-btn" onclick="showToast('Профайл засах хэсэг', 'success')">✏️ Профайл засах</button>
+      </div>
+
+      <div class="upgrade-card">
+        <h3>⭐ Premium болгох</h3>
+        <p>Хязгааргүй таарч харах, хэн таны профайлыг харсаныг мэдэх, эхний хуудсанд гарч ирэх.</p>
+        <button class="upgrade-btn" onclick="openPaymentModal()">₮19,900 / сар</button>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Зөвлөмж</div>
+        <div style="font-size:.85rem;color:var(--muted);line-height:1.6;">
+          <p style="margin-bottom:12px;">📝 <strong style="color:var(--text);">Профайлаа бүрэн бөглө</strong> — Зургаа upload хийж, өөрийнхөө талаар дэлгэрэнгүй бич.</p>
+          <p style="margin-bottom:12px;">💬 <strong style="color:var(--text);">Идэвхтэй бай</strong> — Өдөр бүр орж, шинэ хүмүүст мессеж илгээ.</p>
+          <p>🎯 <strong style="color:var(--text);">Шүүлтүүр ашигла</strong> — Нас, байршил, сонирхлоор хай.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="chat-modal-backdrop" id="chatModal">
+    <div class="chat-modal">
+      <div class="chat-header">
+        <div class="chat-header-avatar" id="chatAvatar" style="background:linear-gradient(135deg,var(--rose),var(--rose-dark));">?</div>
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chatName">Хэрэглэгч</div>
+          <div class="chat-header-status">🟢 Онлайн</div>
+        </div>
+        <button class="chat-close" onclick="closeChat()">×</button>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Мессеж бичнэ үү..." />
+        <button class="chat-send" onclick="sendMessage()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="modal-backdrop" id="paymentModal">
+    <div class="payment-modal">
+      <button class="modal-close" onclick="closePaymentModal()">×</button>
+      <div style="background:#E11C33;color:white;padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:700;display:inline-block;margin-bottom:16px;letter-spacing:0.05em;">KHAN BANK</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:12px;color:var(--gold);">Premium Багц</div>
+      <p style="font-size:0.88rem;color:var(--muted);line-height:1.6;margin-bottom:24px;">Доорх дансанд төлбөрөө шилжүүлснээр таны багц 5-10 минутын дотор идэвхжнэ.</p>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:left;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;margin-bottom:14px;font-size:0.9rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:10px;gap:8px;">
+          <div style="color:var(--muted);flex-shrink:0;min-width:100px;">Банк:</div>
+          <div style="font-weight:600;color:var(--text);flex:1;">Хаан Банк</div>
+        </div>
+        <div style="display:flex;align-items:center;margin-bottom:14px;font-size:0.9rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:10px;gap:8px;">
+          <div style="color:var(--muted);flex-shrink:0;min-width:100px;">Данс:</div>
+          <div style="font-weight:600;color:var(--gold);font-size:1.05rem;flex:1;">5070XXXXXX</div>
+        </div>
+        <div style="display:flex;align-items:center;margin-bottom:14px;font-size:0.9rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:10px;gap:8px;">
+          <div style="color:var(--muted);flex-shrink:0;min-width:100px;">Нэр:</div>
+          <div style="font-weight:600;color:var(--text);flex:1;">Бат-Эрдэнэ .О</div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:0.9rem;gap:8px;">
+          <div style="color:var(--muted);flex-shrink:0;min-width:100px;">Дүн:</div>
+          <div style="font-weight:600;color:var(--gold);font-size:1.05rem;flex:1;">19,900 ₮</div>
+        </div>
+      </div>
+      <button style="width:100%;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:white;border:none;padding:14px;border-radius:12px;font-weight:600;cursor:pointer;font-size:0.95rem;transition:transform .15s;" onclick="completePayment()">Шилжүүлсэн, бэлэн боллоо</button>
+    </div>
+  </div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser) {
+    window.location.href = 'login.html';
+  }
+
+  const demoMatches = [
+    { id: 1, name: 'Наранцэцэг', age: 43, location: 'Сүхбаатар', tags: ['Аялал', 'Ном'], avatar: 'Н', color: 'linear-gradient(135deg,#C1607A,#8B2E4A)', online: true },
+    { id: 2, name: 'Ганбаатар', age: 49, location: 'Баянзүрх', tags: ['Байгаль', 'Зураг'], avatar: 'Г', color: 'linear-gradient(135deg,#5B8FB9,#2C5282)', online: false },
+    { id: 3, name: 'Оюунцэцэг', age: 45, location: 'Хан-Уул', tags: ['Ном', 'Кино'], avatar: 'О', color: 'linear-gradient(135deg,#7B9E5B,#3D5C2A)', online: true },
+    { id: 4, name: 'Дамдинсүрэн', age: 51, location: 'Чингэлтэй', tags: ['Хоол', 'Спорт'], avatar: 'Д', color: 'linear-gradient(135deg,#B9855B,#7A4A20)', online: true },
+    { id: 5, name: 'Энхтуяа', age: 46, location: 'Сонгинохайрхан', tags: ['Уран зохиол', 'Аялал'], avatar: 'Э', color: 'linear-gradient(135deg,#9B59B6,#6C3483)', online: false },
+    { id: 6, name: 'Батбаяр', age: 47, location: 'Баянгол', tags: ['Машин', 'Зураг'], avatar: 'Б', color: 'linear-gradient(135deg,#E67E22,#D35400)', online: true },
+  ];
+
+  const demoMessages = [
+    { id: 1, name: 'Наранцэцэг', avatar: 'Н', color: 'linear-gradient(135deg,#C1607A,#8B2E4A)', preview: 'Сайн уу! Таны профайл их таалагдлаа 😊', time: '2 минутын өмнө', unread: true, count: 2, online: true },
+    { id: 2, name: 'Ганбаатар', avatar: 'Г', color: 'linear-gradient(135deg,#5B8FB9,#2C5282)', preview: 'Баянзүрх дүүрэгт байдаг юм байна. Би ч бас...', time: '1 цагийн өмнө', unread: false, count: 0, online: false },
+    { id: 3, name: 'Оюунцэцэг', avatar: 'О', color: 'linear-gradient(135deg,#7B9E5B,#3D5C2A)', preview: 'Ном уншдаг гэсэн байна. Сүүлд юу уншсан бэ?', time: '3 цагийн өмнө', unread: true, count: 1, online: true },
+    { id: 4, name: 'Дамдинсүрэн', avatar: 'Д', color: 'linear-gradient(135deg,#B9855B,#7A4A20)', preview: 'Сайн уу! Энэ долоо хоногт амарч байна уу?', time: 'Өчигдөр', unread: false, count: 0, online: false },
+  ];
+
+  const demoActivities = [
+    { icon: '💗', text: '<strong>Наранцэцэг</strong> таны профайлыг таалав', time: '2 минутын өмнө' },
+    { icon: '👁️', text: '<strong>Ганбаатар</strong> таны профайлыг харав', time: '15 минутын өмнө' },
+    { icon: '💌', text: '<strong>Оюунцэцэг</strong> танд мессеж илгээлээ', time: '1 цагийн өмнө' },
+    { icon: '✨', text: 'Шинэ хэрэглэгч <strong>Энхтуяа</strong> бүртгүүллээ', time: '2 цагийн өмнө' },
+    { icon: '🎯', text: 'Танд <strong>3</strong> шинэ таарц байна', time: 'Өнөөдөр' },
+  ];
+
+  const demoChatHistory = {
+    1: [
+      { sent: false, text: 'Сайн уу! Таны профайл их таалагдлаа 😊', time: '14:30' },
+      { sent: true, text: 'Сайн уу! Баярлалаа. Таны профайл ч бас гоё байна.', time: '14:32' },
+      { sent: false, text: 'Баянзүрх дүүрэгт байдаг юм уу? Би Сүхбаатар дүүрэгт байдаг.', time: '14:35' },
+    ],
+    2: [
+      { sent: false, text: 'Сайн уу! Аялал дуртай гэсэн байна.', time: '10:15' },
+      { sent: true, text: 'Тийм ээ, хаашаа аялсан бэ?', time: '10:20' },
+    ],
+    3: [
+      { sent: false, text: 'Ном уншдаг гэсэн байна. Сүүлд юу уншсан бэ?', time: '11:00' },
+    ],
+    4: [
+      { sent: false, text: 'Сайн уу! Энэ долоо хоногт амарч байна уу?', time: 'Өчигдөр' },
+      { sent: true, text: 'Сайн уу! Тийм, амарч байна. Та юу хийж байна?', time: 'Өчигдөр' },
+    ],
+  };
+
+  function renderMatches() {
+    const carousel = document.getElementById('matchCarousel');
+    carousel.innerHTML = demoMatches.map(m => `
+      <div class="match-card" data-id="${m.id}">
+        <div class="match-avatar" style="background:${m.color};">
+          ${m.avatar}
+          ${m.online ? '<span class="online-dot"></span>' : ''}
+        </div>
+        <div class="match-name">${m.name}</div>
+        <div class="match-info">${m.age} нас • ${m.location}</div>
+        <div class="match-tags">
+          ${m.tags.map(t => `<span class="match-tag">${t}</span>`).join('')}
+        </div>
+        <div class="match-actions">
+          <button class="match-btn-action skip" onclick="skipMatch(${m.id}, event)" title="Skip">✕</button>
+          <button class="match-btn-action like" onclick="likeMatch(${m.id}, event)" title="Like">💗</button>
+          <button class="match-btn-action msg" onclick="openChat(${m.id}, event)" title="Message">💬</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderMessages() {
+    const list = document.getElementById('msgList');
+    list.innerHTML = demoMessages.map(m => `
+      <div class="msg-item ${m.unread ? 'unread' : ''}" onclick="openChat(${m.id})">
+        <div class="msg-avatar" style="background:${m.color};">
+          ${m.avatar}
+          ${m.online ? '<span class="online-dot"></span>' : ''}
+        </div>
+        <div class="msg-body">
+          <div class="msg-top">
+            <span class="msg-name">${m.name}</span>
+            <span class="msg-time">${m.time}</span>
+          </div>
+          <div class="msg-preview">${m.preview}</div>
+        </div>
+        ${m.unread ? `<div class="msg-unread-badge">${m.count}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function renderActivity() {
+    const feed = document.getElementById('activityFeed');
+    feed.innerHTML = demoActivities.map(a => `
+      <div class="activity-item">
+        <div class="activity-icon">${a.icon}</div>
+        <div>
+          <div class="activity-text">${a.text}</div>
+          <div class="activity-time">${a.time}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function loadUserInfo() {
+    if (!currentUser) return;
+    const initial = currentUser.name ? currentUser.name.charAt(0) : '?';
+    document.getElementById('navAvatar').textContent = initial;
+    document.getElementById('navName').textContent = currentUser.name || 'Хэрэглэгч';
+    document.getElementById('profileAvatar').textContent = initial;
+    document.getElementById('profileName').textContent = currentUser.name || 'Хэрэглэгч';
+    document.getElementById('profileInfo').textContent = `${currentUser.age || '--'} нас • ${currentUser.location || '--'}`;
+    document.getElementById('welcomeGreeting').textContent = `Сайн уу, ${currentUser.name || 'Хэрэглэгч'}!`;
+  }
+
+  function likeMatch(id, e) {
+    if (e) e.stopPropagation();
+    showToast('Таалагдлаа! 💗', 'success');
+    updateStat('statLikes', 1);
+  }
+
+  function skipMatch(id, e) {
+    if (e) e.stopPropagation();
+    const card = document.querySelector(`.match-card[data-id="${id}"]`);
+    if (card) {
+      card.style.transform = 'translateX(-100px) rotate(-10deg)';
+      card.style.opacity = '0';
+      setTimeout(() => card.remove(), 300);
+    }
+  }
+
+  function updateStat(id, delta) {
+    const el = document.getElementById(id);
+    if (el) {
+      const current = parseInt(el.textContent) || 0;
+      el.textContent = current + delta;
+    }
+  }
+
+  let currentChatId = null;
+
+  function openChat(id, e) {
+    if (e) e.stopPropagation();
+    currentChatId = id;
+    const match = demoMatches.find(m => m.id === id) || demoMessages.find(m => m.id === id);
+    if (!match) return;
+
+    document.getElementById('chatAvatar').style.background = match.color;
+    document.getElementById('chatAvatar').textContent = match.avatar;
+    document.getElementById('chatName').textContent = match.name;
+
+    const history = demoChatHistory[id] || [];
+    const container = document.getElementById('chatMessages');
+    container.innerHTML = history.map(msg => `
+      <div class="chat-msg ${msg.sent ? 'sent' : 'received'}">${msg.text}</div>
+    `).join('');
+
+    document.getElementById('chatModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function closeChat() {
+    document.getElementById('chatModal').classList.remove('active');
+    document.body.style.overflow = '';
+    currentChatId = null;
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text || !currentChatId) return;
+
+    const container = document.getElementById('chatMessages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-msg sent';
+    msgDiv.textContent = text;
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+    input.value = '';
+
+    setTimeout(() => {
+      const replyDiv = document.createElement('div');
+      replyDiv.className = 'chat-msg received';
+      replyDiv.textContent = 'Сайн байна уу! Баярлалаа мессеж илгээсэнд 😊';
+      container.appendChild(replyDiv);
+      container.scrollTop = container.scrollHeight;
+    }, 1500);
+  }
+
+  document.getElementById('chatInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  document.getElementById('chatModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeChat();
+  });
+
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.tab;
+      if (target === 'messages') scrollToMessages();
+      else if (target === 'discover') scrollToMatches();
+      else if (target === 'matches') showToast('Таарц хэсэг', 'success');
+    });
+  });
+
+  document.querySelectorAll('.filter-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      showToast(`Шүүлтүүр: ${item.querySelector('span:last-child').textContent}`, 'success');
+    });
+  });
+
+  document.querySelectorAll('.mobile-filter-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.mobile-filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      showToast(`Шүүлтүүр: ${pill.textContent}`, 'success');
+    });
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('currentUser');
+    window.location.href = 'login.html';
+  });
+
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  function scrollToMatches() {
+    document.querySelector('.match-carousel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function scrollToMessages() {
+    document.querySelector('.msg-list').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function openPaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.style.opacity = '1', 10);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }, 300);
+  }
+
+  function completePayment() {
+    showToast('Төлбөр хүлээн авлаа! Админ шалгаж идэвхжүүлнэ.', 'success');
+    closePaymentModal();
+  }
+
+  document.getElementById('paymentModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closePaymentModal();
+  });
+
+  document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+    showToast('Цэс нээгдлээ', 'success');
+  });
+
+  renderMatches();
+  renderMessages();
+  renderActivity();
+  loadUserInfo();
+</script>
+
+</body>
+</html>
