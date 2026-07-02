@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Холбоо — Мессеж</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1A0E1C; --bg2: #221428; --gold: #E8A87C; --gold-lt: #F2D4C2;
+      --rose: #C1607A; --text: #F5EDE8; --muted: #9C8A86;
+      --card: #2B1830; --border: #3D2240; --input: #1f1226;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 28px 0;
+      position: relative;
+    }
+    .sidebar-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); padding: 0 24px 28px; border-bottom: 1px solid var(--border); }
+    .sidebar-logo span { color: var(--rose); }
+    .sidebar-user { display: flex; align-items: center; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+    .sidebar-av { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg,#C1607A,#8B2E4A); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .sidebar-uname { font-size: .9rem; font-weight: 600; }
+    .sidebar-plan { font-size: .72rem; color: var(--gold); background: rgba(232,168,124,.1); padding: 2px 8px; border-radius: 50px; display: inline-block; margin-top: 3px; }
+    .nav-items { padding: 16px 0; flex: 1; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: var(--muted); text-decoration: none; font-size: .9rem; transition: all .2s; border-left: 3px solid transparent; }
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,.03); }
+    .nav-item.active { color: var(--text); border-left-color: var(--rose); background: rgba(193,96,122,.07); }
+    .nav-item .icon { font-size: 1.1rem; width: 22px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--rose); color: #fff; font-size: .68rem; font-weight: 700; padding: 2px 7px; border-radius: 50px; }
+
+    /* CHAT LAYOUT */
+    .chat-layout { flex: 1; display: grid; grid-template-columns: 300px 1fr; overflow: hidden; }
+
+    /* CONVERSATION LIST */
+    .conv-list { border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+    .conv-header { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); }
+    .conv-header h2 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 12px; }
+    .search-input {
+      width: 100%; background: var(--input); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; font-size: .85rem;
+      color: var(--text); font-family: 'Inter', sans-serif; outline: none;
+      transition: border-color .2s;
+    }
+    .search-input:focus { border-color: var(--rose); }
+    .search-input::placeholder { color: rgba(156,138,134,.5); }
+
+    .conv-items { overflow-y: auto; flex: 1; }
+    .conv-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 20px; cursor: pointer;
+      border-bottom: 1px solid rgba(61,34,64,.5);
+      transition: background .15s;
+      position: relative;
+    }
+    .conv-item:hover { background: rgba(255,255,255,.03); }
+    .conv-item.active { background: rgba(193,96,122,.08); }
+    .conv-av {
+      width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; color: #fff;
+      position: relative;
+    }
+    .conv-online {
+      position: absolute; bottom: 1px; right: 1px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #4ade80; border: 2px solid var(--bg);
+    }
+    .conv-info { flex: 1; min-width: 0; }
+    .conv-name { font-size: .9rem; font-weight: 600; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .conv-last { font-size: .78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .conv-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+    .conv-time { font-size: .72rem; color: var(--muted); }
+    .conv-unread { width: 18px; height: 18px; border-radius: 50%; background: var(--rose); color: #fff; font-size: .65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+    /* CHAT AREA */
+    .chat-area { display: flex; flex-direction: column; overflow: hidden; }
+
+    .chat-header {
+      padding: 16px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 14px;
+      background: var(--bg2);
+    }
+    .chat-header-av { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .chat-header-name { font-weight: 600; font-size: 1rem; }
+    .chat-header-status { font-size: .78rem; color: #4ade80; margin-top: 2px; }
+    .chat-header-actions { margin-left: auto; display: flex; gap: 10px; }
+    .header-action-btn {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); font-size: 1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .header-action-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    .messages-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+    .msg-group { display: flex; flex-direction: column; gap: 4px; }
+    .msg-group.mine { align-items: flex-end; }
+    .msg-group.theirs { align-items: flex-start; }
+
+    .msg-sender { font-size: .72rem; color: var(--muted); margin-bottom: 4px; padding: 0 4px; }
+
+    .msg-bubble {
+      max-width: 70%; padding: 12px 16px;
+      border-radius: 18px; font-size: .9rem; line-height: 1.5;
+    }
+    .mine .msg-bubble { background: linear-gradient(135deg, var(--rose), #a8405a); color: #fff; border-bottom-right-radius: 4px; }
+    .theirs .msg-bubble { background: var(--card); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; }
+
+    .msg-time { font-size: .68rem; color: var(--muted); padding: 0 4px; }
+
+    /* Date divider */
+    .date-divider { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
+    .date-divider span { font-size: .72rem; color: var(--muted); white-space: nowrap; }
+    .date-divider::before, .date-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* Input area */
+    .chat-input-area {
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      background: var(--bg2);
+      display: flex; align-items: flex-end; gap: 12px;
+    }
+    .input-wrap { flex: 1; position: relative; }
+    .chat-textarea {
+      width: 100%; background: var(--input); border: 1px solid var(--border);
+      border-radius: 14px; padding: 13px 16px; font-size: .9rem;
+      color: var(--text); font-family: 'Inter', sans-serif; outline: none;
+      resize: none; max-height: 120px; line-height: 1.5;
+      transition: border-color .2s;
+    }
+    .chat-textarea:focus { border-color: var(--rose); }
+    .chat-textarea::placeholder { color: rgba(156,138,134,.5); }
+    .send-btn {
+      width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+      background: var(--rose); border: none; color: #fff; font-size: 1.1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s;
+      box-shadow: 0 4px 14px rgba(193,96,122,.35);
+    }
+    .send-btn:hover { background: #d4506b; transform: scale(1.05); }
+
+    /* Empty state */
+    .empty-chat {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: var(--muted); text-align: center; padding: 40px;
+    }
+    .empty-chat .big { font-size: 3rem; margin-bottom: 16px; }
+    .empty-chat h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text); margin-bottom: 8px; }
+    .empty-chat p { font-size: .88rem; line-height: 1.6; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .chat-layout { grid-template-columns: 280px 1fr; }
+    }
+    @media (max-width: 600px) {
+      .chat-layout { grid-template-columns: 1fr; }
+      .conv-list { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Хол<span>бо</span>о</div>
+  <div class="sidebar-user">
+    <div class="sidebar-av">Д</div>
+    <div>
+      <div class="sidebar-uname">Дэлгэрмаа</div>
+      <span class="sidebar-plan">⭐ Premium</span>
+    </div>
+  </div>
+  <nav class="nav-items">
+    <a class="nav-item" href="matches.html"><span class="icon">🔍</span> Таарч харах</a>
+    <a class="nav-item active" href="messages.html"><span class="icon">💌</span> Мессеж <span class="nav-badge">3</span></a>
+    <a class="nav-item" href="profile.html"><span class="icon">👤</span> Профайл</a>
+    <a class="nav-item" href="liked.html"><span class="icon">💗</span> Надад дурласан</a>
+    <a class="nav-item" href="index.html"><span class="icon">🚪</span> Гарах</a>
+  </nav>
+</aside>
+
+<!-- CHAT LAYOUT -->
+<div class="chat-layout">
+
+  <!-- CONVERSATION LIST -->
+  <div class="conv-list">
+    <div class="conv-header">
+      <h2>Мессеж</h2>
+      <input class="search-input" placeholder="🔍 Хайх..." oninput="searchConvs(this.value)" />
+    </div>
+    <div class="conv-items" id="convList"></div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="chat-area" id="chatArea">
+    <div class="empty-chat" id="emptyChat">
+      <div class="big">💌</div>
+      <h3>Харилцаа эхлүүл</h3>
+      <p>Зүүн талаас харилцан ярих хүнээ сонгоорой.<br/>Нэгдүгээр мессежийг та илгээгээрэй!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const conversations = [
+  {
+    id: 1, name: 'Батбаяр', emoji: 'Б', color: 'linear-gradient(135deg,#5B8FB9,#2C5282)',
+    online: true, unread: 2,
+    messages: [
+      { from: 'them', text: 'Сайн байна уу? Таны профайл харсан, маш сайн хүн байх шиг байна.', time: '10:22' },
+      { from: 'me',   text: 'Сайн байна, баярлалаа 😊 Та байгаль дуртай юм байна?', time: '10:35' },
+      { from: 'them', text: 'Тийм, долоо хоног бүр Богд уул руу явдаг. Та аялах дуртай юу?', time: '10:36' },
+      { from: 'me',   text: 'Аялах их дуртай! Өнгөрсөн зун Хөвсгөл явсан.', time: '10:40' },
+      { from: 'them', text: 'Вай! Хөвсгөл гайхалтай газар. Хамт явах боломж байвал сайхан байх байлаа 😊', time: '10:41' },
+    ]
+  },
+  {
+    id: 2, name: 'Ганбаатар', emoji: 'Г', color: 'linear-gradient(135deg,#7B9E5B,#3D5C2A)',
+    online: false, unread: 1,
+    messages: [
+      { from: 'them', text: 'Сайн уу, танилцаж болох уу?', time: 'Өчигдөр' },
+      { from: 'me',   text: 'Болно, та хаана байдаг юм бол?', time: 'Өчигдөр' },
+      { from: 'them', text: 'Хан-Уул дүүрэгт. Та?', time: 'Өчигдөр' },
+    ]
+  },
+  {
+    id: 3, name: 'Мөнхбаяр', emoji: 'М', color: 'linear-gradient(135deg,#6B7B9B,#3A4A6E)',
+    online: true, unread: 0,
+    messages: [
+      { from: 'me',   text: 'Сайн байна уу?', time: 'Даваа' },
+      { from: 'them', text: 'Сайн, та яаж байна вэ?', time: 'Даваа' },
+      { from: 'me',   text: 'Сайхан байна, баярлалаа!', time: 'Даваа' },
+    ]
+  },
+  {
+    id: 4, name: 'Номин', emoji: 'Н', color: 'linear-gradient(135deg,#5BA8B9,#2C6282)',
+    online: false, unread: 0,
+    messages: [
+      { from: 'them', text: 'Уулзах боломж байна уу?', time: 'Ням' },
+    ]
+  },
+];
+
+let activeConvId = null;
+
+function renderConvList(list) {
+  const el = document.getElementById('convList');
+  el.innerHTML = list.map(c => {
+    const last = c.messages[c.messages.length - 1];
+    return `
+      <div class="conv-item ${activeConvId === c.id ? 'active' : ''}" onclick="openConv(${c.id})">
+        <div class="conv-av" style="background:${c.color}">
+          ${c.emoji}
+          ${c.online ? '<div class="conv-online"></div>' : ''}
+        </div>
+        <div class="conv-info">
+          <div class="conv-name">${c.name}</div>
+          <div class="conv-last">${last.from === 'me' ? 'Та: ' : ''}${last.text}</div>
+        </div>
+        <div class="conv-meta">
+          <span class="conv-time">${last.time}</span>
+          ${c.unread > 0 ? `<span class="conv-unread">${c.unread}</span>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openConv(id) {
+  activeConvId = id;
+  const conv = conversations.find(c => c.id === id);
+  conv.unread = 0;
+  renderConvList(conversations);
+
+  const chatArea = document.getElementById('chatArea');
+  chatArea.innerHTML = `
+    <div class="chat-header">
+      <div class="chat-header-av" style="background:${conv.color}">${conv.emoji}</div>
+      <div>
+        <div class="chat-header-name">${conv.name}</div>
+        <div class="chat-header-status">${conv.online ? '🟢 Онлайн' : '⚫ Офлайн'}</div>
+      </div>
+      <div class="chat-header-actions">
+        <button class="header-action-btn" title="Профайл харах">👤</button>
+        <button class="header-action-btn" title="Блоклох">🚫</button>
+      </div>
+    </div>
+    <div class="messages-area" id="messagesArea">
+      <div class="date-divider"><span>Өнөөдөр</span></div>
+      ${conv.messages.map((m, i) => `
+        <div class="msg-group ${m.from === 'me' ? 'mine' : 'theirs'}">
+          <div class="msg-bubble">${m.text}</div>
+          <div class="msg-time">${m.time}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="chat-input-area">
+      <div class="input-wrap">
+        <textarea class="chat-textarea" id="msgInput" placeholder="Мессеж бичнэ үү..." rows="1"
+          onkeydown="handleKey(event, ${id})"
+          oninput="autoResize(this)"></textarea>
+      </div>
+      <button class="send-btn" onclick="sendMsg(${id})">➤</button>
+    </div>
+  `;
+
+  scrollToBottom();
+}
+
+function sendMsg(convId) {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const conv = conversations.find(c => c.id === convId);
+  const now = new Date();
+  const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+  conv.messages.push({ from: 'me', text, time });
+
+  const area = document.getElementById('messagesArea');
+  const div = document.createElement('div');
+  div.className = 'msg-group mine';
+  div.innerHTML = `<div class="msg-bubble">${text}</div><div class="msg-time">${time}</div>`;
+  area.appendChild(div);
+
+  input.value = '';
+  input.style.height = 'auto';
+  scrollToBottom();
+  renderConvList(conversations);
+
+  // Auto reply after 1.5s
+  setTimeout(() => {
+    const replies = [
+      'Ойлголоо, баярлалаа 😊',
+      'Тийм ээ, та зөв хэлж байна.',
+      'Хаана, хэзээ уулзах вэ?',
+      'Миний утас руу залгаарай, тэгвэл дээр байх.',
+      'Таны тухай илүү мэдмээр байна 😊',
+    ];
+    const reply = replies[Math.floor(Math.random() * replies.length)];
+    conv.messages.push({ from: 'them', text: reply, time });
+
+    const div2 = document.createElement('div');
+    div2.className = 'msg-group theirs';
+    div2.style.animation = 'none';
+    div2.innerHTML = `<div class="msg-bubble">${reply}</div><div class="msg-time">${time}</div>`;
+    document.getElementById('messagesArea').appendChild(div2);
+    scrollToBottom();
+    renderConvList(conversations);
+  }, 1500);
+}
+
+function handleKey(e, id) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(id); }
+}
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+function scrollToBottom() { const a = document.getElementById('messagesArea'); if (a) a.scrollTop = a.scrollHeight; }
+function searchConvs(q) {
+  const filtered = conversations.filter(c => c.name.toLowerCase().includes(q.toLowerCase()));
+  renderConvList(filtered);
+}
+
+renderConvList(conversations);
+</script>
+</body>
+</html>
